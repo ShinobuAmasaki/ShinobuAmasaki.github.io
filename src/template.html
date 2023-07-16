@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	$if(data)$
+	<meta name="dcterms.date" content="$date$" />
+	$endif$ $if(keywords)$
+	<meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
+	$endif$ $if(description)$
+	<meta name="description" content="$description$" />
+	$endif$
+	<title>$if(title)$$title$$endif$ | Amasaki Shinobu's Website</title>
+	<link rel="stylesheet" href=".common/styles/default.min.css">
+	<script src=".common/highlight.min.js"></script>
+	<script>hljs.highlightAll();</script>
+</head>
+<body>
+	$body$
+</body>
+</html>
