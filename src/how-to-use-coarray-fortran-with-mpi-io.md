@@ -714,9 +714,9 @@ Answer: According to the referrences [2, 3], both OpenCoarrays and Intel Fortran
 
 ## Reference
 
-1. [[Japanese ver.] Coarray FortranでMPI I/Oを使う](https://qiita.com/amasaki203/items/4beb0d2b6984bf701dec)
-2. [OpenCoarrays/README.md at main | ](https://github.com/sourceryinstitute/OpenCoarrays/blob/main/README.md)
-3. [Essential Guide to Distributed Memory Coarray Fortran with the Intel Fortran Compiler for Linux | www.Intel.com](https://www.intel.com/content/www/us/en/developer/articles/technical/distributed-memory-coarray-fortran-with-the-intel-fortran-compiler-for-linux-essential.html)
+1. [[Japanese ver.] Coarray FortranでMPI I/Oを使う | Qiita](https://qiita.com/amasaki203/items/4beb0d2b6984bf701dec)
+2. [OpenCoarrays/README.md at main | GitHub](https://github.com/sourceryinstitute/OpenCoarrays/blob/main/README.md)
+3. [Essential Guide to Distributed Memory Coarray Fortran with the Intel Fortran Compiler for Linux | Intel](https://www.intel.com/content/www/us/en/developer/articles/technical/distributed-memory-coarray-fortran-with-the-intel-fortran-compiler-for-linux-essential.html)
 
 
 Copyright 2023 Amasaki Shinobu
