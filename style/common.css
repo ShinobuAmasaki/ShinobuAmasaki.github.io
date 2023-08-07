@@ -1,0 +1,39 @@
+@charset "utf8";
+/* * {
+   margin:auto;
+   width: 90%;
+} */
+.large-img figure img {
+   margin: auto;
+   display: block;
+   width: 95%;
+}
+.large-img {
+   text-align: center;
+   width: 1000px;
+   margin: auto;
+   border: solid 1px block;
+}
+.contents {
+   text-align: left;
+   width: 95%;
+   margin: auto;
+   border: solid 1px block;
+}
+
+@media screen and (max-width:959px) {
+   .large-img figure img {
+      text-align: center;
+      margin: 0px;
+      display: block;
+   }
+   div.large-img {
+      text-align: left;
+      width: 100%;
+      margin:1px;
+      border: solid 1px block;
+   }
+   figure figcaption {
+      text-align: left;
+   }
+}
