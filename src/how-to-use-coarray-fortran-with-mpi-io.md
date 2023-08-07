@@ -13,16 +13,18 @@ Twitter: [@amasaki203](https://twitter.com/amasaki203)
 
 Posted on: 2023-08-12 JST
 
+## Abstract
+
+1. Coarray is cooperatable with MPI on OpenCoarrays or Intel oneAPI environments.
+
+2. We can use MPI I/O, since the Fortran Standards does not define Parallel I/O.
+
+3. Then, let's use together Coarray feature and MPI I/O-based libraries. 
+
 ## Contents
 <div class="contents">
 
-- [Abstract](#abstract)
-
-   1. Coarray is cooperatable with MPI on OpenCoarrays or Intel oneAPI environments.
-
-   2. We can use MPI I/O, since the Fortran Standards does not define Parallel I/O.
-   
-   3. Then, let's use together Coarray feature and MPI I/O-based libraries. 
+- [Introduction](#introduction)
 
 - [Tested environments](#tested-environments)
 
@@ -51,7 +53,7 @@ Posted on: 2023-08-12 JST
 
 </div>
 
-## Abstract
+## Introduction
 
 Coarray is the feature for parallelization built into the Fortran language which standardized at Fortran 2008. This includes parallel processing capabilities, but even the latest standards do not define for I/O parallelization features.
 
@@ -647,7 +649,8 @@ end program main
 >
 > コンパイルと実行、及び結果は次のとおり。
 
-The entire code is available from GitHub repository. Compilation, execution, and the results are as follows.
+[The entire code is available from the file on GitHub repository](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-codes/netcdf-with-coarray_1-dim-block-division.f90).
+ Compilation, execution, and the results are as follows.
 
 ```shell
 % caf netcdf-with-coarray_1-dim-block-division.f90 -I/usr/lib64 -I/usr/include -lnetcdff
@@ -681,7 +684,7 @@ data:
 
 > NetCDFファイルの描画には、Generic Mapping Tools v6.4.0を使用した。
 
-I used Generic Mapping Tools v6.4.0 for plotting the NetCDF file.
+I used [Generic Mapping Tools v6.4.0](https://www.generic-mapping-tools.org/) for plotting the NetCDF file.
 
 > Notes:
 >
