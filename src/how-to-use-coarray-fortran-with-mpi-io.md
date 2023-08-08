@@ -76,8 +76,7 @@ program main
    call mpi_comm_rank(mpi_comm_world, rank, ierr)
    
    print '(a,i2,a,i2,a,i2,a,i2)', &
-      'This rank is ', rank, ' of ', petot, &
-      ' | This image is ', this_image(), ' of ', num_images()
+      'This rank is ', rank, ' of ', petot,' | This image is ', this_image(), ' of ', num_images()
    
 !  absence of `call mpi_finalize`
    
@@ -199,7 +198,7 @@ Next, let's consider an approach where the data to be written is aggregated to a
 
 > 以下のコードでは、`this_image`が1に等しい場合のみデータを受け取る配列`recv`を用意して、他のイメージからデータを受信し、その後にファイルに書き込んでいる。
 
-The following code prepares an array `recv` to recieve data only when `this_image()` is equal to 1 (i.e. PE1) . It then receives data from other images and subsequently writes it to a file.
+The following code prepares an array `recv` to recieve data only when `this_image()` is equal to 1 (i.e. PE1). It then receives data from other images and subsequently writes it to a file.
 
 ```fortran
 program main
@@ -297,10 +296,10 @@ The following code is an example, in which the file is filled with `0xFFFF` (-1)
 ```fortran
 program main
    use, intrinsic :: iso_fortran_env
-	implicit none
-	
-	integer :: length, outuni
-	integer(int16) :: dat, fill(256)
+   implicit none
+   
+   integer :: length, outuni
+   integer(int16) :: dat, fill(256)
    integer :: thisis, petot, ierr, offset
    
    character(8), parameter :: out_file='out.bin'
@@ -585,14 +584,14 @@ As discussed above, it has been confirmed that MPI libraries and Coarray can be 
 
 ```fortran
 program main
-	use, intrinsic :: iso_fortran_env
-	use :: mpi_f08
-	use :: netcdf
+   use, intrinsic :: iso_fortran_env
+   use :: mpi_f08
+   use :: netcdf
 !  ...
-	
-	thisis = this_image()
-	
-	block  ! Define nc
+   
+   thisis = this_image()
+   
+   block  ! Define nc
       call check( nf90_create_par(trim(out_nc_file), NF90_HDF5, comm%mpi_val, info%mpi_val, ncid) )
       call check( nf90_def_dim(ncid, 'x', nx, dim_id_x) )
       call check( nf90_def_dim(ncid, 'y', ny, dim_id_y) )
@@ -658,15 +657,15 @@ end program main
 % ncdump out.nc | head -n 20
 netcdf out {
 dimensions:
-	x = 1024 ;
-	y = 1024 ;
+   x = 1024 ;
+   y = 1024 ;
 variables:
-	double x(x) ;
-		x:units = "meter" ;
-	double y(y) ;
-		y:units = "meter" ;
-	double elevation(y, x) ;
-		elevation:units = "meter" ;
+   double x(x) ;
+      x:units = "meter" ;
+   double y(y) ;
+      y:units = "meter" ;
+   double elevation(y, x) ;
+      elevation:units = "meter" ;
 data:
 
  x = 0, 0.0009765625, 0.001953125, 0.0029296875, 0.00390625, 0.0048828125, 
@@ -706,11 +705,17 @@ Notes:
 
 This article discuss the compatibility of Fortran's Coarray feature with the MPI libraries. While Coarray provides parallelization capabilities within the language, it lacks sufficient suport for I/O operations. The MPI libraries, however, can handle this aspect effectively. Some discussions over whether to use Coarray or MPI is not uncommon, but the combination of both allows for a practical approach, with MPI taking on the role of handling I/O operations. This provides a novel technique for Fortran programmers who develop practical applications.
 
+---
+
 ## Appendix
+> 注意：IntelのoneAPIを使用する場合、HDF5とNetCDFなどはIntelのコンパイラでビルドしたライブラリを使用する必要がある。その際リンク時に、システムのパッケージマネージャーでビルドしたライブラリと競合するので、GCCビルドのライブラリとIntelコンパイラービルドのライブラリを混在させてはいけない。
+Note: When using Intel oneAPI toolkits, it is necessary to utilize libraries built with Intel's compiler for modules like HDF5 and NetCDF. 
+ As they could conflict with libraries installed by the system's package manager during linking, care should be taken to avoid mixing libraries built with GCC and those built with the Intel's compiler.
 
 *Question: Why is it possible to use Coarray and MPI in conjunction by not calling `mpi_init()` and `mpi_finalize()`?*
 
 Answer: According to the referrences [2, 3], both OpenCoarrays and Intel Fortran's coarray implementation use MPI as their backend. I assume that this enables the coexistence of coarray feature and MPI library without conflicts, allowing for the unexpected direct invocation of MPI procedures. 
+
 
 ## Reference
 
