@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="utf-8" />
-	$if(data)$
-	<meta name="dcterms.date" content="$date$" />
-	$endif$ $if(keywords)$
-	<meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
-	$endif$ $if(description)$
-	<meta name="description" content="$description$" />
-	$endif$
-	<title>$if(title)$$title$$endif$ | Amasaki Shinobu's Website</title>
-	<link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/highlight.css">
-	<script src="https://shinobuamasaki.github.io/style/highlight.min.js"></script>
-	<script>hljs.highlightAll();</script>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+   $if(data)$
+   <meta name="dcterms.date" content="$date$" />
+   $endif$ $if(keywords)$
+   <meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
+   $endif$ $if(description)$
+   <meta name="description" content="$description$" />
+   <meta name="twitter:description" content="$description$" />
+   <meta name="og:description" content="$description$" />
+   $endif$$if(title)$
+   <meta property="og:title" content="$title$" /> 
+   $endif$
+<!-- for Twitter  -->
+   <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+<!-- for OG -->
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/items/$pagetitle$" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title>$if(title)$$title$$endif$ | Amasaki Shinobu's Website</title>
+   <link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/highlight.css">
+   <link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/common.css">
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <script src="https://shinobuamasaki.github.io/style/highlight.min.js"></script>
+   <script>hljs.highlightAll();</script>
 </head>
 <body>
-	$body$
+<main>
+   $body$
+</main>
 </body>
 </html>
