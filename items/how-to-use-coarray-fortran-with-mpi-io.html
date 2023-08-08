@@ -19,6 +19,7 @@ I/O | Amasaki Shinobu's Website</title>
 	<script>hljs.highlightAll();</script>
 </head>
 <body>
+<main>
 	<h1 id="how-to-use-coarray-fortran-with-mpi-io">How to Use Coarray
 Fortran with MPI I/O</h1>
 <p>Author: Amasaki Shinobu</p>
@@ -87,8 +88,7 @@ cooperatively with the MPI library, and they can be used together by
    call mpi_comm_rank(mpi_comm_world, rank, ierr)
    
    print &#39;(a,i2,a,i2,a,i2,a,i2)&#39;, &amp;
-      &#39;This rank is &#39;, rank, &#39; of &#39;, petot, &amp;
-      &#39; | This image is &#39;, this_image(), &#39; of &#39;, num_images()
+      &#39;This rank is &#39;, rank, &#39; of &#39;, petot,&#39; | This image is &#39;, this_image(), &#39; of &#39;, num_images()
    
 !  absence of `call mpi_finalize`
    
@@ -212,7 +212,7 @@ approach illsutration</figcaption>
 </figure>
 </div>
 <p>The following code prepares an array <code>recv</code> to recieve
-data only when <code>this_image()</code> is equal to 1 (i.e. PE1) . It
+data only when <code>this_image()</code> is equal to 1 (i.e. PE1). It
 then receives data from other images and subsequently writes it to a
 file.</p>
 <pre class="fortran"><code>program main
@@ -306,10 +306,10 @@ writes 2 bytes at positions shifted by its respective individual
 offsets.</p>
 <pre class="fortran"><code>program main
    use, intrinsic :: iso_fortran_env
-    implicit none
-    
-    integer :: length, outuni
-    integer(int16) :: dat, fill(256)
+   implicit none
+   
+   integer :: length, outuni
+   integer(int16) :: dat, fill(256)
    integer :: thisis, petot, ierr, offset
    
    character(8), parameter :: out_file=&#39;out.bin&#39;
@@ -581,14 +581,14 @@ Fortran Library, by specifying <code>use mpi_f08</code> and
 producing the correct <code>.nc</code> file. Below is part of a code for
 generating a <code>.nc</code> file.</p>
 <pre class="fortran"><code>program main
-    use, intrinsic :: iso_fortran_env
-    use :: mpi_f08
-    use :: netcdf
+   use, intrinsic :: iso_fortran_env
+   use :: mpi_f08
+   use :: netcdf
 !  ...
-    
-    thisis = this_image()
-    
-    block  ! Define nc
+   
+   thisis = this_image()
+   
+   block  ! Define nc
       call check( nf90_create_par(trim(out_nc_file), NF90_HDF5, comm%mpi_val, info%mpi_val, ncid) )
       call check( nf90_def_dim(ncid, &#39;x&#39;, nx, dim_id_x) )
       call check( nf90_def_dim(ncid, &#39;y&#39;, ny, dim_id_y) )
@@ -648,15 +648,15 @@ Compilation, execution, and the results are as follows.</p>
 % ncdump out.nc | head -n 20
 netcdf out {
 dimensions:
-    x = 1024 ;
-    y = 1024 ;
+   x = 1024 ;
+   y = 1024 ;
 variables:
-    double x(x) ;
-        x:units = &quot;meter&quot; ;
-    double y(y) ;
-        y:units = &quot;meter&quot; ;
-    double elevation(y, x) ;
-        elevation:units = &quot;meter&quot; ;
+   double x(x) ;
+      x:units = &quot;meter&quot; ;
+   double y(y) ;
+      y:units = &quot;meter&quot; ;
+   double elevation(y, x) ;
+      elevation:units = &quot;meter&quot; ;
 data:
 
  x = 0, 0.0009765625, 0.001953125, 0.0029296875, 0.00390625, 0.0048828125, 
@@ -696,7 +696,13 @@ uncommon, but the combination of both allows for a practical approach,
 with MPI taking on the role of handling I/O operations. This provides a
 novel technique for Fortran programmers who develop practical
 applications.</p>
+<hr />
 <h2 id="appendix">Appendix</h2>
+<p>Note: When using Intel oneAPI toolkits, it is necessary to utilize
+libraries built with Intel’s compiler for modules like HDF5 and NetCDF.
+As they could conflict with libraries installed by the system’s package
+manager during linking, care should be taken to avoid mixing libraries
+built with GCC and those built with the Intel’s compiler.</p>
 <p><em>Question: Why is it possible to use Coarray and MPI in
 conjunction by not calling <code>mpi_init()</code> and
 <code>mpi_finalize()</code>?</em></p>
@@ -719,5 +725,6 @@ Guide to Distributed Memory Coarray Fortran with the Intel Fortran
 Compiler for Linux | Intel</a></li>
 </ol>
 <p>Copyright 2023 Amasaki Shinobu</p>
+</main>
 </body>
 </html>
