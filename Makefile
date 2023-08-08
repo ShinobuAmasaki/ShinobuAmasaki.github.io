@@ -8,7 +8,7 @@ test.html: $(SRC_DIR)/test.md $(TEMPLATE)
 
 how-to-use-coarray-fortran-with-mpi-io.html: $(SRC_DIR)/how-to-use-coarray-fortran-with-mpi-io.md $(TEMPLATE)
 	grep -v '^\s*>' $< > buff.md.tmp
-	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight --mathjax buff.md.tmp > $(ITEMS_DIR)/$@
+	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight -V pagetitle="$@" --mathjax buff.md.tmp > $(ITEMS_DIR)/$@
 	rm -rf buff.md.tmp
 
 clean:
