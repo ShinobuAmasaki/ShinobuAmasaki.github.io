@@ -5,6 +5,10 @@ main, h1, h2, p {
 	border: 0;
 }
 
+h1, h2, h3 {
+	padding: 10px 0 5px 0;
+}
+
 body {
 	font-family: sans-serif;
 	line-height: 1.8;

@@ -1,17 +1,17 @@
 ---
 title: How to Use Coarray Fortran with MPI I/O
-date:  2023-08-12
+date:  2023-08-10
 author: Amasaki Shinobu
 description: An article about Coarray feature of Fortran and Message Passing Interface.
 ---
 
 # How to Use Coarray Fortran with MPI I/O
 
-Author: Amasaki Shinobu
+Author: Amasaki Shinobu (雨崎しのぶ)
 
 Twitter: [@amasaki203](https://twitter.com/amasaki203)
 
-Posted on: 2023-08-12 JST
+Posted on: 2023-08-10 JST
 
 ## Abstract
 
@@ -26,7 +26,7 @@ Posted on: 2023-08-12 JST
 
 - [Introduction](#introduction)
 
-- [Tested environments](#tested-environments)
+- [Environments](#environments)
 
    - GNU Fortran Compiler + OpenCoarrays
    - Intel oneAPI Fortran Compiler
@@ -46,6 +46,8 @@ Posted on: 2023-08-12 JST
 - [Conclusion](#conclusion)
 
 - [Appendix](#appendix)
+
+   - Tested enviromnets
 
    - Why can they use togather?
 
@@ -112,16 +114,11 @@ This rank is 3 of 8 | This image is 4 of 8
 
 This compatibility will be helpful for Parallel I/O in a Fortran program, and it can also be used in conjunction with libraries dependent on MPI.
 
-## Tested environments
-
-#### Hardware
-
-- HP Proliant ML350 Gen9
-  - dual Intel Xeon E5-2683 v4
-- HP Proliant ML110 Gen9
-  - single Intel Xeon E5-2683 v4
+## Environment
 
 #### Compilers
+
+The environments passed the test code are detailed in [Appendix](#appendix) below.
 
 - GNU Fortran + OpenCoarrays
 - Intel oneAPI HPC toolkits
@@ -129,6 +126,7 @@ This compatibility will be helpful for Parallel I/O in a Fortran program, and it
 **Note**: According to my friend, the NAG Fortran Compiler for Windows is not capable of building the above code. I don't have information regarding the Linux version or its multi-node version.
 
 **Note**: As of 2023, LLVM/Flang does not yet support Coarray feature of the Fortran 2008.
+
 
 #### Cluster configuration
 
@@ -708,13 +706,81 @@ This article discuss the compatibility of Fortran's Coarray feature with the MPI
 ---
 
 ## Appendix
+
+### Tested environments
+
+-  Hardware
+   - HP Proliant ML350 Gen9 (dual Intel Xeon E5-2683 v4)
+   - HP Proliant ML110 Gen9 (single Intel Xeon E5-2683 v4)
+
+-  Interconnection
+   - Gigabit Ethernet
+   - NFS v4
+
+- System (Linux)
+   - Gentoo Linux (Kernel v6.1.31)
+   - Ubuntu Server 22.04.3 LTS
+
+- Compilers
+   
+   - GCC
+      
+      - GNU Fortran
+         
+         ```shell
+         % gfortran --version
+         GNU Fortran (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
+         Copyright (C) 2022 Free Software Foundation, Inc.
+         This is free software; see the source for copying conditions.  There is NO
+         warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+         ```
+
+      - OpenCoarrays
+      
+         ```shell
+         % caf --version
+         OpenCoarrays Coarray Fortran Compiler Wrapper (caf version 2.10.1)
+         Copyright (C) 2015-2022 Sourcery Institute
+         Copyright (C) 2015-2022 Archaeologic Inc.
+
+         OpenCoarrays comes with NO WARRANTY, to the extent permitted by law.
+         You may redistribute copies of OpenCoarrays under the terms of the
+         BSD 3-Clause License.  For more information about these matters, see
+         the file named LICENSE that is distributed with OpenCoarrays.
+         ```
+
+      - OpenMPI
+      
+         ```shell
+         % mpirun --version
+         mpirun (Open MPI) 4.1.4
+
+         Report bugs to http://www.open-mpi.org/community/help/
+         ```
+   
+   - Intel oneAPI
+     
+     ```shell
+     % mpiifort --version
+     ifort (IFORT) 2021.10.0 20230609
+     Copyright (C) 1985-2023 Intel Corporation.  All rights reserved.
+     
+     % mpirun --version
+     Intel(R) MPI Library for Linux* OS, Version 2021.10 Build 20230619 (id: c2e19c2f3e)
+     Copyright 2003-2023, Intel Corporation.
+     ```
+
+
+### Note
 > 注意：IntelのoneAPIを使用する場合、HDF5とNetCDFなどはIntelのコンパイラでビルドしたライブラリを使用する必要がある。その際リンク時に、システムのパッケージマネージャーでビルドしたライブラリと競合するので、GCCビルドのライブラリとIntelコンパイラービルドのライブラリを混在させてはいけない。
-Note: When using Intel oneAPI toolkits, it is necessary to utilize libraries built with Intel's compiler for modules like HDF5 and NetCDF. 
+When using Intel oneAPI toolkits, it is necessary to utilize libraries built with Intel's compiler for modules like HDF5 and NetCDF. 
  As they could conflict with libraries installed by the system's package manager during linking, care should be taken to avoid mixing libraries built with GCC and those built with the Intel's compiler.
 
-*Question: Why is it possible to use Coarray and MPI in conjunction by not calling `mpi_init()` and `mpi_finalize()`?*
+### Questions
+*Question*: Why is it possible to use Coarray and MPI in conjunction by not calling `mpi_init()` and `mpi_finalize()`?
+<br><br>
 
-Answer: According to the referrences [2, 3], both OpenCoarrays and Intel Fortran's coarray implementation use MPI as their backend. I assume that this enables the coexistence of coarray feature and MPI library without conflicts, allowing for the unexpected direct invocation of MPI procedures. 
+*Answer*: According to the referrences [2, 3], both OpenCoarrays and Intel Fortran's coarray implementation use MPI as their backend. I assume that this enables the coexistence of coarray feature and MPI library without conflicts, allowing for the unexpected direct invocation of MPI procedures. 
 
 
 ## Reference
