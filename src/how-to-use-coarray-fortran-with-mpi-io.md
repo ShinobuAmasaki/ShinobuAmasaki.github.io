@@ -159,7 +159,7 @@ In the following, we will examine the characteristics of the above three approac
 >
 > 下の図では、PE (*processor element*) 1, 2, 3, 4は、それぞれ対応するデータファイル1, 2, 3, 4へアクセスする。
 
-Each process launched in parallel independently performs write operations into separate files that remain untouched by other processes. This is the simplest approach and does not require the use of coarray variables.  In the figure below, PE1(*processor element one), PE2,PE3, PE4 access thier corresponding data files 1, 2, 3, 4.
+Each process launched in parallel independently performs write operations into separate files that remain untouched by other processes. This is the simplest approach and does not require the use of coarray variables.  In the figure below, PE1(*processor element one*), PE2, PE3, PE4 access thier corresponding data files 1, 2, 3, 4.
 
 <div class="large-img">
 ![Fig.1 -  I/O distributed on local illustration](../img/manage_IO_distributed_io_on_local.png)
@@ -242,7 +242,7 @@ When running this code with 64 processes, it outputs a single `out.bin` file. Th
 % caf main.f90 -o a.out
 % cafrun -n 64 ./a.out 
 % hexdump out.bin 
-0000000&amp; 0001 0000 0002 0000 0003 0000 0004 0000
+0000000 0001 0000 0002 0000 0003 0000 0004 0000
 0000010 0005 0000 0006 0000 0007 0000 0008 0000
 0000020 0009 0000 000a 0000 000b 0000 000c 0000
 0000030 000d 0000 000e 0000 000f 0000 0010 0000
