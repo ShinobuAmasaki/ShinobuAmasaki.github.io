@@ -12,10 +12,8 @@ feature of Fortran and Message Passing Interface." />
 of Fortran and Message Passing Interface." />
       <meta property="og:title" content="How to Use Coarray Fortran with
 MPI I/O" /> 
-   <!-- for Twitter  -->
-   <meta name="twitter:site" content="@amasaki203" />
+      <meta name="twitter:site" content="@amasaki203" />
    <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
-<!-- for OG -->
    <meta property="og:type" content="website" />
    <meta property="og:url" content="https://shinobuamasaki.github.io/items/how-to-use-coarray-fortran-with-mpi-io.html" />
    <meta property="og:site_name" content="Amasaki Shinobu's website" />
@@ -265,7 +263,7 @@ This rank is 3 of 8 | This image is 4 of 8</code></pre>
    <pre class="shell"><code>% caf main.f90 -o a.out
 % cafrun -n 64 ./a.out 
 % hexdump out.bin 
-0000000 0001 0000 0002 0000 0003 0000 0004 0000
+0000000&amp;amp; 0001 0000 0002 0000 0003 0000 0004 0000
 0000010 0005 0000 0006 0000 0007 0000 0008 0000
 0000020 0009 0000 000a 0000 000b 0000 000c 0000
 0000030 000d 0000 000e 0000 000f 0000 0010 0000

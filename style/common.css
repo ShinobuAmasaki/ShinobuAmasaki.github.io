@@ -58,6 +58,11 @@ pre {
 code {
 	font-family: monospace;
 }
+
+pre code a {
+	color: inherit;
+	text-decoration: none;
+}
 code.hljs {
 	display: block;
 	margin: auto;
