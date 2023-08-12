@@ -1,6 +1,10 @@
 * {
    box-sizing: border-box;
 }
+.container {
+   margin: 0 auto;
+   text-align: center;
+}
 .fa-twitter {
    color: #1d9bf0
 }
@@ -40,4 +44,25 @@ div#links {
 img#myicon {
    margin: 40px;
    border-radius: 0.8em;
+}
+
+@media screen and (max-width:959px) {
+   div.window {
+      min-width: 360px;
+      width: 90%;
+      margin: 0 auto;
+      text-align: center;
+      display: block;
+      -webkit-text-size-adjust: 100%;
+   }
+   img#myicon {
+      margin: 15px;
+   }
+   .window img {
+      width: 240px;
+   }
+   div.description {
+      padding-left: 10px;
+      text-align: left;
+   }
 }
