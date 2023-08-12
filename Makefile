@@ -2,14 +2,18 @@ PC = pandoc
 SRC_DIR = src
 ITEMS_DIR = items
 TEMPLATE = $(SRC_DIR)/template.html
+IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 
-test.html: $(SRC_DIR)/test.md $(TEMPLATE)
-	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight --mathjax $< > $(ITEMS_DIR)/$@
+index.html: $(SRC_DIR)/index.md $(SRC_DIR)/index-template.html
+	$(PC) -f markdown -t html --template=$(SRC_DIR)/index-template.html --toc --no-highlight -V pagetitle="$@" $< > $@
 
 how-to-use-coarray-fortran-with-mpi-io.html: $(SRC_DIR)/how-to-use-coarray-fortran-with-mpi-io.md $(TEMPLATE)
 	grep -v '^\s*>' $< > $@.tmp
 	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight -V pagetitle="$@" --mathjax $@.tmp > $(ITEMS_DIR)/$@
 	rm -rf $@.tmp
+
+test.html: $(SRC_DIR)/test.md $(TEMPLATE)
+	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight --mathjax $< > $(ITEMS_DIR)/$@
 
 clean:
 	cd $(ITEMS_DIR)
