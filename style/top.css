@@ -7,6 +7,9 @@
 .fa-mastodon {
    color: #2989ce;
 }
+.fa-github {
+   color: black;
+}
 body {
    margin: 0;
    background-color: #bbdcf7;
