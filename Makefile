@@ -7,6 +7,11 @@ IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 index.html: $(SRC_DIR)/index.md $(SRC_DIR)/index-template.html
 	$(PC) -f markdown -t html --template=$(SRC_DIR)/index-template.html --toc --no-highlight -V pagetitle="$@" $< > $@
 
+lets-use-procedure-pointers-in-object-oriented-fortran.html: $(SRC_DIR)/Lets-Use-Procedure-Pointers-in-Object-oriented-Fortran.md $(TEMPLATE)
+	grep -v '^\s*>' $< > $@.tmp
+	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight -V pagetitle="$@" --mathjax $@.tmp > $(ITEMS_DIR)/$@
+	rm -rf $@.tmp
+
 how-to-use-coarray-fortran-with-mpi-io.html: $(SRC_DIR)/how-to-use-coarray-fortran-with-mpi-io.md $(TEMPLATE)
 	grep -v '^\s*>' $< > $@.tmp
 	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight -V pagetitle="$@" --mathjax $@.tmp > $(ITEMS_DIR)/$@
