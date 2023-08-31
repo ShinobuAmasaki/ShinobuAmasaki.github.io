@@ -72,6 +72,10 @@ header ul {
    margin: 0;
    border: 0;
 }
+header ul li {
+   border-left: medium solid #dbeefd;
+   border-right: medium solid #dbeefd;
+}
 
 header a, a:link, a:visited {
    text-decoration: none;
