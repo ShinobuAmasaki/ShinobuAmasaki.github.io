@@ -429,18 +429,20 @@ postgres:*:770:770:PostgreSQL Daemon:/var/db/postgres:/bin/sh</code></pre>
    <li>ZFSなどのチェックサムのあるファイルシステムを使用していない場合、データのチェックサムを有効にすることを検討することがあるかもしれません。これは<code>initdb</code>フェーズ中に<code>postgresql_initdb_flags</code>のrc変数に<code>--data-checksums</code>フラグを追加することで有効にできます。それ以外の場合、後から<code>pg_checksums</code>を使用して有効にすることもできます。パフォーマンスへの影響も理解するため、詳細については<code>initdb(1)</code>のマニュアルページも確認してください。」</li>
    </ul>
    <p>今回のインストールでは、ディスクのファイルシステムにZFSを使用しているので、PostgreSQLのチェックサムは有効にしない。</p>
-   <p>最後にセキュリティレポートについての記載がある &gt; &gt; ===&gt;
-   SECURITY REPORT: &gt; This port has installed the following files
-   which may act as network &gt; servers and may therefore pose a remote
-   security risk to the system. &gt;
-   <code>/usr/local/bin/postgres</code> &gt; &gt; If there are
-   vulnerabilities in these programs there may be a security &gt; risk
-   to the system. FreeBSD makes no guarantee about the security of &gt;
-   ports included in the Ports Collection. Please type ‘make deinstall’
-   &gt; to deinstall the port if this is a concern. &gt; &gt; For more
-   information, and contact details about the security &gt; status of
-   this software, see the following webpage: &gt;
-   https://www.postgresql.org/ &gt;</p>
+   <p>最後にセキュリティレポートについての記載がある。</p>
+   <blockquote>
+   <p>===&gt; SECURITY REPORT: This port has installed the following
+   files which may act as network servers and may therefore pose a
+   remote security risk to the system.</p>
+   <p><code>/usr/local/bin/postgres</code></p>
+   <p>If there are vulnerabilities in these programs there may be a
+   security risk to the system. FreeBSD makes no guarantee about the
+   security of ports included in the Ports Collection. Please type ‘make
+   deinstall’ to deinstall the port if this is a concern.</p>
+   <p>For more information, and contact details about the security
+   status of this software, see the following webpage:</p>
+   <p>https://www.postgresql.org/</p>
+   </blockquote>
    <h3 id="セットアップの実行">セットアップの実行</h3>
    <p>initdbを実行する。</p>
    <pre><code>% sudo /usr/local/etc/rc.d/postgresql initdb

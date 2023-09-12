@@ -515,22 +515,23 @@ postgres:\
 
 
 
-最後にセキュリティレポートについての記載がある
->
+最後にセキュリティレポートについての記載がある。
+
 > ===> SECURITY REPORT:
->      This port has installed the following files which may act as network
->      servers and may therefore pose a remote security risk to the system.
+> This port has installed the following files which may act as network
+> servers and may therefore pose a remote security risk to the system.
+>
 > `/usr/local/bin/postgres`
+> 
+> If there are vulnerabilities in these programs there may be a security
+> risk to the system. FreeBSD makes no guarantee about the security of
+> ports included in the Ports Collection. Please type 'make deinstall'
+> to deinstall the port if this is a concern.
 >
->      If there are vulnerabilities in these programs there may be a security
->      risk to the system. FreeBSD makes no guarantee about the security of
->      ports included in the Ports Collection. Please type 'make deinstall'
->      to deinstall the port if this is a concern.
+> For more information, and contact details about the security
+> status of this software, see the following webpage:
 >
->      For more information, and contact details about the security
->      status of this software, see the following webpage:
 > https://www.postgresql.org/
->
 
 
 
