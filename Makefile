@@ -4,6 +4,8 @@ ITEMS_DIR = items
 TEMPLATE = $(SRC_DIR)/template.html
 IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 
+all: index items
+
 index: index.html
 items: item1 item2 item3
 

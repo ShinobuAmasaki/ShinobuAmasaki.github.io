@@ -340,6 +340,7 @@ postgres:*:770:770:PostgreSQL Daemon:/var/db/postgres:/bin/sh
 
 
 >  =========== BACKUP YOUR DATA! =============
+>
 >  As always, backup your data before
 >  upgrading. If the upgrade leads to a higher
 >  major revision (e.g. 9.6 -> 10), a dump
