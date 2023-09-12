@@ -21,7 +21,6 @@ p, h1, h2  {
 	 */
 }
 main {
-	text-align: centor;
 	padding: 10px 12% 10px 12%;
 }
 
@@ -29,6 +28,7 @@ p {
 	max-width: 100%;
 	line-height: 1.8;
 	font-size: 16px;
+	margin: 10px 0 10px 0;
 }
 .large-img {
 	width: auto;
@@ -51,9 +51,9 @@ p {
 	border: solid 1px block;
 }
 pre {
-	max-width: 90%;
+	max-width: 98%;
 	display: block;
-	margin : 10px 5% 10px 5%;
+	margin : 10px 2% 10px 2%;
 }
 code {
 	font-family: monospace;
@@ -70,6 +70,17 @@ code.hljs {
 figcaption {
 	text-align: center;
 }
+
+blockquote {
+    position: relative;
+    padding: 10px 15px 10px 50px;
+    box-sizing: border-box;
+    font-style: italic;
+    color: #464646;
+    background: #c2e8ed;
+    font-weight: bold;
+}
+
 
 @media screen and (max-width:959px) {
 	p, h1, h2 {
