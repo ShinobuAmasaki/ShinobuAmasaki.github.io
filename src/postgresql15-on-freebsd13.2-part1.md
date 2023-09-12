@@ -624,7 +624,7 @@ port = 5432                                      # (change requires restart)
 次に`pg_hba.conf`に以下の記述を追加する。
 
 ```
-% sudo tail -n 2 /var/db/postgres/data15/pg_hba.conf
+% sudo tail -n 3 /var/db/postgres/data15/pg_hba.conf
 
 host    all             all             192.168.0.248/32        trust
 host    all             all             192.168.11.0/24         scram-sha-256

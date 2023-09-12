@@ -504,7 +504,7 @@ port = 5432                                      # (change requires restart)</co
    <h4 id="pg_hba.conf"><code>pg_hba.conf</code></h4>
    <p>このファイルは、より詳細にアクセス制御を記述するファイルである。</p>
    <p>次に<code>pg_hba.conf</code>に以下の記述を追加する。</p>
-   <pre><code>% sudo tail -n 2 /var/db/postgres/data15/pg_hba.conf
+   <pre><code>% sudo tail -n 3 /var/db/postgres/data15/pg_hba.conf
 
 host    all             all             192.168.0.248/32        trust
 host    all             all             192.168.11.0/24         scram-sha-256
