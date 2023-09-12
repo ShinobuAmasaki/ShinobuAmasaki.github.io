@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+      <meta name="dcterms.date" content="" />
+        <meta name="description" content="本稿では、FreeBSDのマシンにPostgreSQL15をインストールする方法について、できるだけ詳細に述べる。インストールに際してはportsによってソースコードからビルドをしてインストールする。重要な依存パッケージであるLLVMについてもportsからビルドしてインストールする。最後にローカルネットワークの別ホストからインストールしたPostgreSQLへアクセスする手順についても述べる。" />
+   <meta name="twitter:description" content="本稿では、FreeBSDのマシンにPostgreSQL15をインストールする方法について、できるだけ詳細に述べる。インストールに際してはportsによってソースコードからビルドをしてインストールする。重要な依存パッケージであるLLVMについてもportsからビルドしてインストールする。最後にローカルネットワークの別ホストからインストールしたPostgreSQLへアクセスする手順についても述べる。" />
+   <meta name="og:description" content="本稿では、FreeBSDのマシンにPostgreSQL15をインストールする方法について、できるだけ詳細に述べる。インストールに際してはportsによってソースコードからビルドをしてインストールする。重要な依存パッケージであるLLVMについてもportsからビルドしてインストールする。最後にローカルネットワークの別ホストからインストールしたPostgreSQLへアクセスする手順についても述べる。" />
+      <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/items/postgresql15-on-freebsd13.2-part1.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title> | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/main/favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/highlight.css">
+   <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="https://shinobuamasaki.github.io/style/highlight.min.js"></script>
+   <script>hljs.highlightAll();</script>
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.PNG" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <h1 id="freebsd-13.2にpostgresql-15をインストールする前編">FreeBSD
+   13.2にPostgreSQL 15をインストールする（前編）</h1>
+   <h2 id="概要">概要</h2>
+   <p>本稿では、FreeBSDのマシンにPostgreSQL15をインストールする方法について、できるだけ詳細に述べる。インストールに際してはportsによってソースコードからビルドをしてインストールする。重要な依存パッケージであるLLVMについてもportsからビルドしてインストールする。最後にローカルネットワークの別ホストからインストールしたPostgreSQLへアクセスする手順についても述べる。</p>
+   <h2 id="目次">目次</h2>
+   <ul>
+   <li><a href="#概要">概要</a></li>
+   <li><a href="#目標">目標</a></li>
+   <li><a href="#前準備">前準備</a>
+   <ul>
+   <li><a href="#portsの準備">portsの準備</a></li>
+   <li><a href="#LLVMのインストール">LLVMのインストール</a></li>
+   </ul></li>
+   <li><a
+   href="#PostgreSQLのインストール">PostgreSQLのインストール</a></li>
+   <li><a
+   href="#データベースサーバーのセットアップ">データベースサーバーのセットアップ</a></li>
+   <li><a
+   href="#インストール時メッセージの詳細について">インストール時メッセージの詳細について</a></li>
+   <li><a href="#セットアップの実行">セットアップの実行</a></li>
+   <li><a
+   href="#LANからのアクセスを有効にする">LANからのアクセスを有効にする</a>
+   <ul>
+   <li><a href="#postgresql.conf"><code>postgresql.conf</code></a></li>
+   <li><a href="#pg_hba.conf"><code>pg_hba.conf</code></a></li>
+   <li><a
+   href="#PostgreSQLの再起動と接続の確認">PostgreSQLの再起動と接続の確認</a></li>
+   </ul></li>
+   <li><a href="#最後に">最後に</a></li>
+   <li><a href="#参考文献">参考文献</a></li>
+   </ul>
+   <h2 id="目標">目標</h2>
+   <h4 id="前編の目標">前編の目標</h4>
+   <ol type="1">
+   <li><p>PostgreSQL 15.4をportsでビルドし、インストールする。</p></li>
+   <li><p>依存パッケージの一つであるLLVMもportsでビルドする。</p>
+   <ul>
+   <li>LLVM Flangもインストールする。</li>
+   </ul></li>
+   <li><p>LAN内の他ホスト（192.168.0.0/24,
+   192.168.11.0/24）から<code>psql</code>コマンドでアクセスできるようにする。</p>
+   <ul>
+   <li>インターネット経由のアクセスは想定しない。</li>
+   <li>パケットフィルタリングは無効の状態を想定するので、読者は必要に応じて有効にして欲しい。</li>
+   </ul></li>
+   </ol>
+   <h4 id="後編の目標">後編の目標</h4>
+   <ul>
+   <li>phpPgAdminをインストールして、LANのホストのブラウザからアクセスできるようにする。</li>
+   </ul>
+   <p>これの実現には以下のWebサーバーパッケージをインストールして稼働させる必要がある。</p>
+   <ul>
+   <li>Apache HTTP Server（<code>apache24</code>）</li>
+   <li>PHP FastCGI Process Manager（<code>php-fpm</code>）</li>
+   </ul>
+   <h2 id="インストールする環境">インストールする環境</h2>
+   <p>以下にハードウェアとOS、ネットワークについての要点を挙げる。</p>
+   <ul>
+   <li>OS：FreeBSD 13.2-RELEASE
+   <ul>
+   <li>シェルは<code>zsh</code>を使用する（コードブロックにはプロンプト<code>%</code>を使用していることに注意）</li>
+   <li><code>sudo</code>が使用可能なことを前提とする。</li>
+   </ul></li>
+   <li>ハードウェア：Fujitsu Esprimo D583/KX
+   <ul>
+   <li>メモリ：DDR3 32GB</li>
+   <li>CPU: Intel(R) Core(TM) i5-4590 CPU @ 3.30GHz (4コア)</li>
+   <li>ストレージ：Sandisk SSD Plus 240GB</li>
+   <li>NIC
+   <ul>
+   <li>Intel(R) PRO/1000 PT 82572EI (Copper)</li>
+   <li>RealTek 8168/8111 PCIe Gigabit Ethernet</li>
+   </ul></li>
+   </ul></li>
+   <li>ネットワーク
+   <ul>
+   <li>Intel: 192.168.0.243/24</li>
+   <li>RealTek: 192.168.11.13/24</li>
+   </ul></li>
+   </ul>
+   <h2 id="前準備">前準備</h2>
+   <h3 id="portsの準備">portsの準備</h3>
+   <p>先に<code>pkg</code>コマンドを使ってGitをインストールする。</p>
+   <pre class="shell"><code>% sudo pkg install git</code></pre>
+   <p>（加えてCMakeとNinjaとGNU
+   Makeもインストールしておくことにする。）</p>
+   <pre class="shell"><code>% sudo pkg install cmake ninja gmake</code></pre>
+   <p>portsツリーをローカルにコピーして配置する。転送量が1GiB程度あるので時間がかかる。</p>
+   <pre class="shell"><code>% sudo git clone https://git.FreeBSD.org/ports.git /usr/ports</code></pre>
+   <p>必要に応じて<code>/usr/ports</code>をアップデートする。</p>
+   <pre class="shell"><code>% sudo git -C /usr/ports pull</code></pre>
+   <h3 id="llvmのインストール">LLVMのインストール</h3>
+   <p>PostgreSQLのビルドにはLLVMが必要となる。このパッケージは非常に大きく、また依存パッケージも多い。インストールがエラーで失敗したときに問題に対処しやすくするため、PostgreSQLに先立って、予めLLVMのパッケージをインストールしておく。</p>
+   <p>PostgreSQL
+   15.4に対応するLLVMのバージョンは<strong>15</strong>なので、<code>llvm15</code>のportをインストールする。</p>
+   <pre class="shell"><code>% cd /usr/ports/devel/llvm15
+% cat pkg-descr
+The LLVM Project is a collection of modular and reusable compiler and
+toolchain technologies.
+
+This port includes Clang (a C/C++/Objective-C compiler), LLD (a linker),
+LLDB (a debugger), an OpenMP runtime library, and the LLVM infrastructure
+these are built on.</code></pre>
+   <p><code>make config</code>コマンドでビルドの設定を行う。</p>
+   <pre class="shell"><code>% sudo make config</code></pre>
+   <p>以下のような画面になり、ビルドオプションを設定できる（任意のオプションだが、ここではFlangのビルドを有効にしておく）。</p>
+   <div class="large-img">
+   <figure>
+   <img src="../img/postgres/llvm15-config.png"
+   alt="llvm15-config.png" />
+   <figcaption aria-hidden="true">llvm15-config.png</figcaption>
+   </figure>
+   </div>
+   <p><code>make</code>コマンドでビルドを実行する。</p>
+   <pre class="shell"><code>% sudo make
+...(依存パッケージのインストールを含め、多くの出力がある)</code></pre>
+   <p>このコマンドの実行中に、依存関係のパッケージのインストールも行われるので、途中で上と似たような設定画面が複数回でることになるだろう。ここでは、依存パッケージのビルド設定はデフォルト通りで変更せずに行った。</p>
+   <p><strong>注</strong>：LLVMのパッケージをインストールをする際の<code>make</code>コマンドの実行には、<strong><code>-j</code>オプションを使わない</strong>ほうがよい。これは依存関係のパッケージのインストールで失敗することが多いためである。どのみちLLVM自体のビルドにはNinjaが使われることになるので、NinjaがCPUのコア数をフルに活用してくれる。本稿では他のportsのインストールにおいても、<code>make</code>コマンドに<code>-j</code>オプションを使用しない。</p>
+   <p>問題なくビルドに成功すれば、以下のようなメッセージが最後に出て終了となる。このパッケージはビルド対象のオブジェクトの数が多く、今回はおよそ9000個で、このCPU（4コア）では3時間ほどかかった。</p>
+   <pre class="shell"><code>====&gt; Compressing man pages (compress-man)
+===&gt; Staging rc.d startup script(s)</code></pre>
+   <p>最後に<code>make install</code>でインストールを実行する。</p>
+   <pre class="shell"><code>% sudo make install</code></pre>
+   <p>ここでのインストールで作成されたコンパイラの実行ファイルは<code>/usr/local/bin</code>に配置される。<code>clang15</code>、<code>clang++15</code>、<code>flang15</code>にPATHが通った状態を確認して、LLVMのインストールは完了となる。</p>
+   <pre><code>% type clang15
+clang15 is /usr/local/bin/clang15
+
+% type clang++15
+clang++15 is /usr/local/bin/clang++15
+
+% type flang15
+flang15 is /usr/local/bin/flang15</code></pre>
+   <h2 id="postgresqlのインストール">PostgreSQLのインストール</h2>
+   <p>2023年現在、portsにはPostgreSQL11から16までのバージョンが存在する。</p>
+   <pre class="shell"><code>% ls -1d /usr/ports/databases/postgresql*-server
+/usr/ports/databases/postgresql11-server
+/usr/ports/databases/postgresql12-server
+/usr/ports/databases/postgresql13-server
+/usr/ports/databases/postgresql14-server
+/usr/ports/databases/postgresql15-server
+/usr/ports/databases/postgresql16-server</code></pre>
+   <p>本稿ではバージョン15を対象とするので、<code>/usr/ports/databases/postgresq15-server</code>をインストールする。</p>
+   <p>カレントディレクトリを移動し、<code>make config</code>コマンドを実行する。</p>
+   <pre class="shell"><code>% cd /usr/ports/databases/postgresql15-server
+% sudo make config</code></pre>
+   <div class="large-img">
+   <figure>
+   <img src="../img/postgres/postgresql15-server-config.png"
+   alt="postgresql15-server-config.png" />
+   <figcaption
+   aria-hidden="true">postgresql15-server-config.png</figcaption>
+   </figure>
+   </div>
+   <p>上のようなビルドオプションとした。<code>GSSAPI</code>は、使う予定がないのでここでは指定していない。</p>
+   <p><code>make</code>コマンドを実行する。</p>
+   <pre class="shell"><code>% sudo make</code></pre>
+   <p><code>postgresql15-server</code>は依存パッケージとしてクライアントのパッケージである<code>postgresql15-client</code>を含んでいるので、<code>make</code>コマンドの実行中にビルド設定を聞かれることになる。クライアントのビルド設定は以下の通りとした。</p>
+   <div class="large-img">
+   <figure>
+   <img src="../img/postgres/postgresql15-client-config.png"
+   alt="postgresql15-client-config.png" />
+   <figcaption
+   aria-hidden="true">postgresql15-client-config.png</figcaption>
+   </figure>
+   </div>
+   <p>ビルドが成功したら<code>make install</code>コマンドでインストールを実行する。以下のような長いメッセージがでて、インストールは完了である。</p>
+   <pre class="shell"><code>% sudo make install
+===&gt;  Installing for postgresql15-server-15.4
+===&gt;  Checking if postgresql15-server is already installed
+===&gt;   Registering installation for postgresql15-server-15.4
+Installing postgresql15-server-15.4...
+===&gt; Creating groups.
+Creating group &#39;postgres&#39; with gid &#39;770&#39;.
+===&gt; Creating users
+Creating user &#39;postgres&#39; with uid &#39;770&#39;.
+===&gt; Creating homedir(s)
+
+  =========== BACKUP YOUR DATA! =============
+  As always, backup your data before
+  upgrading. If the upgrade leads to a higher
+  major revision (e.g. 9.6 -&gt; 10), a dump
+  and restore of all databases is
+  required. This is *NOT* done by the port!
+  See https://www.postgresql.org/docs/current/upgrading.html
+  ===========================================
+For procedural languages and postgresql functions, please note that
+you might have to update them when updating the server.
+
+If you have many tables and many clients running, consider raising
+kern.maxfiles using sysctl(8), or reconfigure your kernel
+appropriately.
+
+The port is set up to use autovacuum for new databases, but you might
+also want to vacuum and perhaps backup your database regularly. There
+is a periodic script, /usr/local/etc/periodic/daily/502.pgsql, that
+you may find useful. You can use it to backup and perform vacuum on all
+databases nightly. Per default, it performs `vacuum analyze&#39;. See the
+script for instructions. For autovacuum settings, please review
+~postgres/data/postgresql.conf.
+
+If you plan to access your PostgreSQL server using ODBC, please
+consider running the SQL script /usr/local/share/postgresql/odbc.sql
+to get the functions required for ODBC compliance.
+
+Please note that if you use the rc script,
+/usr/local/etc/rc.d/postgresql, to initialize the database, unicode
+(UTF-8) will be used to store character data by default.  Set
+postgresql_initdb_flags or use login.conf settings described below to
+alter this behaviour. See the start rc script for more info.
+
+To set limits, environment stuff like locale and collation and other
+things, you can set up a class in /etc/login.conf before initializing
+the database. Add something similar to this to /etc/login.conf:
+---
+postgres:\
+        :lang=en_US.UTF-8:\
+        :setenv=LC_COLLATE=C:\
+        :tc=default:
+---
+and run `cap_mkdb /etc/login.conf&#39;.
+Then add &#39;postgresql_class=&quot;postgres&quot;&#39; to /etc/rc.conf.
+
+======================================================================
+
+To initialize the database, run
+
+  /usr/local/etc/rc.d/postgresql initdb
+
+You can then start PostgreSQL by running:
+
+  /usr/local/etc/rc.d/postgresql start
+
+For postmaster settings, see ~postgres/data/postgresql.conf
+
+NB. FreeBSD&#39;s PostgreSQL port logs to syslog by default
+    See ~postgres/data/postgresql.conf for more info
+
+NB. If you&#39;re not using a checksumming filesystem like ZFS, you might
+    wish to enable data checksumming. It can be enabled during
+    the initdb phase, by adding the &quot;--data-checksums&quot; flag to
+    the postgresql_initdb_flags rcvar. Otherwise you can enable it later by
+    pg_checksums.  Check the initdb(1) manpage for more info
+    and make sure you understand the performance implications.
+
+======================================================================
+
+To run PostgreSQL at startup, add
+&#39;postgresql_enable=&quot;YES&quot;&#39; to /etc/rc.conf
+
+===&gt; SECURITY REPORT:
+      This port has installed the following files which may act as network
+      servers and may therefore pose a remote security risk to the system.
+/usr/local/bin/postgres
+
+      If there are vulnerabilities in these programs there may be a security
+      risk to the system. FreeBSD makes no guarantee about the security of
+      ports included in the Ports Collection. Please type &#39;make deinstall&#39;
+      to deinstall the port if this is a concern.
+
+      For more information, and contact details about the security
+      status of this software, see the following webpage:
+https://www.postgresql.org/</code></pre>
+   <p>これでPostgreSQLがシステムにインストールされた。設定ファイルは主に`/usr/local/etc/p</p>
+   <p>これらのメッセージの解説と指示の実行は、次のセクションで詳しく述べる。</p>
+   <h2
+   id="データベースサーバーのセットアップ">データベースサーバーのセットアップ</h2>
+   <h3
+   id="インストール時メッセージの詳細について">インストール時メッセージの詳細について</h3>
+   <h4 id="ユーザーpostgres">ユーザー<code>postgres</code></h4>
+   <pre class="shell"><code>===&gt; Creating groups.
+Creating group &#39;postgres&#39; with gid &#39;770&#39;.
+===&gt; Creating users
+Creating user &#39;postgres&#39; with uid &#39;770&#39;.
+===&gt; Creating homedir(s)</code></pre>
+   <p>これらは、データベース管理システム内の特権ユーザー<code>postgres</code>が、その名前のグループとユーザーがFreeBSDのOSのシステムにも作られたことを示しているメッセージである。そのgidとuidは共に<code>770</code>であり、これは<code>/etc/group</code>と<code>/etc/passwd</code>に記述で確かめることができる。</p>
+   <pre class="shell"><code>% cat /etc/passwd | grep postgres
+postgres:*:770:770:PostgreSQL Daemon:/var/db/postgres:/bin/sh</code></pre>
+   <p>ここで<code>/var/db/postgres</code>はOSのユーザー<code>postgres</code>のホームディレクトリである。</p>
+   <h4
+   id="バックアップに関する注意書き">バックアップに関する注意書き</h4>
+   <blockquote>
+   <p>=========== BACKUP YOUR DATA! ============= As always, backup your
+   data before upgrading. If the upgrade leads to a higher major
+   revision (e.g. 9.6 -&gt; 10), a dump and restore of all databases is
+   required. This is <em>NOT</em> done by the port!</p>
+   <p>See https://www.postgresql.org/docs/current/upgrading.html</p>
+   <p>==========================================</p>
+   </blockquote>
+   <p>これは、PostgreSQLをアップグレードする前にかならずデータベースのダンプとレストアをユーザー自身が自分で行わなければならないことを指示する注意書きである。これらの操作はportによって<strong>自動的に行われない</strong>ことに注意する必要がある。</p>
+   <h4
+   id="アップデートに関する注意書き">アップデートに関する注意書き</h4>
+   <p>中段の最初の段落は、以下のように書かれている。</p>
+   <blockquote>
+   <p>For procedural languages and postgresql functions, please note
+   that you might have to update them when updating the server.</p>
+   </blockquote>
+   <p>日本語にすると、以下のように訳すことができるだろう。</p>
+   <p>「プロシージャル言語とPostgreSQLの関数について、サーバーを更新する際にはそれらを更新する必要があるかもしれません。」</p>
+   <p>ここで、procedual
+   languageとは、データベース内でストアドプロシージャ、ユーザー定義関数などのプログラムを作成して実行するために<code>CREATE LANGUAGE</code>文で作成されたプロシージャル言語を指す。</p>
+   <p>次に、データベースの規模に応じて設定を見直すように記述されている。</p>
+   <blockquote>
+   <p>If you have many tables and many clients running, consider raising
+   kern.maxfiles using sysctl(8), or reconfigure your kernel
+   appropriately.</p>
+   </blockquote>
+   <p>「多くのテーブルを持ち、多くのクライアントが実行中の場合、<code>sysctl(8)</code>を使用して、kern.maxfilesを増やすか、カーネルを適切に再構成することを検討してください。」</p>
+   <p>これはデータベースの規模が大きい場合には、カーネルの設定を見直すことを促している。</p>
+   <p>そして、バキュームについて書かれている。</p>
+   <blockquote>
+   <p>The port is set up to use autovacuum for new databases, but you
+   might also want to vacuum and perhaps backup your database regularly.
+   There is a periodic script, /usr/local/etc/periodic/daily/502.pgsql,
+   that you may find useful. You can use it to backup and perform vacuum
+   on all databases nightly. Per default, it performs `vacuum analyze’.
+   See the script for instructions. For autovacuum settings, please
+   review ~postgres/data/postgresql.conf.</p>
+   </blockquote>
+   <p>「portは新しいデータベースに対して自動バキュームを使用するように設定されていますが、定期的にデータベースをバキュームし、バックアップを取得したいと考えるかもしれません。そのための定期的なスクリプトとして<code>/usr/local/etc/periodic/daily/502.pgsql</code>が用意されており、便利に使えるでしょう。これを使用してすべてのデータベースに対して夜間にバックアップを取得し、バキュームを実行することができます。デフォルトでは、これは「バキューム解析」を実行します。詳細な手順についてはスクリプトを参照してください。自動バキュームの設定については<code>~postgres/data/postgresql.conf</code>を確認してください。」</p>
+   <p>ここで、<strong>バキューム</strong>とは、データベース内の不要なデータやリソースを削除することである。PostgreSQLの通常の動作では、削除されたもしくは更新によって不要になったレコードはテーブルからは物理的には削除されず、<code>VACUUM</code>が実行されるまで残っている。この操作によって、不要なデータを削除して、データベースを最適化しパフォーマンス向上をすることができる。</p>
+   <p>更に、ODBCに関しての注意書きがある。</p>
+   <blockquote>
+   <p>If you plan to access your PostgreSQL server using ODBC, please
+   consider running the SQL script /usr/local/share/postgresql/odbc.sql
+   to get the functions required for ODBC compliance.</p>
+   </blockquote>
+   <p>「PostgreSQLサーバーへODBC経由でアクセスする予定がある場合、ODBCに準拠に必要な関数を取得するためのSQLスクリプト<code>/usr/local/share/postgresql/odbc.sql</code>を実行することを検討してください。」</p>
+   <p>ここで<strong>ODBC</strong>とはopen database
+   connectivityの略称で、アプリケーションソフトウェアがデータベース管理システムに接続して、データ参照や書き込み、操作を行う際の標準を定めたものである。</p>
+   <h4
+   id="データベース初期化に関する注意書き">データベース初期化に関する注意書き</h4>
+   <p>その次には、重要なことだが、文字コードに関する注意書きがある。</p>
+   <blockquote>
+   <p>Please note that if you use the rc script,
+   /usr/local/etc/rc.d/postgresql, to initialize the database, unicode
+   (UTF-8) will be used to store character data by default. Set
+   postgresql_initdb_flags or use login.conf settings described below to
+   alter this behaviour. See the start rc script for more info.</p>
+   </blockquote>
+   <p>「データベースの初期化にrcスクリプト<code>/usr/local/etc/rc.d/postgresql</code>を使用する場合、デフォルトでは文字データを格納する場合にunicode（UTF-8）が使われることに注意してください。この動作を変更するには、<code>postgresql_initdb_flags</code>を設定するか、以下で説明されている<code>login.conf</code>の設定を使用してください。詳細については、起動用のrcスクリプトを参照してください。」</p>
+   <blockquote>
+   <p>To set limits, environment stuff like locale and collation and
+   other things, you can set up a class in /etc/login.conf before
+   initializing the database. Add something similar to this to
+   /etc/login.conf:</p>
+   <pre class="shell"><code>postgres:\
+        :lang=en_US.UTF-8:\
+        :setenv=LC_COLLATE=C:\
+        :tc=default:</code></pre>
+   <p>and run <code>cap_mkdb /etc/login.conf'</code>. Then add
+   ‘postgresql_class=“postgres”’ to /etc/rc.conf.</p>
+   </blockquote>
+   <p>「制限やロケール、照合順序などの環境設定を行うには、データベースを初期化する前に<code>/etc/login.conf</code>内にクラスを設定することができます。以下のような設定を<code>/etc/login.conf</code>を追加し、<code>cap_mkdb /etc/login.conf</code>を実行してください。</p>
+   <pre><code>postgres:\
+        :lang=en_US.UTF-8:\
+        :setenv=LC_COLLATE=C:\
+        :tc=default:</code></pre>
+   <p>その後、<code>/etc/rc.conf</code>に、<code>postgresql_class="postgres"</code>を追加してください。」</p>
+   <p>これらの設定を行うことで、PostgreSQLデータベースの初期化時に指定したクラスが適用される。</p>
+   <p>しかし、今回のインストールではデフォルトの設定のまま初期化するのでこれらの操作は使用しなかった。</p>
+   <p>その次には、初期化とPostgreSQLの起動について書かれている。</p>
+   <blockquote>
+   <p>To initialize the database, run</p>
+   <pre class="shell"><code>  /usr/local/etc/rc.d/postgresql initdb</code></pre>
+   <p>You can then start PostgreSQL by running:</p>
+   <pre class="shell"><code>  /usr/local/etc/rc.d/postgresql start</code></pre>
+   <p>For postmaster settings, see
+   <code>~postgres/data/postgresql.conf</code></p>
+   <p>NB. FreeBSD’s PostgreSQL port logs to syslog by default See
+   ~postgres/data/postgresql.conf for more info</p>
+   <p>NB. If you’re not using a checksumming filesystem like ZFS, you
+   might wish to enable data checksumming. It can be enabled during the
+   initdb phase, by adding the “–data-checksums” flag to the
+   postgresql_initdb_flags rcvar. Otherwise you can enable it later by
+   pg_checksums. Check the initdb(1) manpage for more info and make sure
+   you understand the performance implications.</p>
+   </blockquote>
+   <p>「データベースを初期化するには以下を実行する：</p>
+   <pre class="shell"><code>/usr/local/etc/rc.d/postgresql initdb</code></pre>
+   <p>その後、以下を実行することでPostgreSQLを起動することができる：</p>
+   <pre class="shell"><code>/usr/local/etc/rc.d/postgresql start</code></pre>
+   <p>ポストマスター（データベースのメインプロセス）の設定については、<code>~postgres/data/postgresql.conf</code>を参照してください。</p>
+   <p>注意事項</p>
+   <ul>
+   <li>FreeBSDのPostgreSQLのportはデフォルトでsyslogにログを記録します。詳細については<code>~postgres/data/postgresql.conf</code>を参照してください。</li>
+   <li>ZFSなどのチェックサムのあるファイルシステムを使用していない場合、データのチェックサムを有効にすることを検討することがあるかもしれません。これは<code>initdb</code>フェーズ中に<code>postgresql_initdb_flags</code>のrc変数に<code>--data-checksums</code>フラグを追加することで有効にできます。それ以外の場合、後から<code>pg_checksums</code>を使用して有効にすることもできます。パフォーマンスへの影響も理解するため、詳細については<code>initdb(1)</code>のマニュアルページも確認してください。」</li>
+   </ul>
+   <p>今回のインストールでは、ディスクのファイルシステムにZFSを使用しているので、PostgreSQLのチェックサムは有効にしない。</p>
+   <p>最後にセキュリティレポートについての記載がある &gt; &gt;===&gt;
+   SECURITY REPORT: &gt; This port has installed the following files
+   which may act as network &gt; servers and may therefore pose a remote
+   security risk to the system. &gt;/usr/local/bin/postgres &gt; &gt; If
+   there are vulnerabilities in these programs there may be a security
+   &gt; risk to the system. FreeBSD makes no guarantee about the
+   security of &gt; ports included in the Ports Collection. Please type
+   ‘make deinstall’ &gt; to deinstall the port if this is a concern.
+   &gt; &gt; For more information, and contact details about the
+   security &gt; status of this software, see the following webpage:
+   &gt;https://www.postgresql.org/ &gt;</p>
+   <h3 id="セットアップの実行">セットアップの実行</h3>
+   <p>initdbを実行する。</p>
+   <pre><code>% sudo /usr/local/etc/rc.d/postgresql initdb
+
+The files belonging to this database system will be owned by user &quot;postgres&quot;.
+This user must also own the server process.
+
+The database cluster will be initialized with this locale configuration:
+  provider:    libc
+  LC_COLLATE:  C
+  LC_CTYPE:    C.UTF-8
+  LC_MESSAGES: C.UTF-8
+  LC_MONETARY: C.UTF-8
+  LC_NUMERIC:  C.UTF-8
+  LC_TIME:     C.UTF-8
+The default text search configuration will be set to &quot;english&quot;.
+
+Data page checksums are disabled.
+
+creating directory /var/db/postgres/data15 ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Japan
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+initdb: warning: enabling &quot;trust&quot; authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    /usr/local/bin/pg_ctl -D /var/db/postgres/data15 -l logfile start</code></pre>
+   <p>PostgreSQLを起動する。</p>
+   <pre class="shell"><code>% sudo /usr/local/etc/rc.d/postgresql start
+2023-09-11 09:16:45.932 JST [1551] LOG:  ending log output to stderr
+2023-09-11 09:16:45.932 JST [1551] HINT:  Future log output will go to log destination &quot;syslog&quot;.</code></pre>
+   <p>ローカルホストからログインしてみる。</p>
+   <pre class="shell"><code>% psql -h localhost -U postgres -d postgres
+psql (15.4)
+Type &quot;help&quot; for help.
+
+postgres=#</code></pre>
+   <p>無事、ログインに成功した。</p>
+   <h3
+   id="lanからのアクセスを有効にする">LANからのアクセスを有効にする</h3>
+   <p>デフォルトではローカルホストからの接続しかできないので、これをLAN経由で接続できるようにする。</p>
+   <p>これには<code>/var/db/postgres/data15/postgresql.conf</code>と<code>/var/db/postgres/data15/pg_hba.conf</code>を編集して、PostgreSQLを再起動する必要がある。</p>
+   <h4 id="postgresql.conf"><code>postgresql.conf</code></h4>
+   <p>このファイルは、PostgreSQLの動作に関する設定を行うファイルである。</p>
+   <p><code>postgresql.conf</code>を以下のように変更する。</p>
+   <pre><code>% sudo grep -e &#39;listen_address =&#39; -e &#39;port =&#39; /var/db/postgres/data15/postgresql.conf
+
+# listen_addresses = &#39;localhost&#39;                 # what IP address(es) to listen on;
+listen_addresses = &#39;localhost,192.168.11.13,192.168.0.243&#39;     
+port = 5432                                      # (change requires restart)</code></pre>
+   <p><code>listen_addresses</code>は、接続を受け付けるNICを、カンマで区切られたIPアドレスを指定する。デフォルトでは<code>'localhost'</code>のみなので、これにLANに接続しているNICのアドレスを記述して、LANからの接続を受け付ける。<code>port</code>は接続を受け付けるポート番号である。デフォルトでは<code>5432</code>を使用する。</p>
+   <h4 id="pg_hba.conf"><code>pg_hba.conf</code></h4>
+   <p>このファイルは、より詳細にアクセス制御を記述するファイルである。</p>
+   <p>次に<code>pg_hba.conf</code>に以下の記述を追加する。</p>
+   <pre><code>% sudo tail -n 2 /var/db/postgres/data15/pg_hba.conf
+
+host    all             all             192.168.0.248/32        trust
+host    all             all             192.168.11.0/24         scram-sha-256
+host    all             all             192.168.0.0/24          scram-sha-256</code></pre>
+   <p>これらのレコードのフィールドは「タイプ」「接続先データベース」「ユーザ」「接続元アドレス」「認証方式」を指定している。</p>
+   <ul>
+   <li>「タイプ」は、どのような方式で接続するかを指定する。<code>local</code>とした場合はUnixドメインソケットを使用した接続を指し、<code>host</code>はTCP/IPを使用した接続を指す。</li>
+   <li>「接続先データベース」では、PostgreSQLが管理するどのデータベースオブジェクトに接続を許可するかを指定する。<code>all</code>とするとすべてのデータベースオブジェクトに対して接続を指す。</li>
+   <li>「ユーザー」は、接続するデータベースユーザーを指定する。<code>all</code>とした場合はすべてのユーザーを指す。</li>
+   <li>「接続元アドレス」は、クライアントのIPアドレスを指定する。IPv4とIPv6の両方を使うことができ、CIDR表記でネットワークを指定することができる。<code>all</code>とした場合はすべてのクライアントを指す。
+   <ul>
+   <li>実際に記述するアドレスについては、各々のネットワーク環境に合わせて適切に記述してほしい。</li>
+   </ul></li>
+   <li>「認証方式」は接続時の認証をどのような方式で行うかを指定する。よく使うものを挙げるが、すべてを網羅していない。
+   <ul>
+   <li><code>trust</code>とした場合、接続を無条件で許可する。パスワードなどを必要とせずに接続を許可するので、これの使用には注意が必要である。</li>
+   <li><code>reject</code>とした場合、接続を無条件で拒否する。</li>
+   <li><code>md5</code>とした場合、MD5暗号化によるパスワード認証を要求する。</li>
+   <li><code>scram-sha-256</code>とした場合、SCRAM-SHA-256によるパスワード認証を要求する。</li>
+   </ul></li>
+   </ul>
+   <h4
+   id="postgresqlの再起動と接続の確認">PostgreSQLの再起動と接続の確認</h4>
+   <p>PostgreSQLを再起動する。</p>
+   <pre class="shell"><code>% sudo /usr/local/etc/rc.d/postgresql restart</code></pre>
+   <p>LANの別ホスト（例として192.168.0.248のLinuxホスト）からアクセスできるかどうかをテストする。</p>
+   <pre><code>% ip -br a | grep UP
+eno1             UP             192.168.0.248/24
+
+% psql -h 192.168.11.13 -U postgres postgres
+Password for user shin0:
+psql (15.4)
+Type &quot;help&quot; for help.
+
+postgres=&gt;</code></pre>
+   <p><code>postgres=&gt;</code>のプロンプトが表示されれば、接続に成功している。</p>
+   <p>接続できない場合は、<code>postgresql.conf</code>か<code>pg_hba.conf</code>の設定のどちらかに誤りがある可能性がある。</p>
+   <h2 id="最後に">最後に</h2>
+   <p>前編となる本稿では、PostgreSQLをソースコードからインストールして、ローカルネットワークの別マシンからアクセスする手順までについて述べた。</p>
+   <p>次の後編では、phpPgAdminパッケージを使用して、別ホストのブラウザからPostgreSQLサーバーへアクセスできるようにする方法について記述する予定である。</p>
+   <h2 id="参考文献">参考文献</h2>
+   <ul>
+   <li>『PostgreSQL
+   15.3文書』、日本PostgreSQLユーザ会、https://www.postgresql.jp/document/15/html/</li>
+   </ul>
+</main>
+</body>
+</html>
