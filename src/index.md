@@ -14,6 +14,7 @@ description: index.html
 - Computational Simulation in Geoscience
 
 ## Posts
+- *2023-09-12:* [FreeBSD 13.2にPostgreSQL 15をインストールする（前編）[JA]](items/postgresql15-on-freebsd13.2-part1.html)
 - *2023-08-28:* [Let's Use Procedure Pointers in Object-Oriented Fortran [EN]](items/lets-use-procedure-pointers-in-object-oriented-fortran.html)
 - *2023-08-27:* [オブジェクト指向Fortranで関数ポインタを使う](https://qiita.com/amasaki203/items/0d6720dff303e3ec7b0f)
 - *2023-08-10:* [How to Use Coarray Fortran with MPI I/O [EN]](items/how-to-use-coarray-fortran-with-mpi-io.html)
