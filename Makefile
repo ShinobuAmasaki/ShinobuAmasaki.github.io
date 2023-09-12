@@ -4,14 +4,15 @@ ITEMS_DIR = items
 TEMPLATE = $(SRC_DIR)/template.html
 IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 
+items = item1 item2 item3
+
+item3 = postgresql15-on-freebsd13.2-part1.html
+item2 = lets-use-procedure-pointers-in-object-oriented-fortran.html
+item1 = how-to-use-coarray-fortran-with-mpi-io.html 
+
 all: index items
 
 index: index.html
-items: item1 item2 item3
-
-item3: postgresql15-on-freebsd13.2-part1.html
-item2: lets-use-procedure-pointers-in-object-oriented-fortran.html
-item1: how-to-use-coarray-fortran-with-mpi-io.html 
 
 index.html: $(SRC_DIR)/index.md $(SRC_DIR)/index-template.html
 	$(PC) -f markdown -t html --template=$(SRC_DIR)/index-template.html --toc --no-highlight -V pagetitle="$@" $< > $@
