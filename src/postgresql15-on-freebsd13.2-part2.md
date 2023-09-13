@@ -494,7 +494,7 @@ php_fpm is running as pid 5477.
 
 ### ブラウザでphpPgAdminを開く
 
-ブラウザのURLに`http://192.168.11.13/phpPgAdmin`と入力して、以下の画面が表示されれば成功である。
+ブラウザのURLに`http://192.168.11.13/phppgadmin`と入力して、以下の画面が表示されれば成功である。
 
 ::: {class=large-img}
 
