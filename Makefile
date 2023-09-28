@@ -4,8 +4,9 @@ ITEMS_DIR = items
 TEMPLATE = $(SRC_DIR)/template.html
 IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 
-items = $(item1) $(item2) $(item3) $(item4)
+items = $(item1) $(item2) $(item3) $(item4) $(item5)
 
+item5 = accessing-a-database-server-via-fortran-en.html
 item4 = postgresql15-on-freebsd13.2-part2.html
 item3 = postgresql15-on-freebsd13.2-part1.html
 item2 = lets-use-procedure-pointers-in-object-oriented-fortran.html
@@ -18,6 +19,10 @@ index: index.html
 index.html: $(SRC_DIR)/index.md $(SRC_DIR)/index-template.html
 	$(PC) -f markdown -t html --template=$(SRC_DIR)/index-template.html --toc --no-highlight -V pagetitle="$@" $< > $@
 
+accessing-a-database-server-via-fortran-en.html: $(SRC_DIR)/accessing-a-database-server-via-fortran-en.md $(TEMPLATE)
+	cat $< > $@.tmp
+	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight -V pagetitle="$@" --mathjax $@.tmp > $(ITEMS_DIR)/$@
+	rm -rf $@.tmp
 
 postgresql15-on-freebsd13.2-part2.html: $(SRC_DIR)/postgresql15-on-freebsd13.2-part2.md $(TEMPLATE)
 	cat $< > $@.tmp
