@@ -77,7 +77,7 @@ header ul li {
    border-right: medium solid #dbeefd;
 }
 
-header a, a:link, a:visited {
+.inner a, .inner a:link, .inner a:visited {
    text-decoration: none;
  }
 
