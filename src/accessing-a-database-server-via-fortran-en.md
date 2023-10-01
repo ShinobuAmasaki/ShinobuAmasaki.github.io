@@ -120,7 +120,7 @@ user: shinobu
 password: xxx
 === END INPUT ===
 === Query Result===
-tuples, fields: 4  1
+tuples, fields: 3  1
 === Available database names ===
 postgres
 template1
@@ -232,7 +232,7 @@ The program written in this manner returns results such as the following:
 
 ```shell
 === Query Result===
-tuples, fields: 4  1
+tuples, fields: 3  1
 === Available database names ===
 postgres
 template1
