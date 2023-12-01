@@ -2,10 +2,12 @@ PC = pandoc
 SRC_DIR = src
 ITEMS_DIR = items
 TEMPLATE = $(SRC_DIR)/template.html
+TEMPLATE_WITH_LATEX = $(SRC_DIR)/template-with-katex.html
 IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 
-items = $(item1) $(item2) $(item3) $(item4) $(item5)
+items = $(item1) $(item2) $(item3) $(item4) $(item5) $(item6)
 
+item6 = for-numerical-simulations-supported-by-database-in-fortran.html
 item5 = accessing-a-database-server-via-fortran-en.html
 item4 = postgresql15-on-freebsd13.2-part2.html
 item3 = postgresql15-on-freebsd13.2-part1.html
@@ -18,6 +20,11 @@ index: index.html
 
 index.html: $(SRC_DIR)/index.md $(SRC_DIR)/index-template.html
 	$(PC) -f markdown -t html --template=$(SRC_DIR)/index-template.html --toc --no-highlight -V pagetitle="$@" $< > $@
+
+for-numerical-simulations-supported-by-database-in-fortran.html: $(SRC_DIR)/for-numerical-simulations-supported-by-database-in-fortran.md
+	cat $< > $@.tmp
+	$(PC) -f markdown -t html5 --template=$(TEMPLATE_WITH_LATEX) --toc --no-highlight -V pagetitle="$@" --mathjax  $@.tmp > $(ITEMS_DIR)/$@
+	rm -rf $@.tmp
 
 accessing-a-database-server-via-fortran-en.html: $(SRC_DIR)/accessing-a-database-server-via-fortran-en.md $(TEMPLATE)
 	cat $< > $@.tmp
