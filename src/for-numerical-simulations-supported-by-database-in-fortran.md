@@ -412,7 +412,7 @@ end subroutine data_registration
 
 This includes a query called the `insert` statement, which inserts a record into the table in the database. 
 
-This insert statement is executed using the `PQexecParams` function, which allows you to include placeholders in the command string and pass thier values separately as an array of strings.  For detailed information about the arguments of this function, please refer to the [PQexecParams page in the Libpq-Fortran documentation.](https://shinobuamasaki.github.io/libpq-fortran/interface/pqexecparams.html)
+This insert statement is executed using the `PQexecParams` function, which allows you to include placeholders in the command string and pass their values separately as an array of strings.  For detailed information about the arguments of this function, please refer to the [PQexecParams page in the Libpq-Fortran documentation.](https://shinobuamasaki.github.io/libpq-fortran/interface/pqexecparams.html)
 
 ### Execute Main Program
 
@@ -612,6 +612,6 @@ In conclusion, we have successfully loaded data from a PostgreSQL server using L
 
 I have described the process of registering numerical simulation data in PostgreSQL using the Libpq-Fortran library and retrieving that data from the server for further use.
 
-This approach is obviously useful in scenarios where the same program needs to be executed massively with varying parameters. There have been instances when I chose to leverage a database for parameter exploration, particularly when conducting an exhaustive search of parameters to evaluate the stability of a finite diference scheme. As seen throughout this process, it's now possible to directly register data from Fortran, whereas at that time, the data registration was done from another language.
+This approach is obviously useful in scenarios where the same program needs to be executed massively with varying parameters. There have been instances when I chose to leverage a database for parameter exploration, particularly when conducting an exhaustive search of parameters to evaluate the stability of a finite difference scheme. As seen throughout this process, it's now possible to directly register data from Fortran, whereas at that time, the data registration was done from another language.
 
 In the example we covered this time, it was relatively easy to manage because one simulation corresponded to one record. However, if we consider cases where multiple files are output for a single simulation, the complexity of data management increases. I hope to write about this aspect at some point in the future. 

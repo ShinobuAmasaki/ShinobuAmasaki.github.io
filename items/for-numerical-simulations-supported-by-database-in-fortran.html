@@ -492,7 +492,7 @@ end subroutine data_registration</code></pre>
    which inserts a record into the table in the database.</p>
    <p>This insert statement is executed using the
    <code>PQexecParams</code> function, which allows you to include
-   placeholders in the command string and pass thier values separately
+   placeholders in the command string and pass their values separately
    as an array of strings. For detailed information about the arguments
    of this function, please refer to the <a
    href="https://shinobuamasaki.github.io/libpq-fortran/interface/pqexecparams.html">PQexecParams
@@ -709,10 +709,10 @@ unset multiplot</code></pre>
    program needs to be executed massively with varying parameters. There
    have been instances when I chose to leverage a database for parameter
    exploration, particularly when conducting an exhaustive search of
-   parameters to evaluate the stability of a finite diference scheme. As
-   seen throughout this process, it’s now possible to directly register
-   data from Fortran, whereas at that time, the data registration was
-   done from another language.</p>
+   parameters to evaluate the stability of a finite difference scheme.
+   As seen throughout this process, it’s now possible to directly
+   register data from Fortran, whereas at that time, the data
+   registration was done from another language.</p>
    <p>In the example we covered this time, it was relatively easy to
    manage because one simulation corresponded to one record. However, if
    we consider cases where multiple files are output for a single
