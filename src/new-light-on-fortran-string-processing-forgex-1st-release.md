@@ -208,12 +208,12 @@ block
    character(:), allocatable :: pattern, str
    integer :: length
    
-   pattern = "胡蝶\s.{3}胡蝶"
+   pattern = "夢.{3,7}胡蝶"
    str = "昔者莊周夢爲胡蝶　栩栩然胡蝶也"
    
    print *, pattern .in. str            ! T
-   print *, regex(pattern, str, length) ! 胡蝶　栩栩然胡蝶
-   pritn *, length                      ! 24 (is 3-byte * 8 characters)
+   print *, regex(pattern, str, length) ! 夢爲胡蝶　栩栩然胡蝶
+   print *, length                      ! 30 (is 3-byte * 10 characters)
    
 end block
 ```
