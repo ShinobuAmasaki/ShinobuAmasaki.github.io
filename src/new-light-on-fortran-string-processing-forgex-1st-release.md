@@ -202,7 +202,7 @@ function regex (pattern, str, length) result(res)
 
 ### UTF-8 String Processing
 
-UTF-8 string can be matched using regular expression patterns just like ASCII strings. The following example demonstrates matching Chinese characters. In this example, the variable `length` stores the byte length, and for 3-byte characters it is 10 characters long resulting in a length of 30.
+UTF-8 string can be matched using regular expression patterns just like ASCII strings. The following example demonstrates matching Chinese characters. In this example, the variable `length` stores the byte length, and in this case there 10 3-byte characters, so the length is 30.
 
 ```fortran
 block
