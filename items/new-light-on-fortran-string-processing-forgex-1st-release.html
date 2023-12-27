@@ -46,11 +46,11 @@ Expression (Forgex)." />
    <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
    <p>Twitter: <a href="https://twitter.com/amasaki203"><span
    class="citation" data-cites="amasaki203">@amasaki203</span></a></p>
-   <p>Posted on: 2023-12-25 JST</p>
+   <p>Posted on: 2023-12-25 JST Updated on: 2023-12-27 JST</p>
    <h2 id="abstract">Abstract</h2>
    <p><a href="https://github.com/ShinobuAmasaki/forgex">I’ve developed
    a new project called ‘Forgex’, an abbreviation for ‘Fortran Regular
-   Expression’, ant its first release took place on December
+   Expression’, and its first release took place on December
    24th.</a></p>
    <p>Forgex is a regular expression engine written entirely in Fortran.
    It is a library module that is executable with just a Fortran
@@ -76,7 +76,7 @@ Expression (Forgex)." />
    <li><code>*</code>: Match zero or more</li>
    <li><code>+</code>: Match one or more</li>
    <li><code>?</code>: Match zero or one</li>
-   <li><code>\</code>: Escape metacharacter</li>
+   <li><code>\</code>: Escape a metacharacter</li>
    <li><code>.</code>: Match any character</li>
    </ul>
    <h4 id="character-classes">Character Classes</h4>
@@ -219,8 +219,8 @@ end block</code></pre>
    <p>UTF-8 string can be matched using regular expression patterns just
    like ASCII strings. The following example demonstrates matching
    Chinese characters. In this example, the variable <code>length</code>
-   stores the byte length, and for 3-byte characters it is 8 characters
-   long resulting in a length of 24.</p>
+   stores the byte length, and for 3-byte characters it is 10 characters
+   long resulting in a length of 30.</p>
    <pre class="fortran"><code>block
    character(:), allocatable :: pattern, str
    integer :: length

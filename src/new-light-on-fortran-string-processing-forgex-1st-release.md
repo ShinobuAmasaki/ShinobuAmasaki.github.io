@@ -11,10 +11,11 @@ Author: Amasaki Shinobu (雨崎しのぶ)
 Twitter: [@amasaki203](https://twitter.com/amasaki203)
 
 Posted on: 2023-12-25 JST
+Updated on: 2023-12-27 JST
 
 ## Abstract
 
-[I've developed a new project called 'Forgex', an abbreviation for 'Fortran Regular Expression', ant its first release took place on December 24th.](https://github.com/ShinobuAmasaki/forgex)
+[I've developed a new project called 'Forgex', an abbreviation for 'Fortran Regular Expression', and its first release took place on December 24th.](https://github.com/ShinobuAmasaki/forgex)
 
 Forgex is a regular expression engine written entirely in Fortran. It is a library module that is executable with just a Fortran compiler, devoid of dependencies other than a compiler and Fortran Package Manager (FPM). This library is freely available under the MIT license.
 
@@ -38,7 +39,7 @@ This section lists the regular expression patterns that are implemented in Forge
 - `*`: Match zero or more
 - `+`: Match one or more
 - `?`: Match zero or one
-- `\`: Escape metacharacter
+- `\`: Escape a metacharacter
 - `.`: Match any character
 
 #### Character Classes
@@ -201,7 +202,7 @@ function regex (pattern, str, length) result(res)
 
 ### UTF-8 String Processing
 
-UTF-8 string can be matched using regular expression patterns just like ASCII strings. The following example demonstrates matching Chinese characters. In this example, the variable `length` stores the byte length, and for 3-byte characters it is 8 characters long resulting in a length of 24.
+UTF-8 string can be matched using regular expression patterns just like ASCII strings. The following example demonstrates matching Chinese characters. In this example, the variable `length` stores the byte length, and for 3-byte characters it is 10 characters long resulting in a length of 30.
 
 ```fortran
 block
