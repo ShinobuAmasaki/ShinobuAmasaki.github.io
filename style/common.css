@@ -62,7 +62,7 @@ pre {
 	margin : 10px 0 10px 0;
 }
 code {
-	font-family: monospace;
+	font-family: "Courier New", "Osaka-mono", monospace;
 }
 
 pre code a {
