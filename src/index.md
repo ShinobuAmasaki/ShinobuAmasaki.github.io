@@ -18,6 +18,7 @@ description: index.html
 - [Libpq-Fortran - Modern Fortran Interface for PostgreSQL](https://github.com/ShinobuAmasaki/libpq-fortran)
    - [Documentation](./libpq-fortran)
 - [Forgex - Fortran Regular Expression Engine](https://github.com/ShinobuAmasaki/forgex)
+- [fpm-completions - Command-line completion for fpm](https://github.com/ShinobuAmasaki/fpm-completions)
 
 ### My Overlay for Gentoo
 - [amasaki-overlay: Amasaki Shinobu's Public Overlay for Gentoo Linux](https://github.com/ShinobuAmasaki/amasaki-overlay#amasaki-overlay)
