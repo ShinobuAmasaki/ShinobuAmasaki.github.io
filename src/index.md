@@ -24,6 +24,8 @@ description: index.html
 - [amasaki-overlay: Amasaki Shinobu's Public Overlay for Gentoo Linux](https://github.com/ShinobuAmasaki/amasaki-overlay#amasaki-overlay)
 
 ## Posts
+- *2024-03-10:* [OpenPBSクラスターを構築する【Ubuntu22.04編】[JA]](https://qiita.com/amasaki203/items/3aff46d570a49d1b216d)
+- *2024-03-06:* [ジョブスケジューラーOpenPBS/PBS Proの使い方[JA]](https://qiita.com/amasaki203/items/4c78d08a100a99cfc323)
 - *2023-12-25:* [New Light on Fortran String Processing: Forgex 1st Release[EN]](items/new-light-on-fortran-string-processing-forgex-1st-release.html)
 - *2023-12-25:* [Fortranで正規表現 [JA]](https://qiita.com/amasaki203/items/9382f05f7c3efafea7a9)
 - *2023-12-02:* [Fortranで数値計算の結果をデータベースで管理する [JA]](https://qiita.com/amasaki203/items/c5786bdbeeb3f17bfd17)
