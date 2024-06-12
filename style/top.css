@@ -14,6 +14,11 @@
 .fa-github {
    color: black;
 }
+.fa-bluesky {
+	color: #0085ff;
+	font-size: 0.9em;
+}
+
 body {
    margin: 0;
    background-color: #bbdcf7;
