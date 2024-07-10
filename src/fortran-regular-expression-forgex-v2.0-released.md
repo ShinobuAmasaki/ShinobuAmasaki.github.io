@@ -17,7 +17,7 @@ Posted on: 2024-07-10 JST
 
 [Forgex v2.0 with Lazy DFA is available.](https://github.com/ShinobuAmasaki/forgex/releases/tag/v2.0)
 
-## Detail
+## Details
 
 I have released version 2.0 of Forgex (short for Fortran Regular Expression), and [it is now available on GitHub.](https://github.com/ShinobuAmasaki/forgex) 
 
@@ -61,8 +61,9 @@ Nonetheless, even if I were to implement it to this extent, it is unclear whethe
 ### Miscellaneous
 
 - I would like to implement escape sequences for Unicode, adopting a notation that is widely used in other engines. But which one should I use?
+- I would like to have more effective testing methods and a sufficient number of test cases.]
 
-- I would like to have more effective testing methods and a sufficient number of test cases.
+------
 
 ## References
 
