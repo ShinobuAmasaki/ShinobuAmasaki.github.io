@@ -5,8 +5,9 @@ TEMPLATE = $(SRC_DIR)/template.html
 TEMPLATE_WITH_LATEX = $(SRC_DIR)/template-with-katex.html
 IDX_TEMPLATE = $(SRC_DIR)/index-template.html
 
-items = $(item1) $(item2) $(item3) $(item4) $(item5) $(item6) $(item7)
+items = $(item8) $(item2) $(item3) $(item4) $(item5) $(item6) $(item7)
 
+item8 = fortran-regular-expression-forgex-v2.0-released.html
 item7 = new-light-on-fortran-string-processing-forgex-1st-release.html
 item6 = for-numerical-simulations-supported-by-database-in-fortran.html
 item5 = accessing-a-database-server-via-fortran-en.html
@@ -21,6 +22,12 @@ index: index.html
 
 index.html: $(SRC_DIR)/index.md $(SRC_DIR)/index-template.html
 	$(PC) -f markdown -t html --template=$(SRC_DIR)/index-template.html --toc --no-highlight -V pagetitle="$@" $< > $@
+
+
+fortran-regular-expression-forgex-v2.0-released.html: $(SRC_DIR)/fortran-regular-expression-forgex-v2.0-released.md
+	cat $< > $@.tmp
+	$(PC) -f markdown -t html --template=$(TEMPLATE) --toc --no-highlight -V pagetitle="$@" --mathjax $@.tmp > $(ITEMS_DIR)/$@
+	rm -rf $@.tmp
 
 new-light-on-fortran-string-processing-forgex-1st-release.html: $(SRC_DIR)/new-light-on-fortran-string-processing-forgex-1st-release.md
 	cat $< > $@.tmp
