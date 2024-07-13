@@ -7,8 +7,8 @@ description: index.html
 <div class="description">
 
 ## Activities
-- Software development in Fortran
-- Numerical analysis
+- Software Development in Fortran
+- Numerical Analysis
 - Parallel Processing
 - Computational Simulation in Geoscience
 
@@ -18,6 +18,7 @@ description: index.html
 - [Libpq-Fortran - Modern Fortran Interface for PostgreSQL](https://github.com/ShinobuAmasaki/libpq-fortran)
    - [Documentation](./libpq-fortran)
 - [Forgex - Fortran Regular Expression Engine](https://github.com/ShinobuAmasaki/forgex)
+   - [Documentation](./forgex)
 - [fpm-completions - Command-line completion for fpm](https://github.com/ShinobuAmasaki/fpm-completions)
 
 ### My Overlay for Gentoo
