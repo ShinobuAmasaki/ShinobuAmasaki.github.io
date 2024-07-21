@@ -12,6 +12,7 @@ Author: Amasaki Shinobu (雨崎しのぶ)
 Twitter: [@amasaki203](https://twitter.com/amasaki203)
 
 Posted on: 2023-08-28 JST
+Updated on: 2024-0722 
 
 ## Abstract
 
@@ -40,17 +41,11 @@ In classical Fortran, programmers write their code using the procedural programm
 
 In the field of numerical computation, utilizing OOP streamlines source code management, simplifies code modification, and reduces human errors, even though there is some overhead.
 
-> 本稿では、オブジェクト指向のモダンFortranで、procedure pointerを活用してコールバックを実装し、その実際的な使用例を解説する。
-
 This article explores practical implementations of callbacks using procedure pointers in modern Fortran's object-oriented paradigm.
 
 ## Preliminary Understanding
 
-> Fortranにおけるオブジェクト指向とは、派生型の宣言の`contains`より下にサブルーチンや関数を宣言することで、それらをその派生型に所属させることである。これをtype-bound procedureと呼ぶ。
-
 In Fortran, object-oriented programming is achieved by declaring subroutines and functions below the `contains` statement of a derived type, associating them with that type. This is referred to as type-bound procedures. Type-bound procedures, similar to regular procedures, can also accept **procedure pointers** as arguments.
-
-> procedure pointerとは、procedureを参照するポインタのことであり、ポインタであるのでprocedureを切り替えたり、その名前を使って関連付けられたprocedureを呼び出す事ができる。
 
 Procedure pointers are pointers that refer to procedures, allowing for the switching of procedures and invocation of associated procedures using the pointer's names. In Fortran, they are defined using explicit `interface` blocks and `procedure` statements for procedures. For exmple:
 
@@ -67,11 +62,7 @@ procedure(f), pointer :: fptr
 
 where between the `interface` and `end interface` keywords, there is a section known as an 'interface block', and interface `f` is then specified within the parentheses of the `procedure` statement.
 
-> これを利用して、コールバックを作ることができ、Fortranによる数値計算のコードなどで初期条件や境界条件の処理を簡潔に書くことが可能となる。これによってOOPがもたらす変更の簡単さをさらに増強することができる。
-
 By using them, it becomes possible to create callbacks, allowing for concise handling of initial and boundary conditions in Fortran numerical computation codes. This further amplifies the ease of changes brought by OOP, enhancing the overall convenience.
-
-> 以下では、手続ポインタを介して派生型への配列成分へ代入を行うことの簡単さを見ていく。
 
 In the following, we will examine the simplicity of performing assignments to array components within a derived type via a procedure pointer.
 
@@ -146,8 +137,6 @@ From above examples, it becomes evident that using a procedure pointer as an arg
 In the next section, we will discuss modules written in an object-oriented manner that achieve these functionalities.
 
 ## Modules and Program written in OOP
-
-> ここでは、簡単のために、次の3つのFortranコードから構成されるアプリケーションを考える。
 
 Here, for simplicity, let's think about an application composed of the following three Fortran codes:
 
@@ -460,8 +449,6 @@ Alternatively, compile with the Intel Fortran Compiler Classic `ifort` from the 
 
 ### Execution
 
-> このアプリケーションを実行すると、データファイル`out.dat`が作成され、上で示した画像をプロットするための準備が完了します。
-
 Upon running the application, a data file named `out.dat` will be generated, completing the preparations for plotting the aforementioned figures.
 
 ```shell
@@ -483,19 +470,13 @@ Upon running the application, a data file named `out.dat` will be generated, com
 
 We have discussed constructing Fortran programs using object-oriented programming techniques and explored the method of passing procedure pointers for initializing arrays. This approach helps clarify the roles of the main program and modules, making it easier to reuse code effectively.
 
-> Fortranの手続ポインタについて説明したものは、英語でも日本語でも極少ないので、この記事があなたのコードの改良の一助となれば幸いである。
-
 There is very limited information available in both English and Japanese about Fortran procedure pointers. I hope this article serves as a helpful resource for you to enhance your codes.
 
 ## Appendixes
 
 ### Notes
 
-> Intel Fortran Compilerでコンパイルされたポインタを含むFortranプログラムの実行は結構遅いので、支障がない限り`-O2`の最適化のためのコンパイルオプションを使用するのがおすすめです。
-
 Execution of Fortran programs containing pointers compiled with the Intel Fortran Compiler might not be as fast, so it's recommended to use the `-O2` optimization compilation option whenever possible, unless it causes any issues.
-
-> 関数のグラフの画像の作成にはGeneric Mapping Tools v6.4.0を使用しました。プロットするためのbashスクリプトを以下に載せておきます。
 
 The figures of the graphs of functions were created using [Generic Mapping Tools version 6.4.0](https://www.generic-mapping-tools.org/). I will include a Bash script for plotting in the following:
 

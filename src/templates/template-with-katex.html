@@ -18,12 +18,18 @@
    <meta name="twitter:site" content="@amasaki203" />
    <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
    <meta property="og:type" content="website" />
-   <meta property="og:url" content="https://shinobuamasaki.github.io/items/$pagetitle$" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/$pagetitle$" />
    <meta property="og:site_name" content="Amasaki Shinobu's website" />
    <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
 
    <title>$if(title)$$title$$endif$ | Amasaki Shinobu's Website</title>
 	
+   $if(latex)$
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha256-tkzDFSl16wERzhCWg0ge2tON2+D6Qe9iEaJqM4ZGd4E=" crossorigin="anonymous" type="text/css" rel="stylesheet">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha256-gNVpJCw01Tg4rruvtWJp9vS0rRchXP2YF+U+b2lp8Po=" crossorigin="anonymous" type="text/javascript"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha256-ExtbCSBuYA7kq1Pz362ibde9nnsHYPt6JxuxYeZbU+c=" crossorigin="anonymous" type="text/javascript"></script>
+   $endif$
+
    <link rel="icon" href="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/main/favicon.ico" type="image/x-icon" >
    
    <link rel="stylesheet" type="text/css" href="../style/common.css">
@@ -46,5 +52,25 @@
 <main>
    $body$
 </main>
+<script>
+   renderMathInElement(
+     document.body,
+     {
+       delimiters: [
+         {left: "$$", right: "$$", display: true},
+         {left: "\\[", right: "\\]", display: true},
+         {left: "\\(", right: "\\)", display: false}
+       ],
+       ignoredTags: [
+         "script",
+         "noscript",
+         "style",
+         "textarea",
+         "pre",
+         "code"
+       ]
+     }
+   );
+ </script>
 </body>
 </html>

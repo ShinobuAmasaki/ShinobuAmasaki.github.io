@@ -151,29 +151,11 @@ In the following, we will examine the characteristics of the above three approac
 
 ### "Each process, each file" approach
 
-
-
-> これは最も単純な方法であり、Coarray変数を使う必要のないアプローチである。
->
-> 並列で起動したプロセスが、それぞれ独立に自分で独占できる別々のファイルからデータを入出力する。
->
-> 下の図では、PE (*processor element*) 1, 2, 3, 4は、それぞれ対応するデータファイル1, 2, 3, 4へアクセスする。
-
 Each process launched in parallel independently performs write operations into separate files that remain untouched by other processes. This is the simplest approach and does not require the use of coarray variables.  In the figure below, PE1(*processor element one*), PE2, PE3, PE4 access thier corresponding data files 1, 2, 3, 4.
 
 <div class="large-img">
 ![Fig.1 -  I/O distributed on local illustration](../img/manage_IO_distributed_io_on_local.png)
 </div>
-
-> この方法の利点は次の通り
->
-> - 通信を必要とせず、
-> - 並列度をスケールすることができ、
-> - 並列ファイルシステムを必要とせず、
-> - データの一貫性を保持できる。
->
-> 唯一の大きな欠点は、並列度に比例してファイルの数が増えることである。そのためデータを書き込みした後の処理の手間が増えることが問題となる。
-
 The advantages of this approach are as follows:
 
 - No communication is required.
@@ -185,17 +167,11 @@ The only significant drawback is that the number of files incleases in proportio
 
 ### "Aggregate data one process" approach
 
-> 次に、書き込むデータを1つのプロセスに集約して、そのプロセスのみが書き込みを担うアプローチを検討しよう。この方法では、各プロセスが保持するデータを特定の一つのプロセスに集める必要がある。以下の図のように、最初にPE2, 3, 4の保持するデータをPE1に転送して、その後にPE1が書き込みを行う。
-
 Next, let's consider an approach where the data to be written is aggregated to a single process, which will be responsible for performing the write operation. In this approach, each process needs to gather the data it holds to a specific designated process. As shown in the figure below, initially, the data held by PE2, PE3, and PE4 are transferred to PE1, and then PE1 performs the write operation.
 
 <div class="large-img">
 ![Fig.2 -  I/O managed by "aggregate data" approach illsutration](../img/manage_IO_master-slave.png)
 </div>
-
-
-> 以下のコードでは、`this_image`が1に等しい場合のみデータを受け取る配列`recv`を用意して、他のイメージからデータを受信し、その後にファイルに書き込んでいる。
-
 The following code prepares an array `recv` to recieve data only when `this_image()` is equal to 1 (i.e. PE1). It then receives data from other images and subsequently writes it to a file.
 
 ```fortran
@@ -234,8 +210,6 @@ program main
    end program main
 ```
 
-> このコードを並列度64で実行すると1つの`out.bin`ファイルを出力する。`out.bin`には4バイト整数が64個、256バイトに渡って格納されている
-
 When running this code with 64 processes, it outputs a single `out.bin` file. This  `out.bin` contains 64 sets of 4-byte integers, stored consecutively for a total of 256 bytes.
 
 ```shell
@@ -261,14 +235,6 @@ When running this code with 64 processes, it outputs a single `out.bin` file. Th
 0000100
 ```
 
-> この方法では1個のファイルに出力をまとめることができる。Coarrayを使って簡単に書くことができ、データの一貫性も保持しやすい。ただし次のようなデメリットを持っている。
->
-> - 特定の1プロセスに負荷（メモリ容量、入出力処理）が集中し、
-> - スケールさせることができず、
-> - データ通信をユーザーが書く必要がある。
-> 
-> 特にスケールさせることができないことは、応用の効くアプリケーションを作るための障害となるだろう。
-
 This approach allows combining the output into a single file. It can be easily implemented using coarray, and it facilitates data consistency. It has, however, the following disadvantages:
 
 - The load is concentrated on a speficic process (such as memory consumption, input/output processing, etc.).
@@ -279,16 +245,11 @@ Especially, the inability to scale can be a barrier in creating practical applic
 
 ### "Direct access to one file" approach
 
-> ３つ目に、それぞれのプロセスから単一のファイルに直接アクセスするアプローチについて述べる。ここでいう「直接」とは、書き込むファイルをバイト列とみなした上で、書き込み位置を指定してその場所にデータを書き込むという意味である。Fortranのopen statementで言えば`access='direct'`を指定してファイルを開くことに対応している。以下の図のように、PE1, PE2, PE3, and PE4がそれぞれ独立に、しかし単一の同じファイルを操作する。
-
 Thirdly, let's discuss the approach of accessing a single file directly from multiple processes. Here, "directly" means writing data specific locations in the file, considering the file as a byte sequence and specifying the file position. In Fortran, this corresponds to opening the file with `access='direct'` specified in the `open` statement. As shown in the diabram below, PE1, PE2, PE3, and PE4 independently, but **simultaneously**, operate on a single shared file.
 
 <div class="large-img">
 ![Fig.3 -  Coordinated controlled accesses](../img/manage_IO_Coordinated_controlled_accesses.png)
 </div>
-
-> 以下のコードは、前処理においてファイルを`0xFFFF`（-1）で埋めた後に、その後に各プロセスがそれぞれ個別のオフセットだけずらした位置に、2バイトだけ書き込む例である。
-
 The following code is an example, in which the file is filled with `0xFFFF` (-1) during preprocessing, and then each process writes 2 bytes at positions shifted by its respective individual offsets.
 
 ```fortran
@@ -334,8 +295,6 @@ program main
 end program main
 ```
 
-> 上のコードを並列度64で実行すると、`out.bin`には、2バイトの整数が8バイトの置きに0x40 (64) まで書き込まれていることがわかる。
-
 When running the above code with a parallel degree of 64, `out.bin` contains 2-byte integers written in increments of 2 bytes, up to 0x40 (64).
 
 ```shell
@@ -361,14 +320,6 @@ When running the above code with a parallel degree of 64, `out.bin` contains 2-b
 0000100
 ```
 
-> このアプローチでは次のようなメリットがある。
->
-> - 通信を回避でき、
-> - 並列数をスケールさせることができ、
-> - ファイルを1個に集約できる。
->
-> 一方で、しかし、重大なデメリットとしてデータの一貫性を保持するのが難しいという点がある。
-
 This approach offers the following advantages:
 
 - Avoiding communication overhead,
@@ -377,22 +328,15 @@ This approach offers the following advantages:
 
 However, a significant drawback is the difficulty in maintaining data consistency.
 
-> 注：Intel Fortranにおいては、1バイト単位で入出力をする場合にはコンパイルオプションで`-assume byterecl`を指定する必要があります
-
 Note: In Intel Fortran, when performing input/output operations at the byte level, you need to specify the compilation option `-assume byterecl`.
 
 ### MPI I/O
-
-> MPI I/Oとは、MPI (Message Passing Interface) version 2.0 (1998) で導入された、並列入出力に関してのMPIライブラリのAPIのサブセットを指す。アプリケーションはファイルに直接アクセスするのではなく、MPIで定義された手続きを介して間接的にデータの読み書きを行う。ユーザーがファイルに直接アクセスする場合と比較し、ブロッキングや集団通信の処理が充実しているので、一貫性を保持してデータを扱うことができるだろう。
 
 MPI I/O refers to an API subset of the MPI (Message Passing Interface) introduced in its version 2.0 (1998) that is designed for parallel input/output operations. In this approach, applications perform data reading and writing indirectly through procedures defined in MPI, rather than accessing files directly. Leverraging features like blocking and collective communication, which a well-supported in MPI, users can maintain data consistency while handling files, resulting in more effective data handling compared to direct file access.
 
 <div class="large-img">
 ![Fig.4 -  I/O managed by MPI I/O illustration](../img/manage_IO_MPI_IO.png)
 </div>
-
-> 以下のコードは、MPI I/Oを用いて書いたバイナリ出力を行うプログラムである。
-
 ```fortran
 program main
    use, intrinsic :: iso_fortran_env
@@ -471,21 +415,12 @@ contains
 end program main 
 ```
 
-> MPI I/Oの手続きについて、どのような処理かという説明は次の通り（詳しくはMPIの規格書やライブラリのドキュメントを参照してほしい）。
->
-> - `mpi_file_open` 手続きは、`amode`で指定されたモードで、`filename`で指定されたファイル名のファイルを開き、ファイルヘッダー変数`fh`に対応づける。
-> - `mpi_file_seek_shared`手続きは、`whence`に`MPI_SEEK_SET`の値が設定されている場合、指定されたファイルヘッダーの読み書き位置を`offset`の値だけシークする。
-> - `mpi_file_write_shared`手続きは、変数`buf`の`count`個の要素を`MPI_INTEGER2`型として、`fh`の指す位置にブロッキング処理をして書き込む（書き込みの順序は不定）。
-> - `mpi_file_close`手続きは、`fh`の指すファイルを閉じる。
-
 The explanation of the MPI I/O procedure is as follows (for more details, please refer to the MPI specification and the library documentation):
 
 - The `mpi_file_open` procedure opens the file specified by `filename` with the mode specified `amode` and associates it with the file header variable `fh`.
 - The `mpi_file_seek_shared` procedure seeks the read/write position of the specified file header by the value of `offset`, if `whence` is set to `MPI_SEEK_SET`.
 - The `mpi_file_write_shared` procedure performs a blocking write of `count` elements from the variable `buf`, which are treated as `MPI_INTEGER2` type, at the position pointed by `fh` (the order of writing is unspecified).
 - The `mpi_file_close` procedure closes the file pointed by `fh`.
-
-> 上のプログラムを並列数64で実行すると、1個のファイル`out.bin`が出力される。`out.bin`の中身は、最初の16バイトをスキップして、17バイト目から512バイトだけデータが格納されていることがわかる。
 
 When running the program with a parallel degree of 64, it outputs a single file `out.bin`. The content of `out.bin` shows that data is stored starting from the 17th byte, skipping the first 16 bytes, up to 528th byte (512 bytes in total),.
 
@@ -562,12 +497,6 @@ When running the program with a parallel degree of 64, it outputs a single file 
 
 ```
 
-> MPI I/Oによる並列入出力は、次のような特徴がある。
->
-> - 並列度をスケールすることができる。
-> - 通信は明示的に書かなくてもよい。
-> - 一貫性は、直接アクセスと比較して保持しやすい。
-
 MPI I/O-based parallel I/O has the following characteristics:
 
 - It can scale with the degree of parallel execution.
@@ -575,8 +504,6 @@ MPI I/O-based parallel I/O has the following characteristics:
 - Data consistency is easier to maintain compared to direct access.
 
 ## Let's Use Coarray with MPI I/O-based libraries
-
-> 以上の通り、MPIライブラリとCoarrayを同時に使用できることが分かった。これはすなわち、MPI I/Oで実装された入出力ライブラリもCoarryと共に使えることが推測できる。実際に、この推測は正しく、たとえばNetCDF Fortranライブラリを使用する場合では、`use mpi_f08`と`use netcdf`を指定することでビルドして実行でき、正しいncファイルを出力する。以下にテストコードの一部を掲載する。
 
 As discussed above, it has been confirmed that MPI libraries and Coarray can be used simultaneously. This implies that I/O libraries implemented with MPI I/O can also be combined with Coarray. In fact, this assumption is correct, and for example, when using the NetCDF Fortran Library, by specifying `use mpi_f08` and `use netcdf`, the program can be built and executed, producing the correct `.nc` file. Below is part of a code for generating a `.nc` file.
 
@@ -642,10 +569,6 @@ contains
 end program main
 ```
 
-> コードの全体はgithubのリポジトリから利用可能である。
->
-> コンパイルと実行、及び結果は次のとおり。
-
 [The entire code is available from the file on GitHub repository](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-codes/netcdf-with-coarray_1-dim-block-division.f90).
  Compilation, execution, and the results are as follows.
 
@@ -678,16 +601,7 @@ data:
 <div class="large-img">
 ![Fig.5 - one-dimension block division nc file](../img/netcdf-with-coarray_1D-block-division_n64.png)
 </div>
-
-> NetCDFファイルの描画には、Generic Mapping Tools v6.4.0を使用した。
-
 I used [Generic Mapping Tools v6.4.0](https://www.generic-mapping-tools.org/) for plotting the NetCDF file.
-
-> Notes:
->
-> - MPIによる並列化を有効にしてビルドされたHDF5とNetCDFライブラリを使用する必要がある。NetCDFに関しては`nc-config --has-parallel --has-parallel4`のコマンドを実行することで並列化が有効になっているかどうかを確認することができる。
->
-> -  `gfortran`でこのコードを実行するためには、ROMIOを有効にしてビルドされたOpenMPIのバイナリを使用する必要がある。
 
 Notes:
 
@@ -698,8 +612,6 @@ Notes:
    
 
 ## Conclusion
-
-> 本稿ではFortranのCoarray機能とMPIライブラリを併用できることを述べた。CoarrayによってFortranは言語に組み込まれた並列化の機能を手に入れたが、入出力については未だ整備されていない。しかし、現在においては、その役割をMPIライブラリが担うことが可能であることがわかった。CoarrayかMPIのどちらを使うかという議論は少なくないが、これら二つが併用できることが判明し、MPIが主に入出力を担うという役割の分担は、Fortranで実際的なアプリケーションを書く者にとって新たな手法の一つとなるだろう。
 
 This article discuss the compatibility of Fortran's Coarray feature with the MPI libraries. While Coarray provides parallelization capabilities within the language, it lacks sufficient suport for I/O operations. The MPI libraries, however, can handle this aspect effectively. Some discussions over whether to use Coarray or MPI is not uncommon, but the combination of both allows for a practical approach, with MPI taking on the role of handling I/O operations. This provides a novel technique for Fortran programmers who develop practical applications.
 
@@ -722,11 +634,11 @@ This article discuss the compatibility of Fortran's Coarray feature with the MPI
    - Ubuntu Server 22.04.3 LTS
 
 - Compilers
-   
+  
    - GCC
-      
+     
       - GNU Fortran
-         
+        
          ```shell
          % gfortran --version
          GNU Fortran (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
@@ -754,7 +666,7 @@ This article discuss the compatibility of Fortran's Coarray feature with the MPI
          ```shell
          % mpirun --version
          mpirun (Open MPI) 4.1.4
-
+        
          Report bugs to http://www.open-mpi.org/community/help/
          ```
    
@@ -772,9 +684,7 @@ This article discuss the compatibility of Fortran's Coarray feature with the MPI
 
 
 ### Note
-> 注意：IntelのoneAPIを使用する場合、HDF5とNetCDFなどはIntelのコンパイラでビルドしたライブラリを使用する必要がある。その際リンク時に、システムのパッケージマネージャーでビルドしたライブラリと競合するので、GCCビルドのライブラリとIntelコンパイラービルドのライブラリを混在させてはいけない。
-When using Intel oneAPI toolkits, it is necessary to utilize libraries built with Intel's compiler for modules like HDF5 and NetCDF. 
- As they could conflict with libraries installed by the system's package manager during linking, care should be taken to avoid mixing libraries built with GCC and those built with the Intel's compiler.
+When using Intel oneAPI toolkits, it is necessary to utilize libraries built with Intel's compiler for modules like HDF5 and NetCDF. As they could conflict with libraries installed by the system's package manager during linking, care should be taken to avoid mixing libraries built with GCC and those built with the Intel's compiler.
 
 ### Questions
 *Question*: Why is it possible to use Coarray and MPI in conjunction by not calling `mpi_init()` and `mpi_finalize()`?
