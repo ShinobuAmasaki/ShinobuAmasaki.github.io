@@ -42,62 +42,67 @@ I/O | Amasaki Shinobu's Website</title>
       </div>
    </header>
 <main>
-   <h1 id="how-to-use-coarray-fortran-with-mpi-io">How to Use Coarray
-   Fortran with MPI I/O</h1>
-   <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
-   <p>Twitter: <a href="https://twitter.com/amasaki203"><span
-   class="citation" data-cites="amasaki203">@amasaki203</span></a></p>
-   <p>Posted on: 2023-08-10 JST</p>
-   <h2 id="abstract">Abstract</h2>
-   <ol type="1">
-   <li><p>Coarray is cooperatable with MPI on OpenCoarrays or Intel
-   oneAPI environments.</p></li>
-   <li><p>We can use MPI I/O, since the Fortran Standards does not
-   define Parallel I/O.</p></li>
-   <li><p>Then, let’s use together Coarray feature and MPI I/O-based
-   libraries.</p></li>
-   </ol>
-   <h2 id="contents">Contents</h2>
-   <div class="contents">
-   <ul>
-   <li><p><a href="#introduction">Introduction</a></p></li>
-   <li><p><a href="#environments">Environments</a></p>
-   <ul>
-   <li>GNU Fortran Compiler + OpenCoarrays</li>
-   <li>Intel oneAPI Fortran Compiler</li>
-   </ul></li>
-   <li><p><a href="#parallel-io">Parallel I/O</a></p>
-   <ol type="1">
-   <li><p><a href="#each-process-each-file-approach">“Each process, each
-   file” approach</a></p></li>
-   <li><p><a href="#aggregate-data-one-process-approach">“Aggregate data
-   one process” approach</a></p></li>
-   <li><p><a href="#direct-access-to-one-file-approach">“Direct access
-   to one file” approach</a></p></li>
-   <li><p><a href="#mpi-io">MPI I/O</a></p></li>
-   </ol></li>
-   <li><p><a href="#lets-use-coarray-with-mpi-io-based-libraries">Let’s
-   Use Coarray with MPI I/O-based libraries.</a></p></li>
-   <li><p><a href="#conclusion">Conclusion</a></p></li>
-   <li><p><a href="#appendix">Appendix</a></p>
-   <ul>
-   <li><p>Tested enviromnets</p></li>
-   <li><p>Why can they use togather?</p></li>
-   </ul></li>
-   <li><p><a href="#reference">Reference</a></p></li>
-   </ul>
-   </div>
-   <h2 id="introduction">Introduction</h2>
-   <p>Coarray is the feature for parallelization built into the Fortran
-   language which standardized at Fortran 2008. This includes parallel
-   processing capabilities, but even the latest standards do not define
-   for I/O parallelization features.</p>
-   <p>The conclusion is that the Coarray feature is able to use
-   cooperatively with the MPI library, and they can be used together by
-   <strong>NOT</strong> calling <code>mpi_init()</code> and
-   <code>mpi_finalize()</code>.</p>
-   <p>Thus, the following code is buildable and executable:</p>
-   <pre class="fortran"><code>program main
+   <div class="container">
+      <div class="child">
+         <h1 id="how-to-use-coarray-fortran-with-mpi-io">How to Use
+         Coarray Fortran with MPI I/O</h1>
+         <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
+         <p>Twitter: <a href="https://twitter.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2023-08-10 JST</p>
+         <h2 id="abstract">Abstract</h2>
+         <ol type="1">
+         <li><p>Coarray is cooperatable with MPI on OpenCoarrays or
+         Intel oneAPI environments.</p></li>
+         <li><p>We can use MPI I/O, since the Fortran Standards does not
+         define Parallel I/O.</p></li>
+         <li><p>Then, let’s use together Coarray feature and MPI
+         I/O-based libraries.</p></li>
+         </ol>
+         <h2 id="contents">Contents</h2>
+         <div class="contents">
+         <ul>
+         <li><p><a href="#introduction">Introduction</a></p></li>
+         <li><p><a href="#environments">Environments</a></p>
+         <ul>
+         <li>GNU Fortran Compiler + OpenCoarrays</li>
+         <li>Intel oneAPI Fortran Compiler</li>
+         </ul></li>
+         <li><p><a href="#parallel-io">Parallel I/O</a></p>
+         <ol type="1">
+         <li><p><a href="#each-process-each-file-approach">“Each
+         process, each file” approach</a></p></li>
+         <li><p><a
+         href="#aggregate-data-one-process-approach">“Aggregate data one
+         process” approach</a></p></li>
+         <li><p><a href="#direct-access-to-one-file-approach">“Direct
+         access to one file” approach</a></p></li>
+         <li><p><a href="#mpi-io">MPI I/O</a></p></li>
+         </ol></li>
+         <li><p><a
+         href="#lets-use-coarray-with-mpi-io-based-libraries">Let’s Use
+         Coarray with MPI I/O-based libraries.</a></p></li>
+         <li><p><a href="#conclusion">Conclusion</a></p></li>
+         <li><p><a href="#appendix">Appendix</a></p>
+         <ul>
+         <li><p>Tested enviromnets</p></li>
+         <li><p>Why can they use togather?</p></li>
+         </ul></li>
+         <li><p><a href="#reference">Reference</a></p></li>
+         </ul>
+         </div>
+         <h2 id="introduction">Introduction</h2>
+         <p>Coarray is the feature for parallelization built into the
+         Fortran language which standardized at Fortran 2008. This
+         includes parallel processing capabilities, but even the latest
+         standards do not define for I/O parallelization features.</p>
+         <p>The conclusion is that the Coarray feature is able to use
+         cooperatively with the MPI library, and they can be used
+         together by <strong>NOT</strong> calling
+         <code>mpi_init()</code> and <code>mpi_finalize()</code>.</p>
+         <p>Thus, the following code is buildable and executable:</p>
+         <pre class="fortran"><code>program main
    use, intrinsic :: iso_fortran_env
    use mpi_f08
    implicit none
@@ -116,25 +121,25 @@ I/O | Amasaki Shinobu's Website</title>
 !  absence of `call mpi_finalize`
    
 end program main</code></pre>
-   <p>where,</p>
-   <ul>
-   <li>the <code>mpi_comm_size</code> procedure stores the total number
-   of the execution in its second argument,</li>
-   <li>the <code>mpi_comm_rank</code> procedure stores the
-   process-specific identifier in its second argument,</li>
-   <li>the <code>num_images()</code> function returns the total number
-   of images of a coarray program execution,</li>
-   <li>and the <code>this_image()</code> function returns the
-   image-specific identifier of a coarray program execution.</li>
-   </ul>
-   <p>Build the above code by specifying the directory with the MPI
-   library (location of the <code>mpi_f08.mod</code>,
-   e.g. <code>/usr/lib64</code> on Gentoo Linux) using the linker option
-   <code>-I</code>.</p>
-   <pre class="shell"><code>% caf main.f90 -I/usr/lib64 -o ./a.out</code></pre>
-   <p>When executed with 8 processes, the following result is
-   obtained:</p>
-   <pre class="shell"><code>% cafrun -n 8 ./a.out 
+         <p>where,</p>
+         <ul>
+         <li>the <code>mpi_comm_size</code> procedure stores the total
+         number of the execution in its second argument,</li>
+         <li>the <code>mpi_comm_rank</code> procedure stores the
+         process-specific identifier in its second argument,</li>
+         <li>the <code>num_images()</code> function returns the total
+         number of images of a coarray program execution,</li>
+         <li>and the <code>this_image()</code> function returns the
+         image-specific identifier of a coarray program execution.</li>
+         </ul>
+         <p>Build the above code by specifying the directory with the
+         MPI library (location of the <code>mpi_f08.mod</code>,
+         e.g. <code>/usr/lib64</code> on Gentoo Linux) using the linker
+         option <code>-I</code>.</p>
+         <pre class="shell"><code>% caf main.f90 -I/usr/lib64 -o ./a.out</code></pre>
+         <p>When executed with 8 processes, the following result is
+         obtained:</p>
+         <pre class="shell"><code>% cafrun -n 8 ./a.out 
 This rank is 0 of 8 | This image is 1 of 8
 This rank is 1 of 8 | This image is 2 of 8
 This rank is 2 of 8 | This image is 3 of 8
@@ -143,100 +148,101 @@ This rank is 5 of 8 | This image is 6 of 8
 This rank is 6 of 8 | This image is 7 of 8
 This rank is 7 of 8 | This image is 8 of 8
 This rank is 3 of 8 | This image is 4 of 8</code></pre>
-   <p>This compatibility will be helpful for Parallel I/O in a Fortran
-   program, and it can also be used in conjunction with libraries
-   dependent on MPI.</p>
-   <h2 id="environment">Environment</h2>
-   <h4 id="compilers">Compilers</h4>
-   <p>The environments passed the test code are detailed in <a
-   href="#appendix">Appendix</a> below.</p>
-   <ul>
-   <li>GNU Fortran + OpenCoarrays</li>
-   <li>Intel oneAPI HPC toolkits</li>
-   </ul>
-   <p><strong>Note</strong>: According to my friend, the NAG Fortran
-   Compiler for Windows is not capable of building the above code. I
-   don’t have information regarding the Linux version or its multi-node
-   version.</p>
-   <p><strong>Note</strong>: As of 2023, LLVM/Flang does not yet support
-   Coarray feature of the Fortran 2008.</p>
-   <h4 id="cluster-configuration">Cluster configuration</h4>
-   <ul>
-   <li><p>Interconnection: Gigabit ethernet</p></li>
-   <li><p>Filesystem: NFS v4</p></li>
-   <li><p>Operating System: Gentoo Linux (kernel 6.1.31)</p></li>
-   <li><p>MPI Library: OpenMPI version 4.1.4</p></li>
-   </ul>
-   <h2 id="parallel-io">Parallel I/O</h2>
-   <p>In the topic of program parallelization, the focus is often on
-   parallelizing computational processes. On the other hand, however,
-   when dealing with large-scale data, whether numerous or massive
-   files, data input/output becomes an essential process that cannot be
-   ignored.</p>
-   <p>In parallel programs, there are several approaches to handle
-   input/output:</p>
-   <ul>
-   <li>The “each process reads from or writes to each file”
-   approach.</li>
-   <li>The “aggregate data one process” approach.</li>
-   <li>The “direct access to one file from multiple processes”
-   approach.</li>
-   <li>The MPI I/O approach.</li>
-   </ul>
-   <p>In the following, we will examine the characteristics of the above
-   three approaches, with a specific focus on examining how each
-   approach handles <strong>file writes</strong>. Additionally, we will
-   explore how to “parallelize input/output” using MPI I/O in order to
-   overcome bottlenecks.</p>
-   <h3 id="each-process-each-file-approach">“Each process, each file”
-   approach</h3>
-   <p>Each process launched in parallel independently performs write
-   operations into separate files that remain untouched by other
-   processes. This is the simplest approach and does not require the use
-   of coarray variables. In the figure below, PE1(<em>processor element
-   one</em>), PE2, PE3, PE4 access thier corresponding data files 1, 2,
-   3, 4.</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/manage_IO_distributed_io_on_local.png"
-   alt="Fig.1 - I/O distributed on local illustration" />
-   <figcaption aria-hidden="true">Fig.1 - I/O distributed on local
-   illustration</figcaption>
-   </figure>
-   </div>
-   <p>The advantages of this approach are as follows:</p>
-   <ul>
-   <li>No communication is required.</li>
-   <li>It can scale the degree of parallel execution.</li>
-   <li>It does not require parallel file system, e.g. NFS, Lustre.</li>
-   <li>It can ensure data consistency.</li>
-   </ul>
-   <p>The only significant drawback is that the number of files
-   incleases in proportion to the degree of parallel execution.
-   Consequently, the post-processing workload after writing data becomes
-   a concern.</p>
-   <h3 id="aggregate-data-one-process-approach">“Aggregate data one
-   process” approach</h3>
-   <p>Next, let’s consider an approach where the data to be written is
-   aggregated to a single process, which will be responsible for
-   performing the write operation. In this approach, each process needs
-   to gather the data it holds to a specific designated process. As
-   shown in the figure below, initially, the data held by PE2, PE3, and
-   PE4 are transferred to PE1, and then PE1 performs the write
-   operation.</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/manage_IO_master-slave.png"
-   alt="Fig.2 - I/O managed by “aggregate data” approach illsutration" />
-   <figcaption aria-hidden="true">Fig.2 - I/O managed by “aggregate
-   data” approach illsutration</figcaption>
-   </figure>
-   </div>
-   <p>The following code prepares an array <code>recv</code> to recieve
-   data only when <code>this_image()</code> is equal to 1 (i.e. PE1). It
-   then receives data from other images and subsequently writes it to a
-   file.</p>
-   <pre class="fortran"><code>program main
+         <p>This compatibility will be helpful for Parallel I/O in a
+         Fortran program, and it can also be used in conjunction with
+         libraries dependent on MPI.</p>
+         <h2 id="environment">Environment</h2>
+         <h4 id="compilers">Compilers</h4>
+         <p>The environments passed the test code are detailed in <a
+         href="#appendix">Appendix</a> below.</p>
+         <ul>
+         <li>GNU Fortran + OpenCoarrays</li>
+         <li>Intel oneAPI HPC toolkits</li>
+         </ul>
+         <p><strong>Note</strong>: According to my friend, the NAG
+         Fortran Compiler for Windows is not capable of building the
+         above code. I don’t have information regarding the Linux
+         version or its multi-node version.</p>
+         <p><strong>Note</strong>: As of 2023, LLVM/Flang does not yet
+         support Coarray feature of the Fortran 2008.</p>
+         <h4 id="cluster-configuration">Cluster configuration</h4>
+         <ul>
+         <li><p>Interconnection: Gigabit ethernet</p></li>
+         <li><p>Filesystem: NFS v4</p></li>
+         <li><p>Operating System: Gentoo Linux (kernel 6.1.31)</p></li>
+         <li><p>MPI Library: OpenMPI version 4.1.4</p></li>
+         </ul>
+         <h2 id="parallel-io">Parallel I/O</h2>
+         <p>In the topic of program parallelization, the focus is often
+         on parallelizing computational processes. On the other hand,
+         however, when dealing with large-scale data, whether numerous
+         or massive files, data input/output becomes an essential
+         process that cannot be ignored.</p>
+         <p>In parallel programs, there are several approaches to handle
+         input/output:</p>
+         <ul>
+         <li>The “each process reads from or writes to each file”
+         approach.</li>
+         <li>The “aggregate data one process” approach.</li>
+         <li>The “direct access to one file from multiple processes”
+         approach.</li>
+         <li>The MPI I/O approach.</li>
+         </ul>
+         <p>In the following, we will examine the characteristics of the
+         above three approaches, with a specific focus on examining how
+         each approach handles <strong>file writes</strong>.
+         Additionally, we will explore how to “parallelize input/output”
+         using MPI I/O in order to overcome bottlenecks.</p>
+         <h3 id="each-process-each-file-approach">“Each process, each
+         file” approach</h3>
+         <p>Each process launched in parallel independently performs
+         write operations into separate files that remain untouched by
+         other processes. This is the simplest approach and does not
+         require the use of coarray variables. In the figure below,
+         PE1(<em>processor element one</em>), PE2, PE3, PE4 access thier
+         corresponding data files 1, 2, 3, 4.</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/manage_IO_distributed_io_on_local.png"
+         alt="Fig.1 - I/O distributed on local illustration" />
+         <figcaption aria-hidden="true">Fig.1 - I/O distributed on local
+         illustration</figcaption>
+         </figure>
+         </div>
+         <p>The advantages of this approach are as follows:</p>
+         <ul>
+         <li>No communication is required.</li>
+         <li>It can scale the degree of parallel execution.</li>
+         <li>It does not require parallel file system, e.g. NFS,
+         Lustre.</li>
+         <li>It can ensure data consistency.</li>
+         </ul>
+         <p>The only significant drawback is that the number of files
+         incleases in proportion to the degree of parallel execution.
+         Consequently, the post-processing workload after writing data
+         becomes a concern.</p>
+         <h3 id="aggregate-data-one-process-approach">“Aggregate data
+         one process” approach</h3>
+         <p>Next, let’s consider an approach where the data to be
+         written is aggregated to a single process, which will be
+         responsible for performing the write operation. In this
+         approach, each process needs to gather the data it holds to a
+         specific designated process. As shown in the figure below,
+         initially, the data held by PE2, PE3, and PE4 are transferred
+         to PE1, and then PE1 performs the write operation.</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/manage_IO_master-slave.png"
+         alt="Fig.2 - I/O managed by “aggregate data” approach illsutration" />
+         <figcaption aria-hidden="true">Fig.2 - I/O managed by
+         “aggregate data” approach illsutration</figcaption>
+         </figure>
+         </div>
+         <p>The following code prepares an array <code>recv</code> to
+         recieve data only when <code>this_image()</code> is equal to 1
+         (i.e. PE1). It then receives data from other images and
+         subsequently writes it to a file.</p>
+         <pre class="fortran"><code>program main
    implicit none
       integer :: i, outuni
       integer :: dat[*]
@@ -269,11 +275,11 @@ This rank is 3 of 8 | This image is 4 of 8</code></pre>
       end if
    
    end program main</code></pre>
-   <p>When running this code with 64 processes, it outputs a single
-   <code>out.bin</code> file. This <code>out.bin</code> contains 64 sets
-   of 4-byte integers, stored consecutively for a total of 256
-   bytes.</p>
-   <pre class="shell"><code>% caf main.f90 -o a.out
+         <p>When running this code with 64 processes, it outputs a
+         single <code>out.bin</code> file. This <code>out.bin</code>
+         contains 64 sets of 4-byte integers, stored consecutively for a
+         total of 256 bytes.</p>
+         <pre class="shell"><code>% caf main.f90 -o a.out
 % cafrun -n 64 ./a.out 
 % hexdump out.bin 
 0000000 0001 0000 0002 0000 0003 0000 0004 0000
@@ -293,40 +299,42 @@ This rank is 3 of 8 | This image is 4 of 8</code></pre>
 00000e0 0039 0000 003a 0000 003b 0000 003c 0000
 00000f0 003d 0000 003e 0000 003f 0000 0040 0000
 0000100</code></pre>
-   <p>This approach allows combining the output into a single file. It
-   can be easily implemented using coarray, and it facilitates data
-   consistency. It has, however, the following disadvantages:</p>
-   <ul>
-   <li>The load is concentrated on a speficic process (such as memory
-   consumption, input/output processing, etc.).</li>
-   <li>It cannot be scaled.</li>
-   <li>The user needs to handle data communication.</li>
-   </ul>
-   <p>Especially, the inability to scale can be a barrier in creating
-   practical applications.</p>
-   <h3 id="direct-access-to-one-file-approach">“Direct access to one
-   file” approach</h3>
-   <p>Thirdly, let’s discuss the approach of accessing a single file
-   directly from multiple processes. Here, “directly” means writing data
-   specific locations in the file, considering the file as a byte
-   sequence and specifying the file position. In Fortran, this
-   corresponds to opening the file with <code>access='direct'</code>
-   specified in the <code>open</code> statement. As shown in the diabram
-   below, PE1, PE2, PE3, and PE4 independently, but
-   <strong>simultaneously</strong>, operate on a single shared file.</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/manage_IO_Coordinated_controlled_accesses.png"
-   alt="Fig.3 - Coordinated controlled accesses" />
-   <figcaption aria-hidden="true">Fig.3 - Coordinated controlled
-   accesses</figcaption>
-   </figure>
-   </div>
-   <p>The following code is an example, in which the file is filled with
-   <code>0xFFFF</code> (-1) during preprocessing, and then each process
-   writes 2 bytes at positions shifted by its respective individual
-   offsets.</p>
-   <pre class="fortran"><code>program main
+         <p>This approach allows combining the output into a single
+         file. It can be easily implemented using coarray, and it
+         facilitates data consistency. It has, however, the following
+         disadvantages:</p>
+         <ul>
+         <li>The load is concentrated on a speficic process (such as
+         memory consumption, input/output processing, etc.).</li>
+         <li>It cannot be scaled.</li>
+         <li>The user needs to handle data communication.</li>
+         </ul>
+         <p>Especially, the inability to scale can be a barrier in
+         creating practical applications.</p>
+         <h3 id="direct-access-to-one-file-approach">“Direct access to
+         one file” approach</h3>
+         <p>Thirdly, let’s discuss the approach of accessing a single
+         file directly from multiple processes. Here, “directly” means
+         writing data specific locations in the file, considering the
+         file as a byte sequence and specifying the file position. In
+         Fortran, this corresponds to opening the file with
+         <code>access='direct'</code> specified in the <code>open</code>
+         statement. As shown in the diabram below, PE1, PE2, PE3, and
+         PE4 independently, but <strong>simultaneously</strong>, operate
+         on a single shared file.</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/manage_IO_Coordinated_controlled_accesses.png"
+         alt="Fig.3 - Coordinated controlled accesses" />
+         <figcaption aria-hidden="true">Fig.3 - Coordinated controlled
+         accesses</figcaption>
+         </figure>
+         </div>
+         <p>The following code is an example, in which the file is
+         filled with <code>0xFFFF</code> (-1) during preprocessing, and
+         then each process writes 2 bytes at positions shifted by its
+         respective individual offsets.</p>
+         <pre class="fortran"><code>program main
    use, intrinsic :: iso_fortran_env
    implicit none
    
@@ -366,10 +374,10 @@ This rank is 3 of 8 | This image is 4 of 8</code></pre>
    sync all
    
 end program main</code></pre>
-   <p>When running the above code with a parallel degree of 64,
-   <code>out.bin</code> contains 2-byte integers written in increments
-   of 2 bytes, up to 0x40 (64).</p>
-   <pre class="shell"><code>% caf main.f90
+         <p>When running the above code with a parallel degree of 64,
+         <code>out.bin</code> contains 2-byte integers written in
+         increments of 2 bytes, up to 0x40 (64).</p>
+         <pre class="shell"><code>% caf main.f90
 % cafrun -n 64 ./a.out      
  % hexdump out.bin           
 0000000 0001 ffff 0002 ffff 0003 ffff 0004 ffff
@@ -389,36 +397,37 @@ end program main</code></pre>
 00000e0 0039 ffff 003a ffff 003b ffff 003c ffff
 00000f0 003d ffff 003e ffff 003f ffff 0040 ffff
 0000100</code></pre>
-   <p>This approach offers the following advantages:</p>
-   <ul>
-   <li>Avoiding communication overhead,</li>
-   <li>Scalablity with the number of processes,</li>
-   <li>Combining files into a single one.</li>
-   </ul>
-   <p>However, a significant drawback is the difficulty in maintaining
-   data consistency.</p>
-   <p>Note: In Intel Fortran, when performing input/output operations at
-   the byte level, you need to specify the compilation option
-   <code>-assume byterecl</code>.</p>
-   <h3 id="mpi-io">MPI I/O</h3>
-   <p>MPI I/O refers to an API subset of the MPI (Message Passing
-   Interface) introduced in its version 2.0 (1998) that is designed for
-   parallel input/output operations. In this approach, applications
-   perform data reading and writing indirectly through procedures
-   defined in MPI, rather than accessing files directly. Leverraging
-   features like blocking and collective communication, which a
-   well-supported in MPI, users can maintain data consistency while
-   handling files, resulting in more effective data handling compared to
-   direct file access.</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/manage_IO_MPI_IO.png"
-   alt="Fig.4 - I/O managed by MPI I/O illustration" />
-   <figcaption aria-hidden="true">Fig.4 - I/O managed by MPI I/O
-   illustration</figcaption>
-   </figure>
-   </div>
-   <pre class="fortran"><code>program main
+         <p>This approach offers the following advantages:</p>
+         <ul>
+         <li>Avoiding communication overhead,</li>
+         <li>Scalablity with the number of processes,</li>
+         <li>Combining files into a single one.</li>
+         </ul>
+         <p>However, a significant drawback is the difficulty in
+         maintaining data consistency.</p>
+         <p>Note: In Intel Fortran, when performing input/output
+         operations at the byte level, you need to specify the
+         compilation option <code>-assume byterecl</code>.</p>
+         <h3 id="mpi-io">MPI I/O</h3>
+         <p>MPI I/O refers to an API subset of the MPI (Message Passing
+         Interface) introduced in its version 2.0 (1998) that is
+         designed for parallel input/output operations. In this
+         approach, applications perform data reading and writing
+         indirectly through procedures defined in MPI, rather than
+         accessing files directly. Leverraging features like blocking
+         and collective communication, which a well-supported in MPI,
+         users can maintain data consistency while handling files,
+         resulting in more effective data handling compared to direct
+         file access.</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/manage_IO_MPI_IO.png"
+         alt="Fig.4 - I/O managed by MPI I/O illustration" />
+         <figcaption aria-hidden="true">Fig.4 - I/O managed by MPI I/O
+         illustration</figcaption>
+         </figure>
+         </div>
+         <pre class="fortran"><code>program main
    use, intrinsic :: iso_fortran_env
    use mpi_f08
    implicit none
@@ -493,31 +502,32 @@ contains
    end subroutine print_error_message
 
 end program main </code></pre>
-   <p>The explanation of the MPI I/O procedure is as follows (for more
-   details, please refer to the MPI specification and the library
-   documentation):</p>
-   <ul>
-   <li>The <code>mpi_file_open</code> procedure opens the file specified
-   by <code>filename</code> with the mode specified <code>amode</code>
-   and associates it with the file header variable <code>fh</code>.</li>
-   <li>The <code>mpi_file_seek_shared</code> procedure seeks the
-   read/write position of the specified file header by the value of
-   <code>offset</code>, if <code>whence</code> is set to
-   <code>MPI_SEEK_SET</code>.</li>
-   <li>The <code>mpi_file_write_shared</code> procedure performs a
-   blocking write of <code>count</code> elements from the variable
-   <code>buf</code>, which are treated as <code>MPI_INTEGER2</code>
-   type, at the position pointed by <code>fh</code> (the order of
-   writing is unspecified).</li>
-   <li>The <code>mpi_file_close</code> procedure closes the file pointed
-   by <code>fh</code>.</li>
-   </ul>
-   <p>When running the program with a parallel degree of 64, it outputs
-   a single file <code>out.bin</code>. The content of
-   <code>out.bin</code> shows that data is stored starting from the 17th
-   byte, skipping the first 16 bytes, up to 528th byte (512 bytes in
-   total),.</p>
-   <pre><code>% caf test/mpiio.f90 -I/usr/lib64        
+         <p>The explanation of the MPI I/O procedure is as follows (for
+         more details, please refer to the MPI specification and the
+         library documentation):</p>
+         <ul>
+         <li>The <code>mpi_file_open</code> procedure opens the file
+         specified by <code>filename</code> with the mode specified
+         <code>amode</code> and associates it with the file header
+         variable <code>fh</code>.</li>
+         <li>The <code>mpi_file_seek_shared</code> procedure seeks the
+         read/write position of the specified file header by the value
+         of <code>offset</code>, if <code>whence</code> is set to
+         <code>MPI_SEEK_SET</code>.</li>
+         <li>The <code>mpi_file_write_shared</code> procedure performs a
+         blocking write of <code>count</code> elements from the variable
+         <code>buf</code>, which are treated as
+         <code>MPI_INTEGER2</code> type, at the position pointed by
+         <code>fh</code> (the order of writing is unspecified).</li>
+         <li>The <code>mpi_file_close</code> procedure closes the file
+         pointed by <code>fh</code>.</li>
+         </ul>
+         <p>When running the program with a parallel degree of 64, it
+         outputs a single file <code>out.bin</code>. The content of
+         <code>out.bin</code> shows that data is stored starting from
+         the 17th byte, skipping the first 16 bytes, up to 528th byte
+         (512 bytes in total),.</p>
+         <pre><code>% caf test/mpiio.f90 -I/usr/lib64        
 % cafrun -n 64 ./a.out &amp;&amp; hexdump out.bin
 0000000 ffff ffff ffff ffff ffff ffff ffff ffff
 0000010 0001 0001 0001 0001 0001 0001 0001 0001
@@ -587,25 +597,27 @@ end program main </code></pre>
 0000410 ffff ffff ffff ffff ffff ffff ffff ffff
 0000420
 </code></pre>
-   <p>MPI I/O-based parallel I/O has the following characteristics:</p>
-   <ul>
-   <li>It can scale with the degree of parallel execution.</li>
-   <li>Communication is not explicitly required to be written by the
-   user.</li>
-   <li>Data consistency is easier to maintain compared to direct
-   access.</li>
-   </ul>
-   <h2 id="lets-use-coarray-with-mpi-io-based-libraries">Let’s Use
-   Coarray with MPI I/O-based libraries</h2>
-   <p>As discussed above, it has been confirmed that MPI libraries and
-   Coarray can be used simultaneously. This implies that I/O libraries
-   implemented with MPI I/O can also be combined with Coarray. In fact,
-   this assumption is correct, and for example, when using the NetCDF
-   Fortran Library, by specifying <code>use mpi_f08</code> and
-   <code>use netcdf</code>, the program can be built and executed,
-   producing the correct <code>.nc</code> file. Below is part of a code
-   for generating a <code>.nc</code> file.</p>
-   <pre class="fortran"><code>program main
+         <p>MPI I/O-based parallel I/O has the following
+         characteristics:</p>
+         <ul>
+         <li>It can scale with the degree of parallel execution.</li>
+         <li>Communication is not explicitly required to be written by
+         the user.</li>
+         <li>Data consistency is easier to maintain compared to direct
+         access.</li>
+         </ul>
+         <h2 id="lets-use-coarray-with-mpi-io-based-libraries">Let’s Use
+         Coarray with MPI I/O-based libraries</h2>
+         <p>As discussed above, it has been confirmed that MPI libraries
+         and Coarray can be used simultaneously. This implies that I/O
+         libraries implemented with MPI I/O can also be combined with
+         Coarray. In fact, this assumption is correct, and for example,
+         when using the NetCDF Fortran Library, by specifying
+         <code>use mpi_f08</code> and <code>use netcdf</code>, the
+         program can be built and executed, producing the correct
+         <code>.nc</code> file. Below is part of a code for generating a
+         <code>.nc</code> file.</p>
+         <pre class="fortran"><code>program main
    use, intrinsic :: iso_fortran_env
    use :: mpi_f08
    use :: netcdf
@@ -664,11 +676,12 @@ contains
    
 
 end program main</code></pre>
-   <p><a
-   href="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-codes/netcdf-with-coarray_1-dim-block-division.f90">The
-   entire code is available from the file on GitHub repository</a>.
-   Compilation, execution, and the results are as follows.</p>
-   <pre class="shell"><code>% caf netcdf-with-coarray_1-dim-block-division.f90 -I/usr/lib64 -I/usr/include -lnetcdff
+         <p><a
+         href="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-codes/netcdf-with-coarray_1-dim-block-division.f90">The
+         entire code is available from the file on GitHub
+         repository</a>. Compilation, execution, and the results are as
+         follows.</p>
+         <pre class="shell"><code>% caf netcdf-with-coarray_1-dim-block-division.f90 -I/usr/lib64 -I/usr/include -lnetcdff
 % cafrun -n 64 ./a.out
 % ncdump out.nc | head -n 20
 netcdf out {
@@ -691,67 +704,70 @@ data:
     0.0205078125, 0.021484375, 0.0224609375, 0.0234375, 0.0244140625, 
     0.025390625, 0.0263671875, 0.02734375, 0.0283203125, 0.029296875, 
     0.0302734375, 0.03125, 0.0322265625, 0.033203125, 0.0341796875, </code></pre>
-   <div class="large-img">
-   <figure>
-   <img src="../img/netcdf-with-coarray_1D-block-division_n64.png"
-   alt="Fig.5 - one-dimension block division nc file" />
-   <figcaption aria-hidden="true">Fig.5 - one-dimension block division
-   nc file</figcaption>
-   </figure>
-   </div>
-   <p>I used <a href="https://www.generic-mapping-tools.org/">Generic
-   Mapping Tools v6.4.0</a> for plotting the NetCDF file.</p>
-   <p>Notes:</p>
-   <ul>
-   <li><p>To do this, you need to use HDF5 and NetCDF libraries built
-   with MPI support to enable parallelization. In order to check whether
-   parallelization is enabled or disabled for NetCDF library, you can
-   execute the command
-   <code>nc-config --has-parallel --has-parallel4</code>.</p></li>
-   <li><p>To run this code with <code>gfortran</code>, you need to use a
-   binary of OpenMPI that has been built with ROMIO enabled.</p></li>
-   </ul>
-   <h2 id="conclusion">Conclusion</h2>
-   <p>This article discuss the compatibility of Fortran’s Coarray
-   feature with the MPI libraries. While Coarray provides
-   parallelization capabilities within the language, it lacks sufficient
-   suport for I/O operations. The MPI libraries, however, can handle
-   this aspect effectively. Some discussions over whether to use Coarray
-   or MPI is not uncommon, but the combination of both allows for a
-   practical approach, with MPI taking on the role of handling I/O
-   operations. This provides a novel technique for Fortran programmers
-   who develop practical applications.</p>
-   <hr />
-   <h2 id="appendix">Appendix</h2>
-   <h3 id="tested-environments">Tested environments</h3>
-   <ul>
-   <li><p>Hardware</p>
-   <ul>
-   <li>HP Proliant ML350 Gen9 (dual Intel Xeon E5-2683 v4)</li>
-   <li>HP Proliant ML110 Gen9 (single Intel Xeon E5-2683 v4)</li>
-   </ul></li>
-   <li><p>Interconnection</p>
-   <ul>
-   <li>Gigabit Ethernet</li>
-   <li>NFS v4</li>
-   </ul></li>
-   <li><p>System (Linux)</p>
-   <ul>
-   <li>Gentoo Linux (Kernel v6.1.31)</li>
-   <li>Ubuntu Server 22.04.3 LTS</li>
-   </ul></li>
-   <li><p>Compilers</p>
-   <ul>
-   <li><p>GCC</p>
-   <ul>
-   <li><p>GNU Fortran</p>
-   <pre class="shell"><code>% gfortran --version
+         <div class="large-img">
+         <figure>
+         <img src="../img/netcdf-with-coarray_1D-block-division_n64.png"
+         alt="Fig.5 - one-dimension block division nc file" />
+         <figcaption aria-hidden="true">Fig.5 - one-dimension block
+         division nc file</figcaption>
+         </figure>
+         </div>
+         <p>I used <a
+         href="https://www.generic-mapping-tools.org/">Generic Mapping
+         Tools v6.4.0</a> for plotting the NetCDF file.</p>
+         <p>Notes:</p>
+         <ul>
+         <li><p>To do this, you need to use HDF5 and NetCDF libraries
+         built with MPI support to enable parallelization. In order to
+         check whether parallelization is enabled or disabled for NetCDF
+         library, you can execute the command
+         <code>nc-config --has-parallel --has-parallel4</code>.</p></li>
+         <li><p>To run this code with <code>gfortran</code>, you need to
+         use a binary of OpenMPI that has been built with ROMIO
+         enabled.</p></li>
+         </ul>
+         <h2 id="conclusion">Conclusion</h2>
+         <p>This article discuss the compatibility of Fortran’s Coarray
+         feature with the MPI libraries. While Coarray provides
+         parallelization capabilities within the language, it lacks
+         sufficient suport for I/O operations. The MPI libraries,
+         however, can handle this aspect effectively. Some discussions
+         over whether to use Coarray or MPI is not uncommon, but the
+         combination of both allows for a practical approach, with MPI
+         taking on the role of handling I/O operations. This provides a
+         novel technique for Fortran programmers who develop practical
+         applications.</p>
+         <hr />
+         <h2 id="appendix">Appendix</h2>
+         <h3 id="tested-environments">Tested environments</h3>
+         <ul>
+         <li><p>Hardware</p>
+         <ul>
+         <li>HP Proliant ML350 Gen9 (dual Intel Xeon E5-2683 v4)</li>
+         <li>HP Proliant ML110 Gen9 (single Intel Xeon E5-2683 v4)</li>
+         </ul></li>
+         <li><p>Interconnection</p>
+         <ul>
+         <li>Gigabit Ethernet</li>
+         <li>NFS v4</li>
+         </ul></li>
+         <li><p>System (Linux)</p>
+         <ul>
+         <li>Gentoo Linux (Kernel v6.1.31)</li>
+         <li>Ubuntu Server 22.04.3 LTS</li>
+         </ul></li>
+         <li><p>Compilers</p>
+         <ul>
+         <li><p>GCC</p>
+         <ul>
+         <li><p>GNU Fortran</p>
+         <pre class="shell"><code>% gfortran --version
 GNU Fortran (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
 Copyright (C) 2022 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</code></pre></li>
-   <li><p>OpenCoarrays</p>
-   <pre class="shell"><code>% caf --version
+         <li><p>OpenCoarrays</p>
+         <pre class="shell"><code>% caf --version
 OpenCoarrays Coarray Fortran Compiler Wrapper (caf version 2.10.1)
 Copyright (C) 2015-2022 Sourcery Institute
 Copyright (C) 2015-2022 Archaeologic Inc.
@@ -760,52 +776,54 @@ OpenCoarrays comes with NO WARRANTY, to the extent permitted by law.
 You may redistribute copies of OpenCoarrays under the terms of the
 BSD 3-Clause License.  For more information about these matters, see
 the file named LICENSE that is distributed with OpenCoarrays.</code></pre></li>
-   <li><p>OpenMPI</p>
-   <pre class="shell"><code>% mpirun --version
+         <li><p>OpenMPI</p>
+         <pre class="shell"><code>% mpirun --version
 mpirun (Open MPI) 4.1.4
 
 Report bugs to http://www.open-mpi.org/community/help/</code></pre></li>
-   </ul></li>
-   <li><p>Intel oneAPI</p>
-   <pre class="shell"><code>% mpiifort --version
+         </ul></li>
+         <li><p>Intel oneAPI</p>
+         <pre class="shell"><code>% mpiifort --version
 ifort (IFORT) 2021.10.0 20230609
 Copyright (C) 1985-2023 Intel Corporation.  All rights reserved.
 
 % mpirun --version
 Intel(R) MPI Library for Linux* OS, Version 2021.10 Build 20230619 (id: c2e19c2f3e)
 Copyright 2003-2023, Intel Corporation.</code></pre></li>
-   </ul></li>
-   </ul>
-   <h3 id="note">Note</h3>
-   <p>When using Intel oneAPI toolkits, it is necessary to utilize
-   libraries built with Intel’s compiler for modules like HDF5 and
-   NetCDF. As they could conflict with libraries installed by the
-   system’s package manager during linking, care should be taken to
-   avoid mixing libraries built with GCC and those built with the
-   Intel’s compiler.</p>
-   <h3 id="questions">Questions</h3>
-   <p><em>Question</em>: Why is it possible to use Coarray and MPI in
-   conjunction by not calling <code>mpi_init()</code> and
-   <code>mpi_finalize()</code>? <br><br></p>
-   <p><em>Answer</em>: According to the referrences [2, 3], both
-   OpenCoarrays and Intel Fortran’s coarray implementation use MPI as
-   their backend. I assume that this enables the coexistence of coarray
-   feature and MPI library without conflicts, allowing for the
-   unexpected direct invocation of MPI procedures.</p>
-   <h2 id="reference">Reference</h2>
-   <ol type="1">
-   <li><a
-   href="https://qiita.com/amasaki203/items/4beb0d2b6984bf701dec">[Japanese
-   ver.] Coarray FortranでMPI I/Oを使う | Qiita</a></li>
-   <li><a
-   href="https://github.com/sourceryinstitute/OpenCoarrays/blob/main/README.md">OpenCoarrays/README.md
-   at main | GitHub</a></li>
-   <li><a
-   href="https://www.intel.com/content/www/us/en/developer/articles/technical/distributed-memory-coarray-fortran-with-the-intel-fortran-compiler-for-linux-essential.html">Essential
-   Guide to Distributed Memory Coarray Fortran with the Intel Fortran
-   Compiler for Linux | Intel</a></li>
-   </ol>
-   <p>Copyright 2023 Amasaki Shinobu</p>
+         </ul></li>
+         </ul>
+         <h3 id="note">Note</h3>
+         <p>When using Intel oneAPI toolkits, it is necessary to utilize
+         libraries built with Intel’s compiler for modules like HDF5 and
+         NetCDF. As they could conflict with libraries installed by the
+         system’s package manager during linking, care should be taken
+         to avoid mixing libraries built with GCC and those built with
+         the Intel’s compiler.</p>
+         <h3 id="questions">Questions</h3>
+         <p><em>Question</em>: Why is it possible to use Coarray and MPI
+         in conjunction by not calling <code>mpi_init()</code> and
+         <code>mpi_finalize()</code>? <br><br></p>
+         <p><em>Answer</em>: According to the referrences [2, 3], both
+         OpenCoarrays and Intel Fortran’s coarray implementation use MPI
+         as their backend. I assume that this enables the coexistence of
+         coarray feature and MPI library without conflicts, allowing for
+         the unexpected direct invocation of MPI procedures.</p>
+         <h2 id="reference">Reference</h2>
+         <ol type="1">
+         <li><a
+         href="https://qiita.com/amasaki203/items/4beb0d2b6984bf701dec">[Japanese
+         ver.] Coarray FortranでMPI I/Oを使う | Qiita</a></li>
+         <li><a
+         href="https://github.com/sourceryinstitute/OpenCoarrays/blob/main/README.md">OpenCoarrays/README.md
+         at main | GitHub</a></li>
+         <li><a
+         href="https://www.intel.com/content/www/us/en/developer/articles/technical/distributed-memory-coarray-fortran-with-the-intel-fortran-compiler-for-linux-essential.html">Essential
+         Guide to Distributed Memory Coarray Fortran with the Intel
+         Fortran Compiler for Linux | Intel</a></li>
+         </ol>
+         <p>Copyright 2023 Amasaki Shinobu</p>
+      </div>
+   </div>
 </main>
 </body>
 </html>

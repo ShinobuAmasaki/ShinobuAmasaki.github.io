@@ -45,127 +45,138 @@ Fortran | Amasaki Shinobu's Website</title>
       </div>
    </header>
 <main>
-   <h1 id="accessing-a-database-server-via-fortran">Accessing a Database
-   Server via Fortran</h1>
-   <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
-   <p>Posted on: 2023-09-28 JST</p>
-   <h2 id="abstract">Abstract</h2>
-   <p>I have developed a software in Fortran that allows access to a
-   database server. Currently, it can connect to a PostgreSQL database
-   server and execute queries.</p>
-   <p><a
-   href="https://github.com/ShinobuAmasaki/libpq-fortran">Libpq-Fortran
-   on GitHub</a> - a Fortran frontend for PostgreSQL server.</p>
-   <h2 id="contents">Contents</h2>
-   <ul>
-   <li><a href="#introduction">Introduction</a></li>
-   <li><a href="#dependencies">Dependencies</a></li>
-   <li><a href="#building">Building</a></li>
-   <li><a href="#try-it">Try it</a></li>
-   <li><a href="#program-demo"><code>program demo</code></a>
-   <ul>
-   <li><a href="#declaration-statements">Declaration statements</a></li>
-   <li><a href="#executable-statements">Executable statements</a></li>
-   </ul></li>
-   <li><a href="#conclusion">Conclusion</a></li>
-   <li><a href="#acknowledgement">Acknowledgement</a></li>
-   <li><a href="#appendix">Appendix</a></li>
-   </ul>
-   <h2 id="introduction">Introduction</h2>
-   <p>There are various implementations of relational database
-   management systems (RDBMS). For example, MySQL, PostgreSQL, IBM Db2,
-   and others come to mind. Another lightweight option is SQLite.</p>
-   <p>Regarding SQLite, there are several Fortran libraries available.
-   According to Philipp Engel, the following four libraries are
-   mentioned:</p>
-   <blockquote>
-   <ul>
-   <li><p><a
-   href="https://github.com/interkosmos/fortran-sqlite3">fortran-sqlite3</a></p>
-   <p>Modern interface bindings to SQLite 3 in pure Fortran
-   2018.</p></li>
-   <li><p><a href="http://flibs.sourceforge.net/">FLIBS</a></p>
-   <p>Fortran 90 modules that include non-standard wrapper routines
-   around SQLite</p></li>
-   <li><p><a
-   href="http://urbanjost.altervista.org/LIBRARY/libGPF/download/tmp/html/download.html">libGPF</a></p>
-   <p>General Purpose Fortran collection, includes SQLite 3
-   bindings.</p></li>
-   <li><p><a
-   href="https://gitlab.com/everythingfunctional/sqliteff">sqliteff</a></p>
-   <p>SQLite for Fortran 2003, a thin C wrapper around the SQLite
-   library.</p></li>
-   </ul>
-   <p><a
-   href="https://cyber.dabamos.de/programming/modernfortran/sqlite.html">SQLite
-   - Programming in Modern Fortran</a>, written by Philipp Engel.</p>
-   </blockquote>
-   <p>However, these and other interface modules to SQLite are database
-   ‘libraries’, and none of them provide a means of accessing modern
-   database ‘servers’. When handling large-scale datasets, server-based
-   management is expected in many scenarios.</p>
-   <p>Therefore, the author decided to develop a Fortran module that
-   serves as a client interface to the PostgreSQL database server. <a
-   href="https://github.com/ShinobuAmasaki/libpq-fortran">It has been
-   released on GitHub under the name ‘Libpq-Fortran’</a> (under the MIT
-   license).</p>
-   <p>Libpq-Fortran utilizes the interoperability features of Modern
-   Fortran to provide access to the PostgreSQL official client library,
-   libpq. In this article, we will explore the initial usage of this
-   library.</p>
-   <h2 id="dependencies">Dependencies</h2>
-   <p>Here, we will discuss the software required for building
-   Libpq-Fortran.</p>
-   <p>First, you will need the libpq installed on your operating system
-   on the local machine. On Windows, it comes as an option when you
-   install PostgreSQL using the wizard. On Ubuntu Linux, you can simply
-   run the command <code>sudo apt install libpq-dev</code>.</p>
-   <p>Next, you will need a Fortran compiler. Currently, the following
-   compilers are supported:</p>
-   <ul>
-   <li>GNU Compiler Collection: <code>gfortran</code></li>
-   <li>Intel oneAPI Fortran Compiler <code>ifx</code>, Fortran Compiler
-   Classic <code>ifort</code></li>
-   </ul>
-   <p>Furthermore, Libpq-Fortran is managed through the Fortran Package
-   Manager (<code>fpm</code>), so you will need this as well.
-   Additionally, it has a dependency on another library developed by the
-   author, <code>uint-fortran</code>, but <code>fpm</code> automatically
-   handles this dependency.</p>
-   <p>Finally, you will need a so-called sandbox database server on your
-   localhost or local network. It is advisable to use a setup where data
-   loss is acceptable for testing purposes. Consider this a warning.</p>
-   <h2 id="building">Building</h2>
-   <p>To get started with Libpq-Fortran, use the following commands:</p>
-   <pre class="shell"><code>$ git clone https://github.com/ShinobuAmasaki/libpq-fortran
+   <div class="container">
+      <div class="child">
+         <h1 id="accessing-a-database-server-via-fortran">Accessing a
+         Database Server via Fortran</h1>
+         <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
+         <p>Posted on: 2023-09-28 JST</p>
+         <h2 id="abstract">Abstract</h2>
+         <p>I have developed a software in Fortran that allows access to
+         a database server. Currently, it can connect to a PostgreSQL
+         database server and execute queries.</p>
+         <p><a
+         href="https://github.com/ShinobuAmasaki/libpq-fortran">Libpq-Fortran
+         on GitHub</a> - a Fortran frontend for PostgreSQL server.</p>
+         <h2 id="contents">Contents</h2>
+         <ul>
+         <li><a href="#introduction">Introduction</a></li>
+         <li><a href="#dependencies">Dependencies</a></li>
+         <li><a href="#building">Building</a></li>
+         <li><a href="#try-it">Try it</a></li>
+         <li><a href="#program-demo"><code>program demo</code></a>
+         <ul>
+         <li><a href="#declaration-statements">Declaration
+         statements</a></li>
+         <li><a href="#executable-statements">Executable
+         statements</a></li>
+         </ul></li>
+         <li><a href="#conclusion">Conclusion</a></li>
+         <li><a href="#acknowledgement">Acknowledgement</a></li>
+         <li><a href="#appendix">Appendix</a></li>
+         </ul>
+         <h2 id="introduction">Introduction</h2>
+         <p>There are various implementations of relational database
+         management systems (RDBMS). For example, MySQL, PostgreSQL, IBM
+         Db2, and others come to mind. Another lightweight option is
+         SQLite.</p>
+         <p>Regarding SQLite, there are several Fortran libraries
+         available. According to Philipp Engel, the following four
+         libraries are mentioned:</p>
+         <blockquote>
+         <ul>
+         <li><p><a
+         href="https://github.com/interkosmos/fortran-sqlite3">fortran-sqlite3</a></p>
+         <p>Modern interface bindings to SQLite 3 in pure Fortran
+         2018.</p></li>
+         <li><p><a href="http://flibs.sourceforge.net/">FLIBS</a></p>
+         <p>Fortran 90 modules that include non-standard wrapper
+         routines around SQLite</p></li>
+         <li><p><a
+         href="http://urbanjost.altervista.org/LIBRARY/libGPF/download/tmp/html/download.html">libGPF</a></p>
+         <p>General Purpose Fortran collection, includes SQLite 3
+         bindings.</p></li>
+         <li><p><a
+         href="https://gitlab.com/everythingfunctional/sqliteff">sqliteff</a></p>
+         <p>SQLite for Fortran 2003, a thin C wrapper around the SQLite
+         library.</p></li>
+         </ul>
+         <p><a
+         href="https://cyber.dabamos.de/programming/modernfortran/sqlite.html">SQLite
+         - Programming in Modern Fortran</a>, written by Philipp
+         Engel.</p>
+         </blockquote>
+         <p>However, these and other interface modules to SQLite are
+         database ‘libraries’, and none of them provide a means of
+         accessing modern database ‘servers’. When handling large-scale
+         datasets, server-based management is expected in many
+         scenarios.</p>
+         <p>Therefore, the author decided to develop a Fortran module
+         that serves as a client interface to the PostgreSQL database
+         server. <a
+         href="https://github.com/ShinobuAmasaki/libpq-fortran">It has
+         been released on GitHub under the name ‘Libpq-Fortran’</a>
+         (under the MIT license).</p>
+         <p>Libpq-Fortran utilizes the interoperability features of
+         Modern Fortran to provide access to the PostgreSQL official
+         client library, libpq. In this article, we will explore the
+         initial usage of this library.</p>
+         <h2 id="dependencies">Dependencies</h2>
+         <p>Here, we will discuss the software required for building
+         Libpq-Fortran.</p>
+         <p>First, you will need the libpq installed on your operating
+         system on the local machine. On Windows, it comes as an option
+         when you install PostgreSQL using the wizard. On Ubuntu Linux,
+         you can simply run the command
+         <code>sudo apt install libpq-dev</code>.</p>
+         <p>Next, you will need a Fortran compiler. Currently, the
+         following compilers are supported:</p>
+         <ul>
+         <li>GNU Compiler Collection: <code>gfortran</code></li>
+         <li>Intel oneAPI Fortran Compiler <code>ifx</code>, Fortran
+         Compiler Classic <code>ifort</code></li>
+         </ul>
+         <p>Furthermore, Libpq-Fortran is managed through the Fortran
+         Package Manager (<code>fpm</code>), so you will need this as
+         well. Additionally, it has a dependency on another library
+         developed by the author, <code>uint-fortran</code>, but
+         <code>fpm</code> automatically handles this dependency.</p>
+         <p>Finally, you will need a so-called sandbox database server
+         on your localhost or local network. It is advisable to use a
+         setup where data loss is acceptable for testing purposes.
+         Consider this a warning.</p>
+         <h2 id="building">Building</h2>
+         <p>To get started with Libpq-Fortran, use the following
+         commands:</p>
+         <pre class="shell"><code>$ git clone https://github.com/ShinobuAmasaki/libpq-fortran
 $ cd libpq-fortran
 $ fpm build</code></pre>
-   <p>When executing <code>fpm build</code>, you may need to specify the
-   directory containing the <code>"libpq-fe.h"</code> C header with
-   <code>-I</code> flag in the environment variable
-   <code>FPM_CFLAGS</code> or using <code>--c-flag</code>. For example,
-   on Ubuntu system, the location may be
-   <code>/usr/include/postgresql</code>, and then the command will be
-   the following:</p>
-   <pre class="shell"><code>$ fpm build --c-flag &quot;-I/usr/include/postgresql&quot;</code></pre>
-   <h2 id="try-it">Try it</h2>
-   <p>The ‘example’ directory in the repository contains a program that
-   interactively accesses a PostgreSQL server to retrieve a list of
-   databases on that server.</p>
-   <p>To run this, execute the following command with
-   <code>fpm run</code>:</p>
-   <pre class="shell"><code>$ fpm run demo --example
+         <p>When executing <code>fpm build</code>, you may need to
+         specify the directory containing the <code>"libpq-fe.h"</code>
+         C header with <code>-I</code> flag in the environment variable
+         <code>FPM_CFLAGS</code> or using <code>--c-flag</code>. For
+         example, on Ubuntu system, the location may be
+         <code>/usr/include/postgresql</code>, and then the command will
+         be the following:</p>
+         <pre class="shell"><code>$ fpm build --c-flag &quot;-I/usr/include/postgresql&quot;</code></pre>
+         <h2 id="try-it">Try it</h2>
+         <p>The ‘example’ directory in the repository contains a program
+         that interactively accesses a PostgreSQL server to retrieve a
+         list of databases on that server.</p>
+         <p>To run this, execute the following command with
+         <code>fpm run</code>:</p>
+         <pre class="shell"><code>$ fpm run demo --example
 demo.f90                               done.
 demo                                   done.
 [100%] Project compiled successfully.
 === INPUT Database Information ===
 === type &quot;q&quot; for quit          ===
 Hostname:</code></pre>
-   <p>Success is indicated by the appearance of a prompt requesting
-   input for accessing the server.</p>
-   <p>Upon entering the information as follows, the connection is
-   established, and the results are returned:</p>
-   <pre class="shell"><code>=== INPUT Database Information ===
+         <p>Success is indicated by the appearance of a prompt
+         requesting input for accessing the server.</p>
+         <p>Upon entering the information as follows, the connection is
+         established, and the results are returned:</p>
+         <pre class="shell"><code>=== INPUT Database Information ===
 === type &quot;q&quot; for quit          ===
 Hostname: localhost
 dbname: postgres
@@ -178,19 +189,21 @@ tuples, fields: 3  1
 postgres
 template1
 template0</code></pre>
-   <p>Please modify the hostname, dbname, username, and password to suit
-   your own environment.</p>
-   <p>Thus, you were able to access a PostgreSQL database and output
-   results using code written in Fortran. In the next section, we will
-   delve into the details of the main program used.</p>
-   <h2 id="program-demo"><code>program demo</code></h2>
-   <h3 id="declaration-statements">Declaration statements</h3>
-   <p>In this section, let’s take closer look at the main program used
-   in the above demonstration. The entire program can be found in the <a
-   href="#appendix">Appendix</a> of this article or on <a
-   href="https://github.com/ShinobuAmasaki/libpq-fortran/blob/main/example/demo.f90">GitHub</a>.</p>
-   <p>The declaration statements are as follows:</p>
-   <pre class="fortran"><code>program demo
+         <p>Please modify the hostname, dbname, username, and password
+         to suit your own environment.</p>
+         <p>Thus, you were able to access a PostgreSQL database and
+         output results using code written in Fortran. In the next
+         section, we will delve into the details of the main program
+         used.</p>
+         <h2 id="program-demo"><code>program demo</code></h2>
+         <h3 id="declaration-statements">Declaration statements</h3>
+         <p>In this section, let’s take closer look at the main program
+         used in the above demonstration. The entire program can be
+         found in the <a href="#appendix">Appendix</a> of this article
+         or on <a
+         href="https://github.com/ShinobuAmasaki/libpq-fortran/blob/main/example/demo.f90">GitHub</a>.</p>
+         <p>The declaration statements are as follows:</p>
+         <pre class="fortran"><code>program demo
    use :: libpq
    use, intrinsic :: iso_c_binding
    use, intrinsic :: iso_fortran_env, only:stdout=&gt;output_unit, stdin=&gt;input_unit
@@ -199,18 +212,19 @@ template0</code></pre>
    character(:, kind=c_char), allocatable :: sql, conninfo
    integer :: i, port
    character(256) :: str, host, dbname, user, password</code></pre>
-   <p>Here, we start with the declaration <code>use :: libpq</code>,
-   which plays a central role in this software.</p>
-   <p>Additionally, please note the declaration
-   <code>use, intrinsic :: iso_c_binding</code>. This is because the
-   software interfaces directly with C libraries, requiring a C-style
-   programming approach, involving passing and relaying pointers to
-   objects as return values from functions.
-   <code>type(c_ptr) ::conn, res</code> are variables used to store C
-   pointers received when programming in this style.</p>
-   <h3 id="executable-statements">Executable statements</h3>
-   <p>Next, let’s examine the execution statements.</p>
-   <pre class="fortran"><code>   print *, &#39;=== INPUT Database Information ===&#39;
+         <p>Here, we start with the declaration
+         <code>use :: libpq</code>, which plays a central role in this
+         software.</p>
+         <p>Additionally, please note the declaration
+         <code>use, intrinsic :: iso_c_binding</code>. This is because
+         the software interfaces directly with C libraries, requiring a
+         C-style programming approach, involving passing and relaying
+         pointers to objects as return values from functions.
+         <code>type(c_ptr) ::conn, res</code> are variables used to
+         store C pointers received when programming in this style.</p>
+         <h3 id="executable-statements">Executable statements</h3>
+         <p>Next, let’s examine the execution statements.</p>
+         <pre class="fortran"><code>   print *, &#39;=== INPUT Database Information ===&#39;
    print *, &#39;=== type &quot;q&quot; for quit          ===&#39;
    write (stdout, &#39;(a)&#39;, advance=&#39;no&#39;) &quot;Hostname: &quot;
    read  (stdin, *) host
@@ -237,82 +251,89 @@ template0</code></pre>
       &quot; dbname=&quot;//trim(adjustl(dbname))// &amp;
       &quot; user=&quot;//trim(adjustl(user))// &amp;
       &quot; password=&quot;//trim(adjustl(password))</code></pre>
-   <p>This section is responsible for receiving input for connection
-   information. Here user input is collected into various fixed-length
-   string variables, processed, and finally copied into the connection
-   information string <code>conninfo</code>.</p>
-   <p>Furthermore, the next set of statements executes the connection to
-   the database.</p>
-   <pre class="fortran"><code>   conn = PQconnectdb(conninfo)
+         <p>This section is responsible for receiving input for
+         connection information. Here user input is collected into
+         various fixed-length string variables, processed, and finally
+         copied into the connection information string
+         <code>conninfo</code>.</p>
+         <p>Furthermore, the next set of statements executes the
+         connection to the database.</p>
+         <pre class="fortran"><code>   conn = PQconnectdb(conninfo)
    if (PQstatus(conn) /= 0) then
       print *, PQerrorMessage(conn)
       error stop
    end if</code></pre>
-   <p>The function <code>PQconnectdb</code> is called with the argument
-   <code>conninfo</code>, and the result is assigned to the C pointer
-   variable <code>conn</code>. This pointer serves as an identifier for
-   the connection and is used by the user without needing to concerned
-   about its internal structure. Following this, the subsequent
-   <code>if</code> block serves as error handling.</p>
-   <p>As we move forward, the part where SQL statements are executed
-   becomes apparent.</p>
-   <pre class="fortran"><code>   query = &quot;select datname from pg_database;&quot;
+         <p>The function <code>PQconnectdb</code> is called with the
+         argument <code>conninfo</code>, and the result is assigned to
+         the C pointer variable <code>conn</code>. This pointer serves
+         as an identifier for the connection and is used by the user
+         without needing to concerned about its internal structure.
+         Following this, the subsequent <code>if</code> block serves as
+         error handling.</p>
+         <p>As we move forward, the part where SQL statements are
+         executed becomes apparent.</p>
+         <pre class="fortran"><code>   query = &quot;select datname from pg_database;&quot;
    res = PQexec(conn, query)
    if (PQstatus(conn) /= 0 ) then
       print *, PQerrorMessage(conn)
    end if</code></pre>
-   <p>Here, we first write the query into the string variable
-   <code>query</code>. Then, we call the <code>PQexec</code> function to
-   execute the <code>query</code> on the <code>conn</code> connection
-   and assign the result to the C pointer variable <code>res</code>. The
-   meaning of <code>select datname from pg_database;</code> is to
-   retrieve a list of (in the sense of collection of tables) databases
-   on the PostgreSQL server. Following this, the subsequent
-   <code>if</code> block serves as error handling.</p>
-   <p>And finally, there is the process of extracting the actual data
-   from the <code>res</code> pointer.</p>
-   <pre class="fortran"><code>    print *, &quot;=== Query Result===&quot;
+         <p>Here, we first write the query into the string variable
+         <code>query</code>. Then, we call the <code>PQexec</code>
+         function to execute the <code>query</code> on the
+         <code>conn</code> connection and assign the result to the C
+         pointer variable <code>res</code>. The meaning of
+         <code>select datname from pg_database;</code> is to retrieve a
+         list of (in the sense of collection of tables) databases on the
+         PostgreSQL server. Following this, the subsequent
+         <code>if</code> block serves as error handling.</p>
+         <p>And finally, there is the process of extracting the actual
+         data from the <code>res</code> pointer.</p>
+         <pre class="fortran"><code>    print *, &quot;=== Query Result===&quot;
     print &#39;(a, i0, 2x, i0)&#39;, &#39;tuples, fields: &#39;, PQntuples(res), PQnfields(res) 
  
     print *, &quot;=== Available database names ===&quot;
     do i = 0, PQntuples(res)-1
        print *, PQgetvalue(res, i, 0)
     end do</code></pre>
-   <p>Here, we use the <code>PQntuples</code> and <code>PQnfields</code>
-   functions to display the number of tuples (rows) and fields (columns)
-   held by the <code>res</code> object. Then, we iterate through the
-   tuples, extracting the value of the 0th column of the
-   <code>i</code>th row as a string. It’s worth noting that we are using
-   0-based indexing, following the conventions of C.</p>
-   <p>The program written in this manner returns results such as the
-   following:</p>
-   <pre class="shell"><code>=== Query Result===
+         <p>Here, we use the <code>PQntuples</code> and
+         <code>PQnfields</code> functions to display the number of
+         tuples (rows) and fields (columns) held by the <code>res</code>
+         object. Then, we iterate through the tuples, extracting the
+         value of the 0th column of the <code>i</code>th row as a
+         string. It’s worth noting that we are using 0-based indexing,
+         following the conventions of C.</p>
+         <p>The program written in this manner returns results such as
+         the following:</p>
+         <pre class="shell"><code>=== Query Result===
 tuples, fields: 3  1
 === Available database names ===
 postgres
 template1
 template0</code></pre>
-   <p>Success is indicated if it includes at least three of the
-   following: postgres, template1, template0.</p>
-   <h2 id="conclusion">Conclusion</h2>
-   <p>I introduced the Libpq-Fortran interface module for PostgreSQL.
-   Currently, it has only implemented about a hundred out of several
-   hundred functions from the libpq library. Setting that aside, I have
-   chosen to release it as open-source software at this point. Next, I
-   plan to write an article on methods for storing numerical computation
-   results in a database.</p>
-   <h2 id="acknowledgement">Acknowledgement</h2>
-   <p>The creation of this package was inspired by a discussion in the
-   <a href="https://fortran-jp.org/">Fortran-jp</a> community.</p>
-   <h2 id="references">References</h2>
-   <ol type="1">
-   <li><a
-   href="https://cyber.dabamos.de/programming/modernfortran/sqlite.html">SQLite
-   - Programming in Modern Fortran</a>, written by Philipp Engel.</li>
-   </ol>
-   <h2 id="appendix">Appendix</h2>
-   <p>The complete code for the program demonstrated above.</p>
-   <pre class="fortran"><code>program demo
+         <p>Success is indicated if it includes at least three of the
+         following: postgres, template1, template0.</p>
+         <h2 id="conclusion">Conclusion</h2>
+         <p>I introduced the Libpq-Fortran interface module for
+         PostgreSQL. Currently, it has only implemented about a hundred
+         out of several hundred functions from the libpq library.
+         Setting that aside, I have chosen to release it as open-source
+         software at this point. Next, I plan to write an article on
+         methods for storing numerical computation results in a
+         database.</p>
+         <h2 id="acknowledgement">Acknowledgement</h2>
+         <p>The creation of this package was inspired by a discussion in
+         the <a href="https://fortran-jp.org/">Fortran-jp</a>
+         community.</p>
+         <h2 id="references">References</h2>
+         <ol type="1">
+         <li><a
+         href="https://cyber.dabamos.de/programming/modernfortran/sqlite.html">SQLite
+         - Programming in Modern Fortran</a>, written by Philipp
+         Engel.</li>
+         </ol>
+         <h2 id="appendix">Appendix</h2>
+         <p>The complete code for the program demonstrated above.</p>
+         <pre class="fortran"><code>program demo
    use :: libpq
    use, intrinsic :: iso_c_binding
    use, intrinsic :: iso_fortran_env, only:stdout=&gt;output_unit, stdin=&gt;input_unit
@@ -379,6 +400,8 @@ template0</code></pre>
 
 
 end program demo</code></pre>
+      </div>
+   </div>
 </main>
 </body>
 </html>

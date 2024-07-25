@@ -48,114 +48,123 @@ Manager（php-fpm）をインストールして、ウェブアプリケーショ
       </div>
    </header>
 <main>
-   <h1
-   id="freebsd13.2にpostgresql-15をインストールする後編">FreeBSD13.2にPostgreSQL
-   15をインストールする（後編）</h1>
-   <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
-   <p>Twitter: <a href="https://twitter.com/amasaki203"><span
-   class="citation" data-cites="amasaki203">@amasaki203</span></a></p>
-   <p>Posted on: 2023-09-14 JST</p>
-   <h2 id="概要">概要</h2>
-   <p>本稿では、FreeBSD
-   13.2のサーバーに、前編でインストールしたPostgreSQLについて、phpPgAdminを経由してウェブブラウザ上からアクセスする方法について、できるだけ詳細に述べる。</p>
-   <p>ウェブサーバーApache HTTP Server 2.4（<code>apache24</code>）とPHP
-   FastCGI Process
-   Manager（<code>php-fpm</code>）をインストールして、ウェブアプリケーションphpPgAdminを実行できる環境を提供するのが本稿の目標である。</p>
-   <h2 id="目次">目次</h2>
-   <ul>
-   <li><a href="#概要">概要</a></li>
-   <li><a href="#目標">目標</a></li>
-   <li><a href="#インストールする環境">インストールする環境</a></li>
-   <li><a href="#前準備">前準備</a>
-   <ul>
-   <li><a
-   href="#ユーザーとデータベースの追加">ユーザーとデータベースの追加</a></li>
-   <li><a href="#php-8.1をインストールする">PHP
-   8.1をインストールする</a></li>
-   <li><a href="#apache-http-server-2.4をインストールする">Apache HTTP
-   Server 2.4をインストールする</a></li>
-   </ul></li>
-   <li><a
-   href="#phppgadminをインストールする">phpPgAdminをインストールする</a></li>
-   <li><a href="#phppgadminへアクセスする">phpPgAdminへアクセスする</a>
-   <ul>
-   <li><a href="#webサーバーを起動する">Webサーバーを起動する</a></li>
-   <li><a
-   href="#ブラウザでphppgadminを開く">ブラウザでphpPgAdminを開く</a></li>
-   </ul></li>
-   </ul>
-   <h2 id="目標">目標</h2>
-   <p>前編ではPostgreSQLをインストールし、LAN内の他のホストからコマンドライン経由でアクセスすることを達成できた。続いて後編では、以下を目標に、その実行方法について述べる。</p>
-   <h4 id="後編の目標">後編の目標</h4>
-   <ul>
-   <li>phpPgAdminをインストールして、LANのホストのブラウザからアクセスできるようにする。</li>
-   </ul>
-   <p>これの実現には以下のWebサーバーパッケージをインストールして稼働させる必要がある。</p>
-   <ul>
-   <li>Apache HTTP Server（<code>apache24</code>）</li>
-   <li>PHP FastCGI Process Manager（<code>php-fpm</code>）</li>
-   </ul>
-   <h2 id="インストールする環境">インストールする環境</h2>
-   <p>以下にハードウェアとOS、ネットワークについての要点を挙げる。</p>
-   <ul>
-   <li>OS：FreeBSD 13.2-RELEASE
-   <ul>
-   <li>シェルは<code>zsh</code>を使用する（コードブロックにはプロンプト<code>%</code>を使用していることに注意）</li>
-   <li><code>sudo</code>が使用可能なことを前提とする。</li>
-   </ul></li>
-   <li>ハードウェア：Fujitsu Esprimo D583/KX
-   <ul>
-   <li>メモリ：DDR3 32GB</li>
-   <li>CPU: Intel(R) Core(TM) i5-4590 CPU @ 3.30GHz (4コア)</li>
-   <li>ストレージ：Sandisk SSD Plus 240GB</li>
-   <li>NIC
-   <ul>
-   <li>Intel(R) PRO/1000 PT 82572EI (Copper)</li>
-   <li>RealTek 8168/8111 PCIe Gigabit Ethernet</li>
-   </ul></li>
-   </ul></li>
-   <li>ネットワーク
-   <ul>
-   <li>Intel: 192.168.0.243/24</li>
-   <li>RealTek: 192.168.11.13/24</li>
-   <li>192.168.0.0/24ネットワークと192.168.11.0/24ネットワークはブリッジを介して接続されている。</li>
-   </ul></li>
-   </ul>
-   <h2 id="前準備">前準備</h2>
-   <h3
-   id="ユーザーとデータベースの追加">ユーザーとデータベースの追加</h3>
-   <p>PostgreSQLサーバーにユーザー（ロール）とデータベースを追加する。</p>
-   <p>ここではユーザー<code>shinobu</code>と、データベース<code>sandbox</code>を追加することにする。</p>
-   <p>最初に、<code>creteuser</code>コマンドでユーザー<code>shinobu</code>を追加する。</p>
-   <pre class="shell"><code>% createuser -h localhost -U postgres shinobu</code></pre>
-   <p>このコマンドは<code>localhost</code>のPostgreSQLサーバーに、管理者<code>postgres</code>の権限でアクセスし、新規ユーザー<code>shinobu</code>を追加するコマンドである。</p>
-   <p>新規ユーザーにパスワードを設定するには、データベースに<code>psql</code>コマンドでアクセスして、以下のように設定する。</p>
-   <pre class="shell"><code>% psql -h localhost -U shinobu postgres
+   <div class="container">
+      <div class="child">
+         <h1
+         id="freebsd13.2にpostgresql-15をインストールする後編">FreeBSD13.2にPostgreSQL
+         15をインストールする（後編）</h1>
+         <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
+         <p>Twitter: <a href="https://twitter.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2023-09-14 JST</p>
+         <h2 id="概要">概要</h2>
+         <p>本稿では、FreeBSD
+         13.2のサーバーに、前編でインストールしたPostgreSQLについて、phpPgAdminを経由してウェブブラウザ上からアクセスする方法について、できるだけ詳細に述べる。</p>
+         <p>ウェブサーバーApache HTTP Server
+         2.4（<code>apache24</code>）とPHP FastCGI Process
+         Manager（<code>php-fpm</code>）をインストールして、ウェブアプリケーションphpPgAdminを実行できる環境を提供するのが本稿の目標である。</p>
+         <h2 id="目次">目次</h2>
+         <ul>
+         <li><a href="#概要">概要</a></li>
+         <li><a href="#目標">目標</a></li>
+         <li><a
+         href="#インストールする環境">インストールする環境</a></li>
+         <li><a href="#前準備">前準備</a>
+         <ul>
+         <li><a
+         href="#ユーザーとデータベースの追加">ユーザーとデータベースの追加</a></li>
+         <li><a href="#php-8.1をインストールする">PHP
+         8.1をインストールする</a></li>
+         <li><a href="#apache-http-server-2.4をインストールする">Apache
+         HTTP Server 2.4をインストールする</a></li>
+         </ul></li>
+         <li><a
+         href="#phppgadminをインストールする">phpPgAdminをインストールする</a></li>
+         <li><a
+         href="#phppgadminへアクセスする">phpPgAdminへアクセスする</a>
+         <ul>
+         <li><a
+         href="#webサーバーを起動する">Webサーバーを起動する</a></li>
+         <li><a
+         href="#ブラウザでphppgadminを開く">ブラウザでphpPgAdminを開く</a></li>
+         </ul></li>
+         </ul>
+         <h2 id="目標">目標</h2>
+         <p>前編ではPostgreSQLをインストールし、LAN内の他のホストからコマンドライン経由でアクセスすることを達成できた。続いて後編では、以下を目標に、その実行方法について述べる。</p>
+         <h4 id="後編の目標">後編の目標</h4>
+         <ul>
+         <li>phpPgAdminをインストールして、LANのホストのブラウザからアクセスできるようにする。</li>
+         </ul>
+         <p>これの実現には以下のWebサーバーパッケージをインストールして稼働させる必要がある。</p>
+         <ul>
+         <li>Apache HTTP Server（<code>apache24</code>）</li>
+         <li>PHP FastCGI Process Manager（<code>php-fpm</code>）</li>
+         </ul>
+         <h2 id="インストールする環境">インストールする環境</h2>
+         <p>以下にハードウェアとOS、ネットワークについての要点を挙げる。</p>
+         <ul>
+         <li>OS：FreeBSD 13.2-RELEASE
+         <ul>
+         <li>シェルは<code>zsh</code>を使用する（コードブロックにはプロンプト<code>%</code>を使用していることに注意）</li>
+         <li><code>sudo</code>が使用可能なことを前提とする。</li>
+         </ul></li>
+         <li>ハードウェア：Fujitsu Esprimo D583/KX
+         <ul>
+         <li>メモリ：DDR3 32GB</li>
+         <li>CPU: Intel(R) Core(TM) i5-4590 CPU @ 3.30GHz (4コア)</li>
+         <li>ストレージ：Sandisk SSD Plus 240GB</li>
+         <li>NIC
+         <ul>
+         <li>Intel(R) PRO/1000 PT 82572EI (Copper)</li>
+         <li>RealTek 8168/8111 PCIe Gigabit Ethernet</li>
+         </ul></li>
+         </ul></li>
+         <li>ネットワーク
+         <ul>
+         <li>Intel: 192.168.0.243/24</li>
+         <li>RealTek: 192.168.11.13/24</li>
+         <li>192.168.0.0/24ネットワークと192.168.11.0/24ネットワークはブリッジを介して接続されている。</li>
+         </ul></li>
+         </ul>
+         <h2 id="前準備">前準備</h2>
+         <h3
+         id="ユーザーとデータベースの追加">ユーザーとデータベースの追加</h3>
+         <p>PostgreSQLサーバーにユーザー（ロール）とデータベースを追加する。</p>
+         <p>ここではユーザー<code>shinobu</code>と、データベース<code>sandbox</code>を追加することにする。</p>
+         <p>最初に、<code>creteuser</code>コマンドでユーザー<code>shinobu</code>を追加する。</p>
+         <pre class="shell"><code>% createuser -h localhost -U postgres shinobu</code></pre>
+         <p>このコマンドは<code>localhost</code>のPostgreSQLサーバーに、管理者<code>postgres</code>の権限でアクセスし、新規ユーザー<code>shinobu</code>を追加するコマンドである。</p>
+         <p>新規ユーザーにパスワードを設定するには、データベースに<code>psql</code>コマンドでアクセスして、以下のように設定する。</p>
+         <pre class="shell"><code>% psql -h localhost -U shinobu postgres
 psql (15.4)
 Type &quot;help&quot; for help.
 
 postgres=&gt; alter role shinobu with password &#39;hogepasswdfuga&#39;;
 ALTER ROLE</code></pre>
-   <p>パスワード文字列<code>hogepasswdfuga</code>は各々自分のものに読み替えて設定して欲しい。</p>
-   <p>次に、<code>cretedb</code>コマンドでデータベース<code>sandbox</code>を作成する。</p>
-   <pre class="shell"><code>% createdb -h localhost -U postgres sandbox</code></pre>
-   <p>このコマンドは<code>localhost</code>のPostgreSQLサーバーに、管理者<code>postgres</code>の権限でアクセスし、新規データベース<code>sandbox</code>を追加するコマンドである。</p>
-   <h3 id="php-8.1をインストールする">PHP 8.1をインストールする</h3>
-   <p>php 8.1（<code>php81</code>）をportsからインストールする。</p>
-   <pre class="shell"><code>% cd /usr/ports/lang/php81
+         <p>パスワード文字列<code>hogepasswdfuga</code>は各々自分のものに読み替えて設定して欲しい。</p>
+         <p>次に、<code>cretedb</code>コマンドでデータベース<code>sandbox</code>を作成する。</p>
+         <pre class="shell"><code>% createdb -h localhost -U postgres sandbox</code></pre>
+         <p>このコマンドは<code>localhost</code>のPostgreSQLサーバーに、管理者<code>postgres</code>の権限でアクセスし、新規データベース<code>sandbox</code>を追加するコマンドである。</p>
+         <h3 id="php-8.1をインストールする">PHP
+         8.1をインストールする</h3>
+         <p>php
+         8.1（<code>php81</code>）をportsからインストールする。</p>
+         <pre class="shell"><code>% cd /usr/ports/lang/php81
 % sudo make config</code></pre>
-   <p>設定画面は次の通り。ここで<code>FPM</code>にチェックが入っていることを確認して、ビルドを実行する。</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/postgres/php81-config.png" alt="php81-config" />
-   <figcaption aria-hidden="true">php81-config</figcaption>
-   </figure>
-   </div>
-   <p>ビルドを実行する（依存関係のパッケージの設定はデフォルトで進めることにする）。</p>
-   <pre class="shell"><code>% sudo make</code></pre>
-   <p><code>gettext-runtime</code>など、<code>php81</code>が要求するよりも古いバージョンのパッケージがすでにインストールされている場合は、当該パッケージのディレクトリに行き、そこで<code>make deinstall</code>を実行してアンインストールをした上で、再び<code>php81</code>のディレクトリで<code>make</code>コマンドを実行する必要がある。</p>
-   <p>以下のような出力がなされれば、<code>php81</code>のビルドは完了である。</p>
-   <pre class="shell"><code>--- all ---
+         <p>設定画面は次の通り。ここで<code>FPM</code>にチェックが入っていることを確認して、ビルドを実行する。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/postgres/php81-config.png"
+         alt="php81-config" />
+         <figcaption aria-hidden="true">php81-config</figcaption>
+         </figure>
+         </div>
+         <p>ビルドを実行する（依存関係のパッケージの設定はデフォルトで進めることにする）。</p>
+         <pre class="shell"><code>% sudo make</code></pre>
+         <p><code>gettext-runtime</code>など、<code>php81</code>が要求するよりも古いバージョンのパッケージがすでにインストールされている場合は、当該パッケージのディレクトリに行き、そこで<code>make deinstall</code>を実行してアンインストールをした上で、再び<code>php81</code>のディレクトリで<code>make</code>コマンドを実行する必要がある。</p>
+         <p>以下のような出力がなされれば、<code>php81</code>のビルドは完了である。</p>
+         <pre class="shell"><code>--- all ---
 
 Build complete.
 Don&#39;t forget to run &#39;make test&#39;.
@@ -182,8 +191,8 @@ Installing man pages:             /usr/ports/lang/php81/work/stage/usr/local/man
   page: php-config.1
 ====&gt; Compressing man pages (compress-man)
 ===&gt; Staging rc.d startup script(s)</code></pre>
-   <p><code>make install</code>でインストールを実行する。</p>
-   <pre class="shell"><code>% sudo make install
+         <p><code>make install</code>でインストールを実行する。</p>
+         <pre class="shell"><code>% sudo make install
 ===&gt;  Installing for php81-8.1.23
 ===&gt;  Checking if php81 is already installed
 ===&gt;   Registering installation for php81-8.1.23
@@ -204,24 +213,24 @@ Installing php81-8.1.23...
       For more information, and contact details about the security
       status of this software, see the following webpage:
 https://www.php.net/</code></pre>
-   <h4 id="php-fpmの起動"><code>php-fpm</code>の起動</h4>
-   <p>php-fpmの設定ファイル<code>/usr/local/etc/php-fpm.d/www.conf</code>を見ると、<code>php-fpm</code>のリスニングポートは<code>9000</code>番であることを確認できる。これは、後でApacheのプロキシ設定を行う際に必要となるので覚えておく。</p>
-   <pre class="shell"><code>% grep &quot;^listen =&quot; /usr/local/etc/php-fpm.d/www.conf
+         <h4 id="php-fpmの起動"><code>php-fpm</code>の起動</h4>
+         <p>php-fpmの設定ファイル<code>/usr/local/etc/php-fpm.d/www.conf</code>を見ると、<code>php-fpm</code>のリスニングポートは<code>9000</code>番であることを確認できる。これは、後でApacheのプロキシ設定を行う際に必要となるので覚えておく。</p>
+         <pre class="shell"><code>% grep &quot;^listen =&quot; /usr/local/etc/php-fpm.d/www.conf
 listen = 127.0.0.1:9000</code></pre>
-   <p>次に、<code>/etc/rc.conf</code>に<code>php_fpm_enable="YES"</code>を記述してスタートアップを有効にする。</p>
-   <pre class="shell"><code>% sudo vi /etc/rc.conf
+         <p>次に、<code>/etc/rc.conf</code>に<code>php_fpm_enable="YES"</code>を記述してスタートアップを有効にする。</p>
+         <pre class="shell"><code>% sudo vi /etc/rc.conf
 php_fpm_enable=&quot;YES&quot;</code></pre>
-   <p>最後に<code>php-fpm</code>のサービスを起動してPHPのインストールは完了である。</p>
-   <pre class="shell"><code>% sudo service php-fpm start
+         <p>最後に<code>php-fpm</code>のサービスを起動してPHPのインストールは完了である。</p>
+         <pre class="shell"><code>% sudo service php-fpm start
 Performing sanity check on php-fpm configuration:
 [13-Sep-2023 19:43:28] NOTICE: configuration file /usr/local/etc/php-fpm.conf test is successful
 
 Starting php_fpm.</code></pre>
-   <h3 id="apache-http-server-2.4をインストールする">Apache HTTP Server
-   2.4をインストールする</h3>
-   <p>Apache HTTP Server
-   2.4（通称Apache2、FreeBSDでは<code>apache24</code>）は、ここではデフォルトのビルドオプションで構わないため、<code>pkg</code>コマンドでインストールすることにする。もし必要があれば、portsでインストールしてもよい。</p>
-   <pre class="shell"><code>% sudo pkg install apache24
+         <h3 id="apache-http-server-2.4をインストールする">Apache HTTP
+         Server 2.4をインストールする</h3>
+         <p>Apache HTTP Server
+         2.4（通称Apache2、FreeBSDでは<code>apache24</code>）は、ここではデフォルトのビルドオプションで構わないため、<code>pkg</code>コマンドでインストールすることにする。もし必要があれば、portsでインストールしてもよい。</p>
+         <pre class="shell"><code>% sudo pkg install apache24
 
 Message from apr-1.7.3.1.6.3_1:
 
@@ -252,64 +261,66 @@ have issues starting depending on the modules you are using.
 
 Please compare the existing httpd.conf with httpd.conf.sample
 and merge missing modules/instructions into httpd.conf!</code></pre>
-   <p><code>apr</code>と<code>apache24</code>についてのメッセージが出る。ここでは後者のメッセージについて一つずつ読んでいこう。</p>
-   <blockquote>
-   <p>To run apache www server from startup, add
-   <code>apache24_enable="yes"</code> in your /etc/rc.conf. Extra
-   options can be found in startup script.</p>
-   </blockquote>
-   <p>「スタートアップ時にapache
-   Webサーバーを実行するには、<code>apache24_enable="yes"</code>を、あなたの<code>/etc/rc.conf</code>に記述してください。その他の選択肢はスタートアップスクリプトに記述されています。」</p>
-   <p>これに書かれている通り、<code>/etc/rc.conf</code>に記述する必要がある。他にも<code>apache24_http_accept_enable="YES"</code>を指定したいので、ここでは<code>/etc/rc.conf.d</code>ディレクトリに<code>apache24</code>ファイルを新規作成して、これらを記述することにする。</p>
-   <pre class="shell"><code>% sudo vim /etc/rc.conf.d/apache24
+         <p><code>apr</code>と<code>apache24</code>についてのメッセージが出る。ここでは後者のメッセージについて一つずつ読んでいこう。</p>
+         <blockquote>
+         <p>To run apache www server from startup, add
+         <code>apache24_enable="yes"</code> in your /etc/rc.conf. Extra
+         options can be found in startup script.</p>
+         </blockquote>
+         <p>「スタートアップ時にapache
+         Webサーバーを実行するには、<code>apache24_enable="yes"</code>を、あなたの<code>/etc/rc.conf</code>に記述してください。その他の選択肢はスタートアップスクリプトに記述されています。」</p>
+         <p>これに書かれている通り、<code>/etc/rc.conf</code>に記述する必要がある。他にも<code>apache24_http_accept_enable="YES"</code>を指定したいので、ここでは<code>/etc/rc.conf.d</code>ディレクトリに<code>apache24</code>ファイルを新規作成して、これらを記述することにする。</p>
+         <pre class="shell"><code>% sudo vim /etc/rc.conf.d/apache24
 apache24_enable=&quot;YES&quot;
 apache24_http_accept_enable=&quot;YES&quot;</code></pre>
-   <p>続くメッセージは次の通り。</p>
-   <blockquote>
-   <p>Your hostname must be resolvable using at least 1 mechanism in
-   /etc/nsswitch.conf typically DNS or /etc/hosts or apache might have
-   issues starting depending on the modules you are using.</p>
-   </blockquote>
-   <p>「あなたのホスト名は、通常はDNSまたは<code>/etc/hosts</code>などの<code>/etc/nsswitch.conf</code>に含まれる少なくとも1つのメカニズムを使用して名前解決可能である必要があります。そうではない場合、使用しているモジュールに応じて、Apacheが起動しないか問題が発生する可能性があります。」</p>
-   <p>今回はIPアドレスを指定してのアクセスしか想定していないので、この注意書きは無視することにする。</p>
-   <p>次に、</p>
-   <blockquote>
-   <ul>
-   <li><p>apache24 default build changed from static MPM to modular
-   MPM</p></li>
-   <li><p>more modules are now enabled per default in the port</p></li>
-   <li><p>icons and error pages moved from WWWDIR to DATADIR</p>
-   <p>If build with modular MPM and no MPM is activated in httpd.conf,
-   then mpm_prefork will be activated as default MPM in
-   etc/apache24/modules.d to keep compatibility with existing
-   php/perl/python modules!</p></li>
-   </ul>
-   </blockquote>
-   <p>「以下の変更点があります：</p>
-   <ul>
-   <li><code>apache24</code>のデフォルトビルドが静的MPMからモジュールMPMに変更されました。</li>
-   <li>このportのデフォルトで、より多くのモジュールが有効になりました。</li>
-   <li>アイコンとエラーページは、<code>WWWDIR</code>から<code>DATADIR</code>に移動しました。</li>
-   </ul>
-   <p>モジュラーMPMでビルドし、<code>httpd.conf</code>でMPMが有効化されていない場合、既存のphp/perl/pythonモジュールとの互換性を維持するために、<code>etc/apache24/modules.d</code>内で<code>mpm_prefork</code>がデフォルトのMPMとして有効化されます。」</p>
-   <p>ここで、MPMとは、multi-processing module
-   の略称で、Apacheの並列処理に関連するモジュールである。このモジュールには<code>prefork</code>/<code>worker</code>/<code>event</code>の3種類の振る舞いがあり、本稿では<code>event</code>を選択することにする。これはこのセクションの最後のコードリストで記述する。</p>
-   <p>最後に<code>httpd.conf</code>に関する注意書きがある。</p>
-   <blockquote>
-   <p>Please compare the existing <code>httpd.conf</code> with
-   <code>httpd.conf.sample</code> and merge missing modules/instructions
-   into <code>httpd.conf</code>!</p>
-   </blockquote>
-   <p>「既存の<code>httpd.conf</code>と<code>httpd.conf.sample</code>を比較し、欠けているモジュールや指示を<code>httpd.conf</code>に統合してください！」</p>
-   <p>今回はApacheを新規インストールしたので古い<code>httpd.conf</code>は存在しない。</p>
-   <p>さて、上に述べてきた注意点を含めて、今回使用する<code>httpd.conf</code>は本セクションの最後に示す。</p>
-   <p>このファイルで重要な点は、次の部分である。</p>
-   <pre class="apache"><code>&lt;FilesMatch &quot;\.php$&quot;&gt;
+         <p>続くメッセージは次の通り。</p>
+         <blockquote>
+         <p>Your hostname must be resolvable using at least 1 mechanism
+         in /etc/nsswitch.conf typically DNS or /etc/hosts or apache
+         might have issues starting depending on the modules you are
+         using.</p>
+         </blockquote>
+         <p>「あなたのホスト名は、通常はDNSまたは<code>/etc/hosts</code>などの<code>/etc/nsswitch.conf</code>に含まれる少なくとも1つのメカニズムを使用して名前解決可能である必要があります。そうではない場合、使用しているモジュールに応じて、Apacheが起動しないか問題が発生する可能性があります。」</p>
+         <p>今回はIPアドレスを指定してのアクセスしか想定していないので、この注意書きは無視することにする。</p>
+         <p>次に、</p>
+         <blockquote>
+         <ul>
+         <li><p>apache24 default build changed from static MPM to
+         modular MPM</p></li>
+         <li><p>more modules are now enabled per default in the
+         port</p></li>
+         <li><p>icons and error pages moved from WWWDIR to DATADIR</p>
+         <p>If build with modular MPM and no MPM is activated in
+         httpd.conf, then mpm_prefork will be activated as default MPM
+         in etc/apache24/modules.d to keep compatibility with existing
+         php/perl/python modules!</p></li>
+         </ul>
+         </blockquote>
+         <p>「以下の変更点があります：</p>
+         <ul>
+         <li><code>apache24</code>のデフォルトビルドが静的MPMからモジュールMPMに変更されました。</li>
+         <li>このportのデフォルトで、より多くのモジュールが有効になりました。</li>
+         <li>アイコンとエラーページは、<code>WWWDIR</code>から<code>DATADIR</code>に移動しました。</li>
+         </ul>
+         <p>モジュラーMPMでビルドし、<code>httpd.conf</code>でMPMが有効化されていない場合、既存のphp/perl/pythonモジュールとの互換性を維持するために、<code>etc/apache24/modules.d</code>内で<code>mpm_prefork</code>がデフォルトのMPMとして有効化されます。」</p>
+         <p>ここで、MPMとは、multi-processing module
+         の略称で、Apacheの並列処理に関連するモジュールである。このモジュールには<code>prefork</code>/<code>worker</code>/<code>event</code>の3種類の振る舞いがあり、本稿では<code>event</code>を選択することにする。これはこのセクションの最後のコードリストで記述する。</p>
+         <p>最後に<code>httpd.conf</code>に関する注意書きがある。</p>
+         <blockquote>
+         <p>Please compare the existing <code>httpd.conf</code> with
+         <code>httpd.conf.sample</code> and merge missing
+         modules/instructions into <code>httpd.conf</code>!</p>
+         </blockquote>
+         <p>「既存の<code>httpd.conf</code>と<code>httpd.conf.sample</code>を比較し、欠けているモジュールや指示を<code>httpd.conf</code>に統合してください！」</p>
+         <p>今回はApacheを新規インストールしたので古い<code>httpd.conf</code>は存在しない。</p>
+         <p>さて、上に述べてきた注意点を含めて、今回使用する<code>httpd.conf</code>は本セクションの最後に示す。</p>
+         <p>このファイルで重要な点は、次の部分である。</p>
+         <pre class="apache"><code>&lt;FilesMatch &quot;\.php$&quot;&gt;
         SetHandler &quot;proxy:fcgi://127.0.0.1:9000/&quot;
 &lt;/FilesMatch&gt;</code></pre>
-   <p>これは、拡張子<code>.php</code>へのリクエストを、<code>fcig://127.0.0.1:9000</code>に、すなわち<code>php-fpm</code>に渡して、PHPでの処理させることを指示するディレクティブである。これを記述しないとphpPgAdminは動作しない。</p>
-   <p>加えて、ここでphpPgAdminに関わるファイルについても述べておく。<code>httpd.conf</code>は、その最後の行に<code>Include</code>命令がある通り、<code>/usr/local/etc/apache24/Include</code>sディレクトリに含まれる<code>.conf</code>拡張子を持つファイルをインクルードする。このディレクトリに<code>phppgadmin.conf</code>ファイルを以下の通りに記述して作成しておく。</p>
-   <pre class="apache"><code>% sudo vim /usr/local/etc/apache24/Includes/phppgadmin.conf
+         <p>これは、拡張子<code>.php</code>へのリクエストを、<code>fcig://127.0.0.1:9000</code>に、すなわち<code>php-fpm</code>に渡して、PHPでの処理させることを指示するディレクティブである。これを記述しないとphpPgAdminは動作しない。</p>
+         <p>加えて、ここでphpPgAdminに関わるファイルについても述べておく。<code>httpd.conf</code>は、その最後の行に<code>Include</code>命令がある通り、<code>/usr/local/etc/apache24/Include</code>sディレクトリに含まれる<code>.conf</code>拡張子を持つファイルをインクルードする。このディレクトリに<code>phppgadmin.conf</code>ファイルを以下の通りに記述して作成しておく。</p>
+         <pre class="apache"><code>% sudo vim /usr/local/etc/apache24/Includes/phppgadmin.conf
 Alias /phppgadmin &quot;/usr/local/www/phpPgAdmin&quot;
 &lt;Directory &quot;/usr/local/www/phpPgAdmin&quot;&gt;
     DirectoryIndex index.php
@@ -317,10 +328,10 @@ Alias /phppgadmin &quot;/usr/local/www/phpPgAdmin&quot;
     Options FollowSymlinks
     Require ip 192.168.0.0/24 192.168.11.0/24
 &lt;/Directory&gt;</code></pre>
-   <p>このファイルでは、Webサーバーの<code>/phppgadmin</code>へのアクセスを、<code>/usr/local/www/phpPgAdmin</code>ディレクトリにエイリアスを作成して参照させることを指示している。ここで注意するのは、後で述べるが、phpPgAdminはそのアプリケーションファイルを<code>/usr/local/www/phpPgAdmin</code>にインストールすることである。</p>
-   <p>また、ディレクトリへのアクセスは<code>index.php</code>を参照するように指定している。これらにアクセスできるIPアドレスの範囲を、ローカルネットワークに限定している。</p>
-   <p><code>httpd.conf</code>ファイルを示す：</p>
-   <pre class="apache"><code>% grep -v -e &quot;^\s*#&quot; -e &quot;^\s*$&quot; /usr/local/etc/apache24/httpd.conf
+         <p>このファイルでは、Webサーバーの<code>/phppgadmin</code>へのアクセスを、<code>/usr/local/www/phpPgAdmin</code>ディレクトリにエイリアスを作成して参照させることを指示している。ここで注意するのは、後で述べるが、phpPgAdminはそのアプリケーションファイルを<code>/usr/local/www/phpPgAdmin</code>にインストールすることである。</p>
+         <p>また、ディレクトリへのアクセスは<code>index.php</code>を参照するように指定している。これらにアクセスできるIPアドレスの範囲を、ローカルネットワークに限定している。</p>
+         <p><code>httpd.conf</code>ファイルを示す：</p>
+         <pre class="apache"><code>% grep -v -e &quot;^\s*#&quot; -e &quot;^\s*$&quot; /usr/local/etc/apache24/httpd.conf
 ServerRoot &quot;/usr/local&quot;
 Listen 80
 LoadModule mpm_event_module libexec/apache24/mod_mpm_event.so
@@ -399,19 +410,19 @@ SSLRandomSeed connect builtin
     SetHandler &quot;proxy:fcgi://127.0.0.1:9000/&quot;
 &lt;/FilesMatch&gt;
 Include etc/apache24/Includes/*.conf</code></pre>
-   <p>ここで、コメントアウト部分は含まれていないことに注意されたい。</p>
-   <h2
-   id="phppgadminをインストールする">phpPgAdminをインストールする</h2>
-   <p>さて、本題のphpPgAdminのインストールへ話題を移そう。</p>
-   <p>phpPgAdminのportは<code>/usr/ports/databases/phppgadmin</code>のディレクトリにある。</p>
-   <p><code>make config</code>で設定できるオプションは存在しないので、そのまま<code>make</code>コマンドでビルドをして構わない。</p>
-   <pre class="shell"><code>% cd /usr/ports/databases/phppgadmin
+         <p>ここで、コメントアウト部分は含まれていないことに注意されたい。</p>
+         <h2
+         id="phppgadminをインストールする">phpPgAdminをインストールする</h2>
+         <p>さて、本題のphpPgAdminのインストールへ話題を移そう。</p>
+         <p>phpPgAdminのportは<code>/usr/ports/databases/phppgadmin</code>のディレクトリにある。</p>
+         <p><code>make config</code>で設定できるオプションは存在しないので、そのまま<code>make</code>コマンドでビルドをして構わない。</p>
+         <pre class="shell"><code>% cd /usr/ports/databases/phppgadmin
 % sudo make
 % sudo make install</code></pre>
-   <p>インストールすると、<code>/usr/local/www</code>ディレクトリに<code>phpPgAdmin</code>ディレクトリが作成され、そこにphpファイルなどからなるWebアプリケーションの本体となるファイルが配置される。</p>
-   <p>メインの設定ファイルは<code>conf/config.inc.php</code>であり、<code>classes/database/Connection.php</code>にはデータベースへの接続を管理する設定がある。</p>
-   <p>ここで後者にはPostgreSQLバージョン15に関するドライバーの記述が欠けているので、78行目付近に以下のように1行追加する。</p>
-   <pre class="php"><code>% sudo vi /usr/local/www/phpPgAdmin/classes/database/Connection.php
+         <p>インストールすると、<code>/usr/local/www</code>ディレクトリに<code>phpPgAdmin</code>ディレクトリが作成され、そこにphpファイルなどからなるWebアプリケーションの本体となるファイルが配置される。</p>
+         <p>メインの設定ファイルは<code>conf/config.inc.php</code>であり、<code>classes/database/Connection.php</code>にはデータベースへの接続を管理する設定がある。</p>
+         <p>ここで後者にはPostgreSQLバージョン15に関するドライバーの記述が欠けているので、78行目付近に以下のように1行追加する。</p>
+         <pre class="php"><code>% sudo vi /usr/local/www/phpPgAdmin/classes/database/Connection.php
                 // Detect version and choose appropriate database driver
                 switch (substr($version,0,2)) {
                         case &#39;15&#39;: return &#39;Postgres&#39;; break; // &lt;-- NEW
@@ -421,47 +432,50 @@ Include etc/apache24/Includes/*.conf</code></pre>
                         case &#39;11&#39;: return &#39;Postgres11&#39;; break;
                         case &#39;10&#39;: return &#39;Postgres10&#39;; break;
                 }</code></pre>
-   <p>cf. <a
-   href="https://www.server-world.info/query?os=Debian_12&amp;p=postgresql&amp;f=6">Debian
-   12 Bookworm : PostgreSQL 15 : phpPgAdmin インストール : Server
-   World</a></p>
-   <h2 id="phppgadminへアクセスする">phpPgAdminへアクセスする</h2>
-   <h3 id="webサーバーを起動する">Webサーバーを起動する</h3>
-   <p>ここでApache24を起動する。</p>
-   <pre class="shell"><code>% sudo service apache24 start</code></pre>
-   <p>起動メッセージに</p>
-   <pre class="shell"><code>Syntax OK
+         <p>cf. <a
+         href="https://www.server-world.info/query?os=Debian_12&amp;p=postgresql&amp;f=6">Debian
+         12 Bookworm : PostgreSQL 15 : phpPgAdmin インストール : Server
+         World</a></p>
+         <h2 id="phppgadminへアクセスする">phpPgAdminへアクセスする</h2>
+         <h3 id="webサーバーを起動する">Webサーバーを起動する</h3>
+         <p>ここでApache24を起動する。</p>
+         <pre class="shell"><code>% sudo service apache24 start</code></pre>
+         <p>起動メッセージに</p>
+         <pre class="shell"><code>Syntax OK
 Starting apache24.</code></pre>
-   <p>と表示されれば、起動は完了である。</p>
-   <p>ここで上のセクションで起動しておいた<code>php-fpm</code>のサービスの状態を確認しておこう。次のコマンドを実行する。</p>
-   <pre class="shell"><code>% service php-fpm status
+         <p>と表示されれば、起動は完了である。</p>
+         <p>ここで上のセクションで起動しておいた<code>php-fpm</code>のサービスの状態を確認しておこう。次のコマンドを実行する。</p>
+         <pre class="shell"><code>% service php-fpm status
 php_fpm is running as pid 5477.</code></pre>
-   <p>実行中のプロセスIDが表示されれば正常に動作している。</p>
-   <h3 id="ブラウザでphppgadminを開く">ブラウザでphpPgAdminを開く</h3>
-   <p>ブラウザのURLに<code>http://192.168.11.13/phppgadmin</code>と入力して、以下の画面が表示されれば成功である。</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/postgres/phppgadmin-top.png"
-   alt="phpPgAdmin - Top" />
-   <figcaption aria-hidden="true">phpPgAdmin - Top</figcaption>
-   </figure>
-   </div>
-   <p>「サーバー」を選択するとログイン画面が表示される。</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/postgres/phppgadmin-login.png"
-   alt="phpPgAdmin - Login" />
-   <figcaption aria-hidden="true">phpPgAdmin - Login</figcaption>
-   </figure>
-   </div>
-   <p>上のセクションで作成しておいたユーザー名とパスワードを入力する。画面が遷移して、データベース<code>sandbox</code>が表示されているのを確認できれば、本稿の目標は達成された。</p>
-   <div class="large-img">
-   <figure>
-   <img src="../img/postgres/phppgadmin-dblist.png"
-   alt="phpPgAdmin - Database list" />
-   <figcaption aria-hidden="true">phpPgAdmin - Database
-   list</figcaption>
-   </figure>
+         <p>実行中のプロセスIDが表示されれば正常に動作している。</p>
+         <h3
+         id="ブラウザでphppgadminを開く">ブラウザでphpPgAdminを開く</h3>
+         <p>ブラウザのURLに<code>http://192.168.11.13/phppgadmin</code>と入力して、以下の画面が表示されれば成功である。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/postgres/phppgadmin-top.png"
+         alt="phpPgAdmin - Top" />
+         <figcaption aria-hidden="true">phpPgAdmin - Top</figcaption>
+         </figure>
+         </div>
+         <p>「サーバー」を選択するとログイン画面が表示される。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/postgres/phppgadmin-login.png"
+         alt="phpPgAdmin - Login" />
+         <figcaption aria-hidden="true">phpPgAdmin - Login</figcaption>
+         </figure>
+         </div>
+         <p>上のセクションで作成しておいたユーザー名とパスワードを入力する。画面が遷移して、データベース<code>sandbox</code>が表示されているのを確認できれば、本稿の目標は達成された。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/postgres/phppgadmin-dblist.png"
+         alt="phpPgAdmin - Database list" />
+         <figcaption aria-hidden="true">phpPgAdmin - Database
+         list</figcaption>
+         </figure>
+         </div>
+      </div>
    </div>
 </main>
 </body>

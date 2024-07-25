@@ -40,110 +40,120 @@
       </div>
    </header>
 <main>
-   <h1 id="fortran-regular-expression-forgex-v2.0-released">Fortran
-   Regular Expression: Forgex v2.0 Released</h1>
-   <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
-   <p>Twitter: <a href="https://x.com/amasaki203"><span class="citation"
-   data-cites="amasaki203">@amasaki203</span></a></p>
-   <p>Posted on: 2024-07-10 JST</p>
-   <h2 id="abstract">Abstract</h2>
-   <p><a
-   href="https://github.com/ShinobuAmasaki/forgex/releases/tag/v2.0">Forgex
-   v2.0 with Lazy DFA is available.</a></p>
-   <h2 id="details">Details</h2>
-   <p>I have released version 2.0 of Forgex (short for Fortran Regular
-   Expression), and <a
-   href="https://github.com/ShinobuAmasaki/forgex">it is now available
-   on GitHub.</a></p>
-   <p>Starting with this version, I have adopted a lazy-evaluated
-   deterministic finite automaton (Lazy DFA) approach for subset
-   construction, which has reduced the consumption of time and memory
-   resources compared to using previous statically compiled DFA.</p>
-   <p>As a minor fix, I have added the <code>forgex_</code> prefix to
-   the names of all internal modules. This prevents module name
-   collisions when introducing Forgex into a new project. The API module
-   name <code>forgex</code> and the APIs of <code>.in.</code> and
-   <code>.match.</code> operators, and <code>regex</code> function will
-   remain unchanged.</p>
-   <p>Thank you.</p>
-   <hr />
-   <h2 id="to-do">To Do</h2>
-   <p>Here are some of the things I am considering for the future of
-   this project:</p>
-   <ul>
-   <li>improving documentation of the internal implementation for
-   developers (<em>top priority</em>),</li>
-   <li>optimizing with a literal search method,</li>
-   <li>supporting escape sequences for Unicode,</li>
-   <li>Parallelizing matching.</li>
-   </ul>
-   <h2 id="memo">Memo</h2>
-   <p><em>The following are just my own thoughts and notes, so I cannot
-   guarantee their accuracy.</em></p>
-   <h3 id="documentation">Documentation</h3>
-   <p>​ I am trying to decide where to place and how to build the
-   documentation for my Fortran project. Should I put it in the main
-   repository or create a separate repository for the documentation?
-   Should I use FORD or Sphinx? FORD is very easy to use as it
-   automatically generates the reference documentation, but I am
-   considering Sphinx because of the wide selection of visual themes and
-   good typesetting.</p>
-   <h3 id="regex-literals-optimization">Regex Literals Optimization</h3>
-   <p>​ The regex literals optimization is a method which avoids
-   executing the regex engine on parts of the input character string
-   that cannot possibly match the regex pattern (cf. [5]). I need to
-   think in advance about which part of the engine this feature should
-   be implemented in. Since I want to avoid changing the syntax tree
-   construction as much as possible, would it be better to implement
-   this naively in a relatively shallow layer, in a module close to the
-   users and API?</p>
-   <h3 id="parallelization">Parallelization</h3>
-   <p>​ The thread parallelization of regex engines can be discussed in
-   two parts: DFA construction and matching. Parallelizing DFA
-   construction will undoubtedly be difficult. Care must be taken to
-   avoid race conditions. On the other hand, parallelizing matching is
-   more realistic, and is possible if I prepare as many pointer
-   variables as there are threads, with the upper limit being the number
-   of starting points for matching. In other words, the
-   <code>.in.</code> operator and the <code>regex</code> function can be
-   parallelized, but the <code>.match.</code> operator cannot.</p>
-   <p>​ The above discussion pertains to <strong>static</strong> DFA
-   construction. However, in Lazy DFA, it will be necessary to balance
-   both of these, that is, to avoid race conditions during matching and
-   execute DFA construction in parallel. At this point, I don’t know
-   whether this is possible or not, so I need to learn by reading
-   computer science papers and studying other implementations of regex
-   engines.</p>
-   <p>Nonetheless, even if I were to implement it to this extent, it is
-   unclear whether I could expect any significant from
-   parallelization.</p>
-   <h3 id="miscellaneous">Miscellaneous</h3>
-   <ul>
-   <li>I would like to implement escape sequences for Unicode, adopting
-   a notation that is widely used in other engines. But which one should
-   I use?</li>
-   <li>I would like to have more effective testing methods and a
-   sufficient number of test cases.]</li>
-   </ul>
-   <hr />
-   <h2 id="references">References</h2>
-   <ol type="1">
-   <li><p><a
-   href="./new-light-on-fortran-string-processing-forgex-1st-release.html">Article
-   for version 1.0 release (including usage details)</a></p></li>
-   <li><p><a
-   href="https://qiita.com/amasaki203/items/9382f05f7c3efafea7a9">Article
-   for version 1.0 release in Japanese</a></p></li>
-   <li><p><a href="https://github.com/ShinobuAmasaki/forgex">Forgex
-   Repository on GitHub</a></p></li>
-   <li><p><a
-   href="https://fortran-lang.discourse.group/t/new-release-of-forgex-fortran-regular-expression/8325">Discussions
-   on Fortran-lang Discourse</a></p></li>
-   <li><p><a
-   href="https://nitely.github.io/2020/11/30/regex-literals-optimization.html"><em>Regex
-   literals optimization</em> - Nitely’s Thoughts by Esteban Castro
-   Borsani</a></p></li>
-   </ol>
+   <div class="container">
+      <div class="child">
+         <h1
+         id="fortran-regular-expression-forgex-v2.0-released">Fortran
+         Regular Expression: Forgex v2.0 Released</h1>
+         <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2024-07-10 JST</p>
+         <h2 id="abstract">Abstract</h2>
+         <p><a
+         href="https://github.com/ShinobuAmasaki/forgex/releases/tag/v2.0">Forgex
+         v2.0 with Lazy DFA is available.</a></p>
+         <h2 id="details">Details</h2>
+         <p>I have released version 2.0 of Forgex (short for Fortran
+         Regular Expression), and <a
+         href="https://github.com/ShinobuAmasaki/forgex">it is now
+         available on GitHub.</a></p>
+         <p>Starting with this version, I have adopted a lazy-evaluated
+         deterministic finite automaton (Lazy DFA) approach for subset
+         construction, which has reduced the consumption of time and
+         memory resources compared to using previous statically compiled
+         DFA.</p>
+         <p>As a minor fix, I have added the <code>forgex_</code> prefix
+         to the names of all internal modules. This prevents module name
+         collisions when introducing Forgex into a new project. The API
+         module name <code>forgex</code> and the APIs of
+         <code>.in.</code> and <code>.match.</code> operators, and
+         <code>regex</code> function will remain unchanged.</p>
+         <p>Thank you.</p>
+         <hr />
+         <h2 id="to-do">To Do</h2>
+         <p>Here are some of the things I am considering for the future
+         of this project:</p>
+         <ul>
+         <li>improving documentation of the internal implementation for
+         developers (<em>top priority</em>),</li>
+         <li>optimizing with a literal search method,</li>
+         <li>supporting escape sequences for Unicode,</li>
+         <li>Parallelizing matching.</li>
+         </ul>
+         <h2 id="memo">Memo</h2>
+         <p><em>The following are just my own thoughts and notes, so I
+         cannot guarantee their accuracy.</em></p>
+         <h3 id="documentation">Documentation</h3>
+         <p>​ I am trying to decide where to place and how to build the
+         documentation for my Fortran project. Should I put it in the
+         main repository or create a separate repository for the
+         documentation? Should I use FORD or Sphinx? FORD is very easy
+         to use as it automatically generates the reference
+         documentation, but I am considering Sphinx because of the wide
+         selection of visual themes and good typesetting.</p>
+         <h3 id="regex-literals-optimization">Regex Literals
+         Optimization</h3>
+         <p>​ The regex literals optimization is a method which avoids
+         executing the regex engine on parts of the input character
+         string that cannot possibly match the regex pattern (cf. [5]).
+         I need to think in advance about which part of the engine this
+         feature should be implemented in. Since I want to avoid
+         changing the syntax tree construction as much as possible,
+         would it be better to implement this naively in a relatively
+         shallow layer, in a module close to the users and API?</p>
+         <h3 id="parallelization">Parallelization</h3>
+         <p>​ The thread parallelization of regex engines can be
+         discussed in two parts: DFA construction and matching.
+         Parallelizing DFA construction will undoubtedly be difficult.
+         Care must be taken to avoid race conditions. On the other hand,
+         parallelizing matching is more realistic, and is possible if I
+         prepare as many pointer variables as there are threads, with
+         the upper limit being the number of starting points for
+         matching. In other words, the <code>.in.</code> operator and
+         the <code>regex</code> function can be parallelized, but the
+         <code>.match.</code> operator cannot.</p>
+         <p>​ The above discussion pertains to <strong>static</strong>
+         DFA construction. However, in Lazy DFA, it will be necessary to
+         balance both of these, that is, to avoid race conditions during
+         matching and execute DFA construction in parallel. At this
+         point, I don’t know whether this is possible or not, so I need
+         to learn by reading computer science papers and studying other
+         implementations of regex engines.</p>
+         <p>Nonetheless, even if I were to implement it to this extent,
+         it is unclear whether I could expect any significant from
+         parallelization.</p>
+         <h3 id="miscellaneous">Miscellaneous</h3>
+         <ul>
+         <li>I would like to implement escape sequences for Unicode,
+         adopting a notation that is widely used in other engines. But
+         which one should I use?</li>
+         <li>I would like to have more effective testing methods and a
+         sufficient number of test cases.]</li>
+         </ul>
+         <hr />
+         <h2 id="references">References</h2>
+         <ol type="1">
+         <li><p><a
+         href="./new-light-on-fortran-string-processing-forgex-1st-release.html">Article
+         for version 1.0 release (including usage details)</a></p></li>
+         <li><p><a
+         href="https://qiita.com/amasaki203/items/9382f05f7c3efafea7a9">Article
+         for version 1.0 release in Japanese</a></p></li>
+         <li><p><a
+         href="https://github.com/ShinobuAmasaki/forgex">Forgex
+         Repository on GitHub</a></p></li>
+         <li><p><a
+         href="https://fortran-lang.discourse.group/t/new-release-of-forgex-fortran-regular-expression/8325">Discussions
+         on Fortran-lang Discourse</a></p></li>
+         <li><p><a
+         href="https://nitely.github.io/2020/11/30/regex-literals-optimization.html"><em>Regex
+         literals optimization</em> - Nitely’s Thoughts by Esteban
+         Castro Borsani</a></p></li>
+         </ol>
+      </div>
+   </div>
 </main>
 </body>
 </html>
