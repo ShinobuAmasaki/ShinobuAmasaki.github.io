@@ -17,7 +17,7 @@ code {
    color: #222;
    margin: 0 4px;
    padding: 0 4px;
-   background-color: #e8e8e8;
+   background-color: #f7f7f7;
 }
 
 main {
@@ -117,6 +117,13 @@ blockquote {
 
 
 @media screen and (max-width:959px) {
+	.container {
+		margin: 0;
+	}
+	.child {
+		margin: 0;
+		padding: 0;
+	}
 	p, h1, h2 {
 		font-size: 16;
 	}
