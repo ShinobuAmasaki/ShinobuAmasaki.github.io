@@ -129,6 +129,9 @@ blockquote {
 	p, ol, ul {
 		font-size: 12px;
 	}
+	ul {
+		padding-left: 5%;
+	}
    .large-img figure img {
       text-align: center;
       margin: 0px;
