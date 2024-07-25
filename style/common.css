@@ -113,6 +113,14 @@ blockquote {
 .br-sp {
 	display: none;
 }
+p {
+	text-align: justify;
+}
+
+p.logo
+{
+	text-align: left;
+}
 
 @media screen and (max-width:959px) {
 	.container {
