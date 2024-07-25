@@ -110,7 +110,9 @@ blockquote {
     background: #c2e8ed;
     font-weight: bold;
 }
-
+.br-sp {
+	display: none;
+}
 
 @media screen and (max-width:959px) {
 	.container {
@@ -146,4 +148,7 @@ blockquote {
    figure figcaption {
       text-align: left;
    }
+	.br-sp {
+		display: block;
+	}
 }
