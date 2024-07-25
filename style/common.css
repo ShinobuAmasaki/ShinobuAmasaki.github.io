@@ -120,7 +120,13 @@ blockquote {
 		margin: 0;
 		padding: 3%;
 	}
-	p, h1, h2 {
+   h1, h2 {
+		font-size: 18px;
+	}
+	h3 {
+		font-size: 16px;
+	}
+	p, ol, ul {
 		font-size: 12px;
 	}
    .large-img figure img {
