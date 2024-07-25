@@ -49,7 +49,7 @@ p, h1, h2  {
 	 */
 }
 main {
-	padding: 10px 12% 10px 12%;
+	padding: 10px 3% 10px 3%;
 }
 
 p {
@@ -118,9 +118,6 @@ blockquote {
 	}
 	.child {
 		margin: 0;
-		padding: 0;
-	}
-	main {
 		padding: 0;
 	}
 	p, h1, h2 {
