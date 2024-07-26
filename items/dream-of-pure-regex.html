@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+        <meta name="description" content="With the next Forgex release,
+what I want to do." />
+   <meta name="twitter:description" content="With the next Forgex
+release, what I want to do." />
+   <meta name="og:description" content="With the next Forgex release,
+what I want to do." />
+      <meta property="og:title" content="Dream of PURE Forgex" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/items/dream-of-pure-regex.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title>Dream of PURE Forgex | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/main/favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/highlight.css">
+   <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="https://shinobuamasaki.github.io/style/highlight.min.js"></script>
+   <script>hljs.highlightAll();</script>
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1 id="dream-of-pure-regex">Dream of <code>PURE</code>
+         Regex</h1>
+         <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2024-07-26 JST</p>
+         <h2 id="abstract">Abstract</h2>
+         <p>In the next major release of Fortran Regular Expression
+         library, I aim to provide <code>pure</code> operators and a
+         <code>pure</code> procedure.</p>
+         <h2 id="details">Details</h2>
+         <p>One of my recent personal projects is Forgex—Fortran Regular
+         Expression. <a
+         href="https://github.com/ShinobuAmasaki/forgex/releases/tag/v2.0">The
+         latest version, version 2.0</a>, is still under development. It
+         has implemented Lazy DFA and released its documentation. In
+         this version, the regular expression engine utilizes modern
+         Fortran features, particularly modules, object-oriented
+         programming, and pointers. Within the engine, regular
+         expressions are parsed using module variables of derived-types,
+         and matching is achieved by constructing an abstract syntax
+         tree (AST), an equivalent non-deterministic finite automaton
+         (NFA), and an equivalent deterministic finite automaton
+         (DFA).</p>
+         <p>In the next version of the project, one of the goals is to
+         support parallelization. There are two possible approaches to
+         parallelize within the library (although I’m not sure if the
+         first one is feasible):</p>
+         <ul>
+         <li>parallelizing the construction of automata,</li>
+         <li>parallelizing the matching process.</li>
+         </ul>
+         <p>The first approach involves the challenge of parallelizing
+         the process of constructing an NFA from an AST and a DFA from
+         an NFA. I’m not sure if this is even theoretically possible. If
+         any readers have information on this, please let me know (<a
+         href="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/issues">feel
+         free to contact me through GitHub issue page</a>).</p>
+         <p>The second approach is simpler. The <code>.in.</code>
+         operator and <code>regex</code> procedure shift the text string
+         to be matched from the beginning to the right by one character
+         at a time, trying to match, so in theory, this process can be
+         parallelized by the length of the string. However, this
+         approach cannot be applied to the <code>.match.</code>operator.
+         Additionally, the potential for parallelization will be limited
+         when the optimization by literal search[1, 2], which is planned
+         for future implementation, is incorporated.</p>
+         <p>I initially considered these approaches, but after
+         reassessing the assumption that users would benefit from
+         parallelization, I realized that parallelization did not need
+         to be achieved within the library. The <code>.in.</code>,
+         <code>.match.</code> and <code>regex</code> procedures provided
+         by the library depend only on two arguments—a pattern and text
+         string—and their results are determined without side effects.
+         In Fortran, procedures that have the properties of pure
+         functions can be written with the <code>pure</code> attribute.
+         These can be used in <code>do concurrent</code> constructs,
+         allowing the compiler to partially optimize the code block. In
+         other words, by implementing thread-safe procedures, users will
+         be able to handle parallelization themselves.</p>
+         <p>Therefore, the goal of Forgex version 3 is to rewrite the
+         code, giving all procedures the <code>pure</code> attribute,
+         and to provide <code>pure</code> <code>.in.</code> and
+         <code>.match.</code> operators, as well as
+         <code>pure subroutine regex</code> (which are
+         <code>function</code> in v2.0). To achieve this, the following
+         changes will be added:</p>
+         <ul>
+         <li>Remove pointers and module variables from the
+         implementation of AST, NFA, and DFA.</li>
+         <li>Implement the construction and processing of these using
+         arrays of derived-types with index management.</li>
+         <li>Allow reverse transitions in DFA for <strong>literal search
+         optimization</strong> [1, 2] which I intend to implement in a
+         later version.</li>
+         </ul>
+         <p>Finally, almost all of the source code will be rewritten,
+         but since Forgex v2.0 is only about 3000 lines, I don’t expect
+         it to be too difficult. As of July 24, about 80% of the new AST
+         construction has been written, so if all goes well, I should be
+         able to release version 3 within this year.</p>
+         <h2 id="conclusion">Conclusion</h2>
+         <p>Here’s what I’m planning for the next version of Forgex:</p>
+         <ul>
+         <li>Provide <code>pure</code> operators (<code>.in.</code> and
+         <code>.match.</code>) and a subroutine
+         (<code>regex</code>).</li>
+         <li>Remove pointers and module variables, implement arrays of
+         derived-types.</li>
+         <li>Allow for future extensions to implement literal search
+         optimization.</li>
+         </ul>
+         <h2 id="references">References</h2>
+         <ol type="1">
+         <li><a
+         href="https://nitely.github.io/2020/11/30/regex-literals-optimization.html"><em>Regex
+         literals optimization</em> - Nitely’s Thoughts</a>, Esteban C.
+         Borsani, 2020.</li>
+         <li><a
+         href="https://blog.burntsushi.net/regex-internals/"><em>Regex
+         engine internals as a library</em> - Andrew Gallant’s Blog</a>,
+         Andrew Gallant, 2023</li>
+         </ol>
+      </div>
+   </div>
+</main>
+</body>
+</html>
