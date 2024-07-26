@@ -1,5 +1,5 @@
 ---
-title: Dream of PURE Forgex
+title: Dream of PURE Regex
 date: 2024-07-26
 author: Amasaki Shinobu
 description: With the next Forgex release, what I want to do.
