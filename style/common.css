@@ -9,6 +9,8 @@
 	padding: 20px;
 	max-width: 900px;
 	background-color: #ffffff;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 code {
@@ -57,6 +59,7 @@ p {
 	line-height: 1.8;
 	font-size: 16px;
 	margin: 10px 0 10px 0;
+	white-space: normal;
 }
 a, a:visited{
 	color: #167abd;
@@ -87,7 +90,11 @@ a:hover {
 pre {
 	max-width: 100%;
 	display: block;
-	margin : 10px 0 10px 0;
+	margin : 10px 0;
+	white-space: pre;
+	overflow-x: auto;
+	padding: 10px;
+	box-sizing: border-box;
 }
 pre code a {
 	color: inherit;
@@ -135,6 +142,9 @@ p.logo
 	}
 	h3 {
 		font-size: 16px;
+	}
+	code {
+		font-size: 12px;
 	}
 	p, ol, ul {
 		font-size: 12px;
