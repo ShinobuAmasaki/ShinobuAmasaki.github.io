@@ -25,6 +25,7 @@ description: index.html
 - [amasaki-overlay: Amasaki Shinobu's Public Overlay for Gentoo Linux](https://github.com/ShinobuAmasaki/amasaki-overlay#amasaki-overlay)
 
 ## Posts
+- *2024-07-26:*<br class="br-sp"> [Dream of PURE Regex[EN]](items/dream-of-pure-regex.html)
 - *2024-07-10:*<br class="br-sp"> [Fortran Regular Expression: Forgex v2.0 Released[EN]](./items/fortran-regular-expression-forgex-v2.0-released.html)
 - *2024-03-10:*<br class="br-sp"> [OpenPBSクラスターを構築する【Ubuntu22.04編】[JA]](https://qiita.com/amasaki203/items/3aff46d570a49d1b216d)
 - *2024-03-06:*<br class="br-sp"> [ジョブスケジューラーOpenPBS/PBS Proの使い方[JA]](https://qiita.com/amasaki203/items/4c78d08a100a99cfc323)
