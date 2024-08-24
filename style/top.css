@@ -51,7 +51,7 @@ img#myicon {
    border-radius: 0.8em;
 }
 
-@media screen and (max-width:959px) {
+@media screen and (max-width:820px) {
    div.window {
       min-width: 360px;
       width: 90%;
