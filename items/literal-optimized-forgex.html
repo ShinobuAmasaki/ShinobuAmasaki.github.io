@@ -62,18 +62,17 @@ version 3.4 have been released." />
          <h3 id="api-changes">API changes</h3>
          <p>The <code>.in.</code> and <code>.match.</code> operators
          remain functional, and have been extended to work on arrays.
-         From version 3.0, the <code>regex</code> procedure has been
-         changed from a function to a subroutine. If you want to get a
-         string as the return value, use the <code>regex_f</code>
-         function. For detailed usage information, <a
+         From v3.0, the <code>regex</code> procedure has been changed
+         from a function to a subroutine. If you want to get a string as
+         the return value, use the <code>regex_f</code> function. For
+         detailed usage information, <a
          href="https://github.com/ShinobuAmasaki/forgex">see the README
-         in the repository</a>. The next section describes the two
-         operators with pure element attributes.</p>
+         in the repository</a>.</p>
          <h3 id="operators-with-pure-elemental-attribute">Operators with
          Pure Elemental attribute</h3>
          <p>A dream that I discussed in the previous article—to provide
          <code>pure</code> API procedures—has come true in v3.0. From
-         version 3.0 onward, Forgex provides API operators with
+         v3.0 onward, Forgex provides API operators with
          <code>pure elemental</code> attributes, and users can use them
          on array operations and in <code>do concurrent</code> blocks
          and OpenMP parallel blocks. While I could have parallelized the
@@ -120,31 +119,30 @@ end block</code></pre>
          helps avoid using global variables, which cannot be utilized in
          procedures with the <code>pure</code> attribute, by
          substituting component variables of derived types.</p>
-         <p>Note: the version 1.4 feature of remembering the DFA of
-         previous patterns has been removed, as it was incompatible with
-         the <code>pure</code> attribute of operators.</p>
+         <p>Note: the v1.4 feature of remembering the DFA of previous
+         patterns has been removed, as it was incompatible with the
+         <code>pure</code> attribute of operators.</p>
          <h3 id="literal-search-optimization">Literal Search
          Optimization</h3>
          <p>The previous article also discussed literal search
          optimization as a next step in this project. This feature has
-         been implemented in the version 3.3, and it performs more
-         efficiently than brute-force matching for certain regex
-         patterns and input text strings. For instance, consider
-         checking whether the regex pattern <code>ab[^x]d</code> is
-         contained in the input text <code>cdefghabcde</code>. This
-         matches <code>abcd</code> from the 7th to 10th characters. In
-         previous versions, the algorithm was naive and inefficient,
-         trying to match from the 1st character and, if that failed,
-         moving on to the 2nd character, and so on. Literal search
-         optimization first extracts the prefix <code>ab</code> and the
-         suffix <code>d</code> from the AST of the regex pattern, then
-         uses the <code>index</code> intrinsic function to locate the
-         prefix. The <code>index</code> function is much faster than the
-         regex engine, so it skips the first 6 characters,
-         <code>cdefgh</code>, which do not need to be checked, and
-         starts the engine directly from the 7th character. This reduces
-         unnecessary comparisons and enables more efficient
-         processing.</p>
+         been implemented in the v3.3, and it performs more efficiently
+         than brute-force matching for certain regex patterns and input
+         text strings. For instance, consider checking whether the regex
+         pattern <code>ab[^x]d</code> is contained in the input text
+         <code>cdefghabcde</code>. This matches <code>abcd</code> from
+         the 7th to 10th characters. In previous versions, the algorithm
+         was naive and inefficient, trying to match from the 1st
+         character and, if that failed, moving on to the 2nd character,
+         and so on. Literal search optimization first extracts the
+         prefix <code>ab</code> and the suffix <code>d</code> from the
+         AST of the regex pattern, then uses the <code>index</code>
+         intrinsic function to locate the prefix. The <code>index</code>
+         function is much faster than the regex engine, so it skips the
+         first 6 characters, <code>cdefgh</code>, which do not need to
+         be checked, and starts the engine directly from the 7th
+         character. This reduces unnecessary comparisons and enables
+         more efficient processing.</p>
          <p>Currently, one prefix and one suffix are extracted as
          literal strings, excluding character classes and closures. For
          alternations, the intersection of the literal is extracted.
@@ -155,14 +153,14 @@ end block</code></pre>
          Therefore, I’m currently wondering if this should be
          implemented.</p>
          <h3 id="command-line-tool">Command-line Tool</h3>
-         <p>Although not mentioned in the previous article, since
-         version 3.1 the development process has required additional
-         tools. Starting with version 3.2 a command line tool was
-         introduced that can be used to test and benchmark Forgex. This
-         application uses both Forgex’s internal modules and APIs to
-         provide step-by-step information on how the AST, NFA and DFA
-         are generated from the pattern, along with approximate
-         execution time and memory consumption.</p>
+         <p>Although not mentioned in the previous article, since v3.1
+         the development process has required additional tools. Starting
+         with v3.2 a command line tool was introduced that can be used
+         to test and benchmark Forgex. This application uses both
+         Forgex’s internal modules and APIs to provide step-by-step
+         information on how the AST, NFA and DFA are generated from the
+         pattern, along with approximate execution time and memory
+         consumption.</p>
          <p>For example, to perform the matching discussed in the
          previous section, run the following command:</p>
          <pre class="shell"><code>forgex-cli find match lazy-dfa &quot;ab[^x]d&quot; .in. &quot;cdefghabcde&quot;</code></pre>
@@ -217,8 +215,8 @@ memory (estimated):       827
          <p>From the result, we can see that in this example,
          <code>ab</code> is extracted as the prefix and <code>d</code>
          is extracted as the suffix. <a
-         href="https://shinobuamasaki.github.io/forgex">See the
-         documentation for more information on how to use this
+         href="https://shinobuamasaki.github.io/forgex/page/English/forgex_on_command_line_en.html">See
+         the documentation for more information on how to use this
          command.</a></p>
          <h3 id="bugfix">Bugfix</h3>
          <p>Versions prior to v3.3 did not handle position matching

@@ -24,15 +24,14 @@ Referring to [my previous article](./dream-of-pure-regex.html), here is an intro
 ### API changes
 
 The `.in.` and `.match.` operators remain functional, and have been extended to work on arrays.
-From version 3.0, the `regex` procedure has been changed from a function to a subroutine.
+From v3.0, the `regex` procedure has been changed from a function to a subroutine.
 If you want to get a string as the return value, use the `regex_f` function.
 For detailed usage information, [see the README in the repository](https://github.com/ShinobuAmasaki/forgex).
-The next section describes the two operators with pure element attributes.
 
 ### Operators with Pure Elemental attribute
 
 A dream that I discussed in the previous article—to provide `pure` API procedures—has come true in v3.0.
-From version 3.0 onward, Forgex provides API operators with `pure elemental` attributes, and users can use them on array operations and in `do concurrent` blocks and OpenMP parallel blocks.
+From v3.0 onward, Forgex provides API operators with `pure elemental` attributes, and users can use them on array operations and in `do concurrent` blocks and OpenMP parallel blocks.
 While I could have parallelized the internal processing of Forgex to achieve faster text processing, I chose instead to provide a robust, easy-to-use API that, although not particularly fast, is primarily aimed at assisting with numerical calculations which is the main interest of Fortran users. 
 
 Below is an example of using the `.in.` operator in an array operation:
@@ -65,12 +64,12 @@ Each node in the tree and automata is defined as a derived type, and to represen
 Using type-bound procedures reduces the number of arguments needed when calling procedures, resulting in more concise code description.
 Additionally, this implementation helps avoid using global variables, which cannot be utilized in procedures with the `pure` attribute, by substituting component variables of derived types.
 
-Note: the version 1.4 feature of remembering the DFA of previous patterns has been removed, as it was incompatible with the `pure` attribute of operators.
+Note: the v1.4 feature of remembering the DFA of previous patterns has been removed, as it was incompatible with the `pure` attribute of operators.
 
 ### Literal Search Optimization
 
 The previous article also discussed literal search optimization as a next step in this project.
-This feature has been implemented in the version 3.3, and it performs more efficiently than brute-force matching for certain regex patterns and input text strings. 
+This feature has been implemented in the v3.3, and it performs more efficiently than brute-force matching for certain regex patterns and input text strings. 
 For instance, consider checking whether the regex pattern `ab[^x]d` is contained in the input text `cdefghabcde`.
 This matches `abcd` from the 7th to 10th characters.
 In previous versions, the algorithm was naive and inefficient, trying to match from the 1st character and, if that failed, moving on to the 2nd character, and so on.
@@ -85,8 +84,8 @@ Therefore, I'm currently wondering if this should be implemented.
 
 ### Command-line Tool
 
-Although not mentioned in the previous article, since version 3.1 the development process has required additional tools.
-Starting with version 3.2 a command line tool was introduced that can be used to test and benchmark Forgex.
+Although not mentioned in the previous article, since v3.1 the development process has required additional tools.
+Starting with v3.2 a command line tool was introduced that can be used to test and benchmark Forgex.
 This application uses both Forgex's internal modules and APIs to provide step-by-step information on how the AST, NFA and DFA are generated from the pattern, along with approximate execution time and memory consumption.
 
 For example, to perform the matching discussed in the previous section, run the following command:
@@ -162,7 +161,7 @@ memory (estimated):       827
 </div>
 
 From the result, we can see that in this example, `ab` is extracted as the prefix and `d` is extracted as the suffix.
-[See the documentation for more information on how to use this command.](https://shinobuamasaki.github.io/forgex)
+[See the documentation for more information on how to use this command.](https://shinobuamasaki.github.io/forgex/page/English/forgex_on_command_line_en.html)
 
 ### Bugfix
 
