@@ -1,0 +1,5 @@
+.none-highlight-user pre code * {
+   color: black;
+   font-style: normal;
+   font-weight: normal;
+}
