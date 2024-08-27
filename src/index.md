@@ -25,6 +25,7 @@ description: index.html
 - [amasaki-overlay: Amasaki Shinobu's Public Overlay for Gentoo Linux](https://github.com/ShinobuAmasaki/amasaki-overlay#amasaki-overlay)
 
 ## Posts
+- *2024-08-25:*<br class="br-sp"> [Fortranで正規表現 その2[JA]](https://qiita.com/amasaki203/items/2c4e4db44b0d443abcb5)
 - *2024-08-25:*<br class="br-sp"> [Forgex v3.4: Literal Search Optimizations[EN]](items/literal-optimized-forgex.html)
 - *2024-07-26:*<br class="br-sp"> [Dream of PURE Regex[EN]](items/dream-of-pure-regex.html)
 - *2024-07-10:*<br class="br-sp"> [Fortran Regular Expression: Forgex v2.0 Released[EN]](./items/fortran-regular-expression-forgex-v2.0-released.html)
