@@ -44,6 +44,7 @@ jobs:
         run: |
          cp -r img site/img
          cp -r style site/style
+         cp favicon.ico site/.
 
       - name: Deploy Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.3
