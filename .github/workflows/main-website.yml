@@ -1,59 +1,59 @@
 name: main-website
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+   push:
+      branches: [ "main" ]
+   pull_request:
+      branches: [ "main" ]
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: write
+   build:
+      runs-on: ${{ matrix.os }}
+      permissions:
+         contents: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-24.04 ]
+      strategy:
+         fail-fast: false
+         matrix:
+            os: [ ubuntu-24.04 ]
       
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Install Pandoc
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install --no-install-recommends pandoc
-        pandoc --version
+      - name: Install Pandoc
+        run: |
+         sudo apt-get update
+         sudo apt-get -y install --no-install-recommends pandoc
+         pandoc --version
 
-    - name: Generate HTML files
-      run: |
-        mkdir -p site/items
-        pandoc -f markdown -t html --template=src/templates/index-template.html --eol=lf --toc --no-highlight -V pagetitle="index.html" src/index.md > site/index.html
-        for file in src/items/*.md; do
-          filename=$(basename -- $file)
-          filename="${filename%.*}.html"
-          pandoc -f markdown -t html --template=src/templates/template.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "site/items/$filename"
-        done
-        for file in src/items/with-katex/*.md; do
-          filename=$(basename -- $file)
-          filename="${filename%.*}.html"
-          pandoc -f markdown -t html5 --template=src/templates/template-with-katex.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "site/items/$filename"
-        done
+      - name: Generate HTML files
+        run: |
+         mkdir -p site/items
+         pandoc -f markdown -t html --template=src/templates/index-template.html --eol=lf --toc --no-highlight -V pagetitle="index.html" src/index.md > site/index.html
+         for file in src/items/*.md; do
+            filename=$(basename -- $file)
+            filename="${filename%.*}.html"
+            pandoc -f markdown -t html --template=src/templates/template.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "site/items/$filename"
+         done
+         for file in src/items/with-katex/*.md; do
+            filename=$(basename -- $file)
+            filename="${filename%.*}.html"
+            pandoc -f markdown -t html5 --template=src/templates/template-with-katex.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "site/items/$filename"
+         done
 
-    - name: Generate RSS file
-      run: |
-        mkdir -p rss
-        pandoc feed.yml -f markdown -t html --template ./src/rss/template_en.rss -o rss/feed.rss
+      - name: Generate RSS feed
+        run: |
+         mkdir -p site/rss
+         pandoc feed.yml -f markdown -t html --template ./src/rss/template_en.rss -o site/rss/feed_en.rss
 
-    - name: Copy image and style files
-      run: |
-        cp -r img site/img
-        cp -r style site/style
-        cp favicon.ico site/.
+      - name: Copy image and style files
+        run: |
+         cp -r img site/img
+         cp -r style site/style
+         cp favicon.ico site/.
 
-    - name: Deploy Pages
-      uses: JamesIves/github-pages-deploy-action@v4.4.3
-      with:
-        branch: gh-pages
-        folder: site
-              
+      - name: Deploy Pages
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        with:
+         branch: gh-pages
+         folder: site
+            
