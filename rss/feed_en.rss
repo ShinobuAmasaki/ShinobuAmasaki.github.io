@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+<title>Amasaki Shinobu's Website</title>
+<link>https://shinobuamasaki.github.io/</link>
+<description>Amasaki Shinobu's personal activities: Fortran, Parallel Processing, Comptational Geoscience<description>
+<langage>en</langage>
+<copyright>Amasaki Shinobu</copyright>
+<docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
+<pubDate>2024-09-02</pubDate>
+
+
+<image>
+<url>https://shinobuamasaki.github.io</url>
+<title>Welcome to Amasaki Shinobu's Website!</title>
+<link>https://shinobuamasaki.github.io/img/shinobu.png</link>
+<width>512</width>
+<height>512</height>
+<description>Amasaki Shinobu's icon</description>
+</image>
+
+<item>
+<title>Forgex v3.4 - Literal Search Optimizations</title>
+ <description>Fortran Regular Expression version 3.4 have been
+released.</description>
+ <author>Amasaki Shinobu</author>
+ <date>2024-08-25</date>
+</item>
+<item>
+<title>Dream of PURE Forgex</title>
+ <description>With the next Forgex release, what I want to
+do.</description>
+ <author>Amasaki Shinobu</author>
+ <date>2024-07-26</date>
+</item>
+
+</channel>
+</rss>
