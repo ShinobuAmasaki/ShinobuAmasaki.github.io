@@ -19,6 +19,7 @@ description: index.html
    - [Documentation](./libpq-fortran)
 - [Forgex - Fortran Regular Expression Engine](https://github.com/ShinobuAmasaki/forgex)
    - [Documentation](./forgex)
+   - [Forgex-CLI - Forgex Command Line Interface](https://github.com/ShinobuAmasaki/forgex-cli)
 - [fpm-completions - Command-line completion for fpm](https://github.com/ShinobuAmasaki/fpm-completions)
 
 ### My Overlay for Gentoo
