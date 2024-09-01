@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+<title>Amasaki Shinobu's Website</title>
+<link>https://shinobuamasaki.github.io/</link>
+<description>Amasaki Shinobu's personal activities: Fortran, Parallel Processing, Comptational Geoscience<description>
+<langage>en</langage>
+<copyright>Amasaki Shinobu</copyright>
+<docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
+$if(pubDate)$<pubDate>$pubDate$</pubDate>$endif$
+$if(lastBuildDate)$<lastBuildDate>$lastBuildDate$</lastBuildDate>$endif$
+
+<image>
+<url>https://shinobuamasaki.github.io</url>
+<title>Welcome to Amasaki Shinobu's Website!</title>
+<link>https://shinobuamasaki.github.io/img/shinobu.png</link>
+<width>512</width>
+<height>512</height>
+<description>Amasaki Shinobu's icon</description>
+</image>
+
+$for(item)$
+<item>
+$if(item.title)$
+<title>$item.title$</title>
+$endif$ $if(item.description)$
+<description>$item.description$</description>
+$endif$ $if(item.author)$
+<author>$item.author$</author>
+$endif$ $if(item.date)$
+<date>$item.date$</date>
+$endif$
+</item>
+$endfor$
+
+</channel>
+</rss>
