@@ -69,6 +69,8 @@ rss_feed = {
 }
 
 with open(rss_yaml_file, 'w', encoding='utf-8') as file:
+    file.write("---\n")
     yaml.dump(rss_feed, file, allow_unicode=True, sort_keys=False, default_flow_style=False, Dumper=FixIndentDumper)
+    file.write("---\n")
 
 print(f"RSS YAML file has been generated: {rss_yaml_file}")
