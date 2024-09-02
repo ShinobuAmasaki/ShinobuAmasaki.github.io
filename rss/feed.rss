@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
-<pubDate>Mon, 02 Sep 2024 11:48:43 +0900</pubDate>
+<pubDate>Mon, 02 Sep 2024 12:00:18 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,15 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>Forgex v3.5 released, Moved CLI tool to a New Repository</title>
+ <link>https://shinobuamasaki.github.io/items/forgex-v3.5-moved-cli-tool-to-separate-repository.html</link>
+ <description>A new version of Forgex, version 3.5, has been released.
+The command line tools provided in v3.2 and later have been moved to a
+separate repository starting with this version.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2024-09-02</pubDate>
+</item>
 <item>
 <title>Forgex v3.4 Released [EN]</title>
  <link>https://shinobuamasaki.github.io/items/literal-optimized-forgex.html</link>

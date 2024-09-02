@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+        <meta name="description" content="A new version of Forgex,
+version 3.5, has been released. The command line tools provided in v3.2
+and later have been moved to a separate repository starting with this
+version." />
+   <meta name="twitter:description" content="A new version of Forgex,
+version 3.5, has been released. The command line tools provided in v3.2
+and later have been moved to a separate repository starting with this
+version." />
+   <meta name="og:description" content="A new version of Forgex, version
+3.5, has been released. The command line tools provided in v3.2 and
+later have been moved to a separate repository starting with this
+version." />
+      <meta property="og:title" content="Forgex v3.5 released, Moved CLI
+tool to a New Repository" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/forgex-v3.5-moved-cli-tool-to-separate-repository.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title>Forgex v3.5 released, Moved CLI tool to a New
+Repository | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/highlight.css">
+   <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="https://shinobuamasaki.github.io/style/highlight.min.js"></script>
+   <script>hljs.highlightAll();</script>
+   <link rel="stylesheet" type="text/css" href="../style/none-highlight.css">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1 id="forgex-v3.5-moved-cli-tool-to-new-repository">Forgex
+         v3.5: Moved CLI Tool to New Repository</h1>
+         <p>Author: Amasaki Shinobu（雨崎しのぶ）</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2024-09-02 JST</p>
+         <h2 id="abstract">Abstract</h2>
+         <p><a href="">Forgex—Fortran Regular Expression—version 3.5</a>
+         has been released. In this release, Forgex command line tool
+         (<code>forgex-cli</code>) has been moved to a new repository as
+         <a href="">Forgex-CLI</a> on GitHub.</p>
+         <p>None of the Forgex APIs have changed.</p>
+         <h2 id="details">Details</h2>
+         <h3 id="source-code-bloat">Source Code Bloat</h3>
+         <p>Since the release of Forgex v3.4, the lines of code in the
+         source files across the entire project have reached 9,000. Most
+         of the increase comes from code that constructs the
+         <code>forgex-cli</code> executable file, which is used for
+         debugging, testing, and benchmarking. This has resulted in
+         compilation times roughly twice as long as before. This
+         situation is problematic for me as a developer and for most
+         users who only need the library.</p>
+         <h3 id="c-code">C code</h3>
+         <p>Additionally, a module included in <code>forgex-cli</code>
+         that measures execution time was also an issue. This module
+         required different handling depending on the OS to achieve the
+         time resolution needed for measurements. On Windows, it invokes
+         system calls for high-resolution timing, but on other OSes,
+         successful builds require the following stub code written in
+         C.</p>
+         <pre class="c"><code>// This file is a stub to building on Unix-like systems.
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include &lt;stdbool.h&gt;
+bool QueryPerformanceCounter(long long PerformanceCount_count) {
+return false;
+}
+bool QueryPerformanceFrequency(long long Frequency_countPerSec) {
+return false;
+}
+#endif</code></pre>
+         <p>This required using system calls on Windows and
+         corresponding stub function with the same name on other
+         systems, necessitating the use of the C preprocessor’s
+         functionality. I tried to write the stub in Fortran to avoid
+         relying on C code, but GNU Fortran compiler’s predefined macros
+         provided insufficient for this purpose.</p>
+         <p>Below is a list of predefined macros provided by GNU Fortran
+         v13.1.0 in MinGW-W64 on Windows 10:</p>
+         <pre><code>PS&gt; touch foo.f90
+PS&gt; gfortran -cpp -E -dM .\foo.f90
+# 1 &quot;.\\foo.f90&quot;
+# 1 &quot;&lt;built-in&gt;&quot;
+# 1 &quot;&lt;command-line&gt;&quot;
+# 1 &quot;.\\foo.f90&quot;
+
+#define __ATOMIC_ACQUIRE 2
+#define __CHAR_BIT__ 8
+#define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
+#define __ORDER_LITTLE_ENDIAN__ 1234
+#define __ORDER_PDP_ENDIAN__ 3412
+#define __GFC_REAL_10__ 1
+#define __FINITE_MATH_ONLY__ 0
+#define __GNUC_PATCHLEVEL__ 0
+#define __GFC_INT_2__ 1
+#define __SIZEOF_INT__ 4
+#define __SIZEOF_POINTER__ 8
+#define __GFORTRAN__ 1
+#define __GFC_REAL_16__ 1
+#define __STDC_HOSTED__ 0
+#define __NO_MATH_ERRNO__ 1
+#define __SIZEOF_FLOAT__ 4
+#define __pic__ 1
+#define _LANGUAGE_FORTRAN 1
+#define __SIZEOF_LONG__ 4
+#define __GFC_INT_8__ 1
+#define _REENTRANT 1
+#define __SIZEOF_SHORT__ 2
+#define __GNUC__ 13
+#define __SIZEOF_LONG_DOUBLE__ 16
+#define __BIGGEST_ALIGNMENT__ 16
+#define __ATOMIC_RELAXED 0
+#define __GFC_INT_1__ 1
+#define __ORDER_BIG_ENDIAN__ 4321
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
+#define __SIZEOF_SIZE_T__ 8
+#define __PIC__ 1
+#define __SIZEOF_DOUBLE__ 8
+#define __ATOMIC_CONSUME 1
+#define __GNUC_MINOR__ 1
+#define __GFC_INT_16__ 1
+#define __ATOMIC_SEQ_CST 5
+#define __SIZEOF_LONG_LONG__ 8
+#define __ATOMIC_ACQ_REL 4
+#define __ATOMIC_RELEASE 3
+#define __VERSION__ &quot;13.1.0&quot;</code></pre>
+         <p>Unlike the C compiler, these macros (<code>WIN32</code>,
+         <code>WIN64</code>, <code>_WIN32</code>, and
+         <code>_WIN64</code>) are not defined in the Fortran compiler.
+         Therefore, it is advisable not to use these macros to determine
+         the OS. For more detailed information on preprocessor usage in
+         Fortran, refer to Reference 3. The discussion in Reference 3
+         provided valuable insights for me.</p>
+         <h3 id="my-decision">My Decision</h3>
+         <p>Due to the reasons mentioned above, I decided to move the
+         Forgex command line tool to a separate repository.
+         <code>forgex-cli</code> will now be provided at the following
+         repository link:</p>
+         <p>https://github.com/ShinobuAmasaki/forgex-cli</p>
+         <p>This choice has the following advantages over providing
+         command line tool bundled with Forgex:</p>
+         <ul>
+         <li>It keeps the repository lightweight.</li>
+         <li>Users who don’t need the CLI tool need not compile its
+         files.</li>
+         <li>It ensures that the only compiler required for the Forgex
+         repository is Fortran.</li>
+         </ul>
+         <p>However, there are also some disadvantages:</p>
+         <ul>
+         <li>It is necessary to manage two repositories.</li>
+         <li>It takes more effort to synchronize source code during
+         development.</li>
+         <li>The documentation of Forgex’s functionalities generated by
+         FORD may become scattered.</li>
+         </ul>
+         <p>After considering these issues, I have concluded that, for
+         the time being, I will accept the disadvantages of the latter
+         in favor of the benefits of the former.</p>
+         <p>It is possible to build the package for each OS using CMake
+         functions or command line arguments of the Fortran Package
+         Manager (FPM). However, from the viewpoint of providing
+         libraries that can be easily used with FPM, I will opt for
+         separate repositories, at least until FPM can provide
+         platform-specific builds in a more transparent manner (i.e. by
+         specifying them in the manifest file
+         <code>fpm.toml</code>).</p>
+         <h2 id="conclusion">Conclusion</h2>
+         <p>While it is a useful command line tool for my purposes, I
+         have concluded that Forgex should not ship
+         <code>forgex-cli</code> with its repository. The minimal amount
+         of C code that was introduced in Forgex v3.2 has been relocated
+         to Forgex-CLI, and Forgex is once again a pure Fortran
+         repository. As the developer of both projects, I believe the
+         benefits outweigh the extra effort required to maintain a
+         separate repository.</p>
+         <h2 id="references">References</h2>
+         <ol type="1">
+         <li><a
+         href="https://github.com/ShinobuAmasaki/forgex">ShinobuAmasaki/forgex
+         | GitHub.com</a></li>
+         <li><a
+         href="https://github.com/ShinobuAmasaki/forgex-cli">ShinobuAmasaki/forgex-cli
+         | GitHub.com</a></li>
+         <li><a
+         href="https://fortran-lang.discourse.group/t/problem-using-c-preprocessor-with-gfortran/64?u=amasaki203">Problem
+         using ‘C’ preprocessor with gfortran | Fortran-lang
+         Discourse</a></li>
+         </ol>
+      </div>
+   </div>
+</main>
+</body>
+</html>
