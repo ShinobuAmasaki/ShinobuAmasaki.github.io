@@ -4,3 +4,5 @@ a.out
 *.swp
 libpq-fortran
 forgex
+*.rss
+feed.yaml

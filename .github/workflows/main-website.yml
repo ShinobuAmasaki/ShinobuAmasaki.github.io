@@ -56,13 +56,14 @@ jobs:
       - name: Generate RSS feed
         run: |
          mkdir -p site/rss
-         pandoc feed.yaml -f markdown -t html --template ./src/rss/template.rss --metadata title="RSS feed for Amasaki Shinobu's Website" -o site/rss/feed.rss
+         pandoc feed.yaml -f markdown -t html --template ./src/rss/template.rss --metadata title="RSS feed for Amasaki Shinobu's Website" -o feed.rss
 
       - name: Copy image and style files
         run: |
          cp -r img site/img
          cp -r style site/style
          cp favicon.ico site/.
+         cp feed.rss site/.
 
       - name: Deploy Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.3
