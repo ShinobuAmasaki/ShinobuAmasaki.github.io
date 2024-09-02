@@ -1,6 +1,7 @@
 ---
-title: Forgex v2.0 Released
+title: Forgex v2.0 Released [EN]
 date: 2024-07-10
+link: https://shinobuamasaki.github.io/items/fortran-regular-expression-forgex-v2.0-released.html
 author: Amasaki Shinobu
 description: Fortran Regular Expresion (Forgex) v2.0 have been released.
 ---

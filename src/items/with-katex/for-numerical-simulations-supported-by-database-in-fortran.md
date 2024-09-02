@@ -1,6 +1,8 @@
 ---
-title: For Numerical Simulations Supported by Database in Fortran
+title: For Numerical Simulations Supported by Database in Fortran [EN]
 date: 2023-12-10
+link: https://shinobuamasaki.github.io/items/for-numerical-simulations-supported-by-database-in-fortran.html
+description: Article on how to utilize database servers for Fortran numerical simulations
 latex: true
 ---
 

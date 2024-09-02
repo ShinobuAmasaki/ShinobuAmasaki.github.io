@@ -1,6 +1,7 @@
 ---
-title: How to Use Coarray Fortran with MPI I/O
+title: How to Use Coarray Fortran with MPI I/O [EN]
 date:  2023-08-10
+link: https://shinobuamasaki.github.io/items/how-to-use-coarray-fortran-with-mpi-io.html
 author: Amasaki Shinobu
 description: An article about Coarray feature of Fortran and Message Passing Interface.
 ---

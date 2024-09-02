@@ -1,6 +1,7 @@
 ---
-title: Dream of PURE Regex
+title: Dream of PURE Regex [EN]
 date: 2024-07-26
+link: https://shinobuamasaki.github.io/items/dream-of-pure-regex.html
 author: Amasaki Shinobu
 description: With the next Forgex release, what I want to do.
 ---

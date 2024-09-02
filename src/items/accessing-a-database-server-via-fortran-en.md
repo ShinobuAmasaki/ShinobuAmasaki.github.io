@@ -1,6 +1,7 @@
 ---
-title: Accessing Database Server via Fortran
+title: Accessing Database Server via Fortran [EN]
 date: 2023-09-28
+link: https://shinobuamasaki.github.io/items/accessing-a-database-server-via-fortran-en.html
 author: Amasaki Shinobu
 description: The article discusses the development and usage of Libpq-Fortran, a Fortran frontend for PostgreSQL server.
 ---

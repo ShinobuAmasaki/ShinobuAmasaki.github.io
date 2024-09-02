@@ -1,6 +1,7 @@
 ---
-title: FreeBSD 13.2にPostgreSQL 15をインストールする（前編）
-data: 2023-09-12
+title: FreeBSD 13.2にPostgreSQL 15をインストールする（前編）[JA]
+date: 2023-09-12
+link: https://shinobuamasaki.github.io/items/postgresql15-on-freebsd13.2-part1.html
 author: 雨崎しのぶ（Amasaki Shinobu）
 description: 本稿では、FreeBSDのマシンにPostgreSQL15をインストールする方法について、できるだけ詳細に述べる。インストールに際してはportsによってソースコードからビルドをしてインストールする。重要な依存パッケージであるLLVMについてもportsからビルドしてインストールする。最後にローカルネットワークの別ホストからインストールしたPostgreSQLへアクセスする手順についても述べる。
 ---
