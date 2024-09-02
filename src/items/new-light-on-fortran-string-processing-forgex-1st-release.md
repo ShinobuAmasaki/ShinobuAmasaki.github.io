@@ -1,5 +1,5 @@
 ---
-title: Forgex 1st Release [EN]
+title: "New Light on Fortran String Processing: Forgex 1st Release"
 date: 2023-12-25
 link: https://shinobuamasaki.github.io/items/new-light-on-fortran-string-processing-forgex-1st-release.html
 author: Amasaki Shinobu

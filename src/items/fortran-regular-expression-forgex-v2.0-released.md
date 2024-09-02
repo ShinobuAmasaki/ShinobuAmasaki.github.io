@@ -1,5 +1,5 @@
 ---
-title: Forgex v2.0 Released [EN]
+title: "Fortran Regular Expression: Forgex v2.0 Released [EN]"
 date: 2024-07-10
 link: https://shinobuamasaki.github.io/items/fortran-regular-expression-forgex-v2.0-released.html
 author: Amasaki Shinobu
