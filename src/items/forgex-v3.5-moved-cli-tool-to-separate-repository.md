@@ -103,8 +103,7 @@ Unlike the C compiler,  these macros (`WIN32`, `WIN64`, `_WIN32`, and `_WIN64`) 
 
 Due to the reasons mentioned above, I decided to move the Forgex command line tool to a separate repository.  `forgex-cli` will now be provided at the following repository link:
 
-[https://github.com/ShinobuAmasaki/forgex-cli](https://github.com/ShinobuAmasaki/forgex-cli
-)
+[https://github.com/ShinobuAmasaki/forgex-cli](https://github.com/ShinobuAmasaki/forgex-cli)
 
 This choice has the following advantages over providing command line tool bundled with Forgex:
 
