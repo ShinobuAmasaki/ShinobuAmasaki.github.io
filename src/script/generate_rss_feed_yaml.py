@@ -4,6 +4,10 @@ from datetime import datetime
 import pytz
 import platform
 
+class FixIndentDumper(yaml.Dumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super(FixIndentDumper, self).increase_indent(flow, False)
+
 system = platform.system()
 
 if system == 'Windows':
@@ -65,6 +69,6 @@ rss_feed = {
 }
 
 with open(rss_yaml_file, 'w', encoding='utf-8') as file:
-    yaml.dump(rss_feed, file, allow_unicode=True, sort_keys=False)
+    yaml.dump(rss_feed, file, allow_unicode=True, sort_keys=False, default_flow_style=False, Dumper=FixIndentDumper)
 
 print(f"RSS YAML file has been generated: {rss_yaml_file}")
