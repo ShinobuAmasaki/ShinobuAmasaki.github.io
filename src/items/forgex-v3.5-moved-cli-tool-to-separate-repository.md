@@ -15,7 +15,8 @@ Posted on: 2024-09-02 JST
 
 ## Abstract
 
-[Forgex—Fortran Regular Expression—version 3.5]() has been released. In this release, Forgex command line tool (`forgex-cli`) has been moved to a new repository as [Forgex-CLI]() on GitHub.
+[Forgex—Fortran Regular Expression—version 3.5](https://github.com/ShinobuAmasaki/forgex/releases) has been released.
+In this release, Forgex command line tool (`forgex-cli`) has been moved to a new repository as [Forgex-CLI](https://github.com/ShinobuAmasaki/forgex-cli) on GitHub.
 
 None of the Forgex APIs have changed.
 
@@ -42,7 +43,8 @@ return false;
 }
 #endif
 ```
-This required using system calls on Windows and corresponding stub function with the same name on other systems, necessitating the use of the C preprocessor's functionality. I tried to write the stub in Fortran to avoid relying on C code, but GNU Fortran compiler's predefined macros provided insufficient for this purpose.
+This required using system calls on Windows and corresponding stub functions with the same name on other systems, necessitating the use of the C preprocessor's functionality.
+I tried to write the stub in Fortran to avoid relying on C code, but GNU Fortran compiler's predefined macros provided insufficient for this purpose.
 
 Below is a list of predefined macros provided by GNU Fortran v13.1.0 in MinGW-W64 on Windows 10:
 
