@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
-<pubDate>Mon, 02 Sep 2024 17:02:15 +0900</pubDate>
+<pubDate>Mon, 02 Sep 2024 17:09:01 +0900</pubDate>
 
 
 <image>
@@ -30,7 +30,7 @@ separate repository starting with this version.</description>
  <pubDate>2024-09-02</pubDate>
 </item>
 <item>
-<title>Forgex v3.4 Released [EN]</title>
+<title>Forgex v3.4: Literal Search Optimizations [EN]</title>
  <link>https://shinobuamasaki.github.io/items/literal-optimized-forgex.html</link>
  <description>Fortran Regular Expression version 3.4 have been
 released.</description>
@@ -38,7 +38,7 @@ released.</description>
  <pubDate>2024-08-25</pubDate>
 </item>
 <item>
-<title>Fortranで正規表現 その2[JA]</title>
+<title>Fortranで正規表現 その2 [JA]</title>
  <link>https://qiita.com/amasaki203/items/2c4e4db44b0d443abcb5</link>
  <description>My second article in Japanese explaining how to use
 regular expressions in Fortran.</description>
@@ -54,7 +54,7 @@ do.</description>
  <pubDate>2024-07-26</pubDate>
 </item>
 <item>
-<title>Forgex v2.0 Released [EN]</title>
+<title>Fortran Regular Expression: Forgex v2.0 Released [EN]</title>
  <link>https://shinobuamasaki.github.io/items/fortran-regular-expression-forgex-v2.0-released.html</link>
  <description>Fortran Regular Expresion (Forgex) v2.0 have been
 released.</description>
@@ -78,7 +78,8 @@ OpenPBS</description>
  <pubDate>2024-03-06</pubDate>
 </item>
 <item>
-<title>Forgex 1st Release [EN]</title>
+<title>New Light on Fortran String Processing: Forgex 1st
+Release</title>
  <link>https://shinobuamasaki.github.io/items/new-light-on-fortran-string-processing-forgex-1st-release.html</link>
  <description>An article about Fortran Reguler Expression
 (Forgex).</description>
