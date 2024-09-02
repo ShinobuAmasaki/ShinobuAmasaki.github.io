@@ -35,7 +35,7 @@ jobs:
       - name: Construct index.md
         run: |
          python src/script/generate_index_header.py # >> index_header.md
-         python src/scritp/generate_posts_list.py # >> posts.md
+         python src/script/generate_posts_list.py # >> index_posts.md
          cat index_header.md index_contents.md index_posts.md index_footer.md > src/index.md
 
       - name: Install Pandoc
