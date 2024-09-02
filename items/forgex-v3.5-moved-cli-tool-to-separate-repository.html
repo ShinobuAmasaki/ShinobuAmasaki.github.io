@@ -59,10 +59,13 @@ tool to a New Repository [EN]" />
          data-cites="amasaki203">@amasaki203</span></a></p>
          <p>Posted on: 2024-09-02 JST</p>
          <h2 id="abstract">Abstract</h2>
-         <p><a href="">Forgex—Fortran Regular Expression—version 3.5</a>
-         has been released. In this release, Forgex command line tool
-         (<code>forgex-cli</code>) has been moved to a new repository as
-         <a href="">Forgex-CLI</a> on GitHub.</p>
+         <p><a
+         href="https://github.com/ShinobuAmasaki/forgex/releases">Forgex—Fortran
+         Regular Expression—version 3.5</a> has been released. In this
+         release, Forgex command line tool (<code>forgex-cli</code>) has
+         been moved to a new repository as <a
+         href="https://github.com/ShinobuAmasaki/forgex-cli">Forgex-CLI</a>
+         on GitHub.</p>
          <p>None of the Forgex APIs have changed.</p>
          <h2 id="details">Details</h2>
          <h3 id="source-code-bloat">Source Code Bloat</h3>
@@ -94,7 +97,7 @@ return false;
 }
 #endif</code></pre>
          <p>This required using system calls on Windows and
-         corresponding stub function with the same name on other
+         corresponding stub functions with the same name on other
          systems, necessitating the use of the C preprocessor’s
          functionality. I tried to write the stub in Fortran to avoid
          relying on C code, but GNU Fortran compiler’s predefined macros
