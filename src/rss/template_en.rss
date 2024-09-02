@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
 <title>Amasaki Shinobu's Website</title>
 <link>https://shinobuamasaki.github.io/</link>
-<description>Amasaki Shinobu's personal activities: Fortran, Parallel Processing, Comptational Geoscience<description>
-<langage>en</langage>
+<description>Amasaki Shinobu's personal activities: Fortran, Parallel Processing, Comptational Geoscience</description>
+<language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
 $if(pubDate)$<pubDate>$pubDate$</pubDate>$endif$
@@ -28,9 +28,9 @@ $endif$ $if(item.link)$
 $endif$ $if(item.description)$
 <description>$item.description$</description>
 $endif$ $if(item.author)$
-<author>$item.author$</author>
+<dc:creator>$item.author$</dc:creator>
 $endif$ $if(item.date)$
-<date>$item.date$</date>
+<pubDate>$item.date$</pubDate>
 $endif$
 </item>
 $endfor$
