@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
-
+<pubDate>Mon, 02 Sep 2024 11:33:21 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,153 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>Forgex v3.4 Released [EN]</title>
+ <link>https://shinobuamasaki.github.io/items/literal-optimized-forgex.html</link>
+ <description>Fortran Regular Expression version 3.4 have been
+released.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2024-08-25</pubDate>
+</item>
+<item>
+<title>Fortranで正規表現 その2[JA]</title>
+ <link>https://qiita.com/amasaki203/items/2c4e4db44b0d443abcb5</link>
+ <description>My second article in Japanese explaining how to use
+regular expressions in Fortran.</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2024-08-25</pubDate>
+</item>
+<item>
+<title>Fortranで正規表現 その2[JA]</title>
+ <link>https://qiita.com/amasaki203/items/9382f05f7c3efafea7a9</link>
+ <description>My first article in Japanese explaining how to use regular
+expressions in Fortran.</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2024-08-25</pubDate>
+</item>
+<item>
+<title>Dream of PURE Regex [EN]</title>
+ <link>https://shinobuamasaki.github.io/items/dream-of-pure-regex.html</link>
+ <description>With the next Forgex release, what I want to
+do.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2024-07-26</pubDate>
+</item>
+<item>
+<title>Forgex v2.0 Released [EN]</title>
+ <link>https://shinobuamasaki.github.io/items/fortran-regular-expression-forgex-v2.0-released.html</link>
+ <description>Fortran Regular Expresion (Forgex) v2.0 have been
+released.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2024-07-10</pubDate>
+</item>
+<item>
+<title>OpenPBSクラスターを構築する【Ubuntu22.04編】[JA]</title>
+ <link>https://qiita.com/amasaki203/items/3aff46d570a49d1b216d</link>
+ <description>Article on building an OpenPBS cluster on Ubuntu 22.04
+LTS.</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2024-03-10</pubDate>
+</item>
+<item>
+<title>ジョブスケジューラーOpenPBS/PBS Proの使い方 [JA]</title>
+ <link>https://qiita.com/amasaki203/items/4c78d08a100a99cfc323</link>
+ <description>An article about the basic usage of the job scheduler
+OpenPBS</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2024-03-06</pubDate>
+</item>
+<item>
+<title>Forgex 1st Release [EN]</title>
+ <link>https://shinobuamasaki.github.io/items/new-light-on-fortran-string-processing-forgex-1st-release.html</link>
+ <description>An article about Fortran Reguler Expression
+(Forgex).</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2023-12-25</pubDate>
+</item>
+<item>
+<title>For Numerical Simulations Supported by Database in Fortran
+[EN]</title>
+ <link>https://shinobuamasaki.github.io/items/for-numerical-simulations-supported-by-database-in-fortran.html</link>
+ <description>Article on how to utilize database servers for Fortran
+numerical simulations</description>
+  <pubDate>2023-12-10</pubDate>
+</item>
+<item>
+<title>Fortranで数値計算の結果をデータベースで管理する [JA]</title>
+ <link>https://qiita.com/amasaki203/items/c5786bdbeeb3f17bfd17</link>
+ <description>Article in Japanese on how to utilize database servers for
+Fortran numerical simulations.</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2023-12-02</pubDate>
+</item>
+<item>
+<title>Open MPI v5.0.0をビルドする [JA]</title>
+ <link>https://qiita.com/amasaki203/items/65beda209bf00fbdc896</link>
+ <description>An article on how to install OpenMPI v5.0.0 on Gentoo
+Linux.</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2023-11-07</pubDate>
+</item>
+<item>
+<title>Fortranでもデータベースしたい! [JA]</title>
+ <link>https://qiita.com/amasaki203/items/fa0ffaff614324fb6d5f</link>
+ <description>The article discusses the development and usage of
+Libpq-Fortran, a Fortran frontend for PostgreSQL server
+[JA].</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2023-09-29</pubDate>
+</item>
+<item>
+<title>Accessing Database Server via Fortran [EN]</title>
+ <link>https://shinobuamasaki.github.io/items/accessing-a-database-server-via-fortran-en.html</link>
+ <description>The article discusses the development and usage of
+Libpq-Fortran, a Fortran frontend for PostgreSQL server.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2023-09-28</pubDate>
+</item>
+<item>
+<title>FreeBSD 13.2にPostgreSQL 15をインストールする（後編）[JA]</title>
+ <link>https://shinobuamasaki.github.io/items/postgresql15-on-freebsd13.2-part2.html</link>
+ <description>本稿では、FreeBSD
+13.2のサーバーに、前編でインストールしたPostgreSQLについて、phpPgAdminを経由してウェブブラウザ上からアクセスする方法について、できるだけ詳細に述べる。ウェブサーバーApache
+HTTP Server 2.4（apache24）とPHP FastCGI Process
+Manager（php-fpm）をインストールして、ウェブアプリケーションphpPgAdminを実行できる環境を提供するのが本稿の目標である。</description>
+ <dc:creator>雨崎しのぶ（Amasaki Shinobu）</dc:creator>
+ <pubDate>2023-09-14</pubDate>
+</item>
+<item>
+<title>FreeBSD 13.2にPostgreSQL 15をインストールする（前編）[JA]</title>
+ <link>https://shinobuamasaki.github.io/items/postgresql15-on-freebsd13.2-part1.html</link>
+ <description>本稿では、FreeBSDのマシンにPostgreSQL15をインストールする方法について、できるだけ詳細に述べる。インストールに際してはportsによってソースコードからビルドをしてインストールする。重要な依存パッケージであるLLVMについてもportsからビルドしてインストールする。最後にローカルネットワークの別ホストからインストールしたPostgreSQLへアクセスする手順についても述べる。</description>
+ <dc:creator>雨崎しのぶ（Amasaki Shinobu）</dc:creator>
+ <pubDate>2023-09-12</pubDate>
+</item>
+<item>
+<title>Let’s Use Procedure Pointers in Object-Oriented Fortran
+[EN]</title>
+ <link>https://shinobuamasaki.github.io/items/lets-use-procedure-pointers-in-object-oriented-fortran.html</link>
+ <description>An article about procedure pointers in modern
+Fortran.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2023-08-28</pubDate>
+</item>
+<item>
+<title>オブジェクト指向Fortranで関数ポインタを使う [JA]</title>
+ <link>https://qiita.com/amasaki203/items/0d6720dff303e3ec7b0f</link>
+ <description>An article about procedure pointers in modern Fortran
+[JA].</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2023-08-27</pubDate>
+</item>
+<item>
+<title>How to Use Coarray Fortran with MPI I/O [EN]</title>
+ <link>https://shinobuamasaki.github.io/items/how-to-use-coarray-fortran-with-mpi-io.html</link>
+ <description>An article about Coarray feature of Fortran and Message
+Passing Interface.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2023-08-10</pubDate>
+</item>
 
 </channel>
 </rss>
