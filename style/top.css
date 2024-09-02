@@ -15,11 +15,8 @@
    color: black;
 }
 .fa-bluesky {
-   color: #0085ff;
-   font-size: 0.9em;
-}
-.fa-rss {
-   color: #f26522;
+	color: #0085ff;
+	font-size: 0.9em;
 }
 
 body {
@@ -30,13 +27,13 @@ body {
    align-items: center;
 }
 div.window {
-   background-color: rgba(239, 239, 239, 0.945);
-   min-width: 600px;
-   min-height: 400px;
-   border-radius: 0.8em;
-   margin: 1em;
-   padding: 1em;
-   text-align: center;
+	background-color: rgba(239, 239, 239, 0.945);
+	min-width: 600px;
+	min-height: 400px;
+	border-radius: 0.8em;
+	margin: 1em;
+	padding: 1em;
+	text-align: center;
 }
 div.description {
    padding-left: 40px;
