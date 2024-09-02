@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
-<pubDate>2024-09-02</pubDate>
+
 
 
 <image>
@@ -19,22 +19,6 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
-<item>
-<title>Forgex v3.4 - Literal Search Optimizations</title>
- <link>https://shinobuamasaki.github.io/items/literal-optimized-forgex.html</link>
- <description>Fortran Regular Expression version 3.4 have been
-released.</description>
- <dc:creator>Amasaki Shinobu</dc:creator>
- <pubDate>2024-08-25</pubDate>
-</item>
-<item>
-<title>Dream of PURE Forgex</title>
- <link>https://shinobuamasaki.github.io/items/dream-of-pure-regex.html</link>
- <description>With the next Forgex release, what I want to
-do.</description>
- <dc:creator>Amasaki Shinobu</dc:creator>
- <pubDate>2024-07-26</pubDate>
-</item>
 
 </channel>
 </rss>
