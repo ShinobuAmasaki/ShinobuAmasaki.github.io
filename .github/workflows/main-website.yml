@@ -56,7 +56,7 @@ jobs:
       - name: Generate RSS feed
         run: |
          mkdir -p site/rss
-         pandoc feed.yaml -f markdown -t html --template ./src/rss/template.rss --metadata title="RSS feed for Amasaki Shinobu's Website" -o site/rss/feed_en.rss
+         pandoc feed.yaml -f markdown -t html --template ./src/rss/template.rss --metadata title="RSS feed for Amasaki Shinobu's Website" -o site/rss/feed.rss
 
       - name: Copy image and style files
         run: |
