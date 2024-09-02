@@ -18,7 +18,9 @@
 	color: #0085ff;
 	font-size: 0.9em;
 }
-
+.fa-rss {
+   color: #f26522;
+}
 body {
    margin: 0;
    background-color: #bbdcf7;
