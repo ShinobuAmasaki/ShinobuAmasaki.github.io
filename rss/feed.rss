@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
-<pubDate>Mon, 02 Sep 2024 11:33:21 +0900</pubDate>
+<pubDate>Mon, 02 Sep 2024 11:43:25 +0900</pubDate>
 
 
 <image>
@@ -36,7 +36,7 @@ regular expressions in Fortran.</description>
  <pubDate>2024-08-25</pubDate>
 </item>
 <item>
-<title>Fortranで正規表現 その2[JA]</title>
+<title>Fortranで正規表現 その1[JA]</title>
  <link>https://qiita.com/amasaki203/items/9382f05f7c3efafea7a9</link>
  <description>My first article in Japanese explaining how to use regular
 expressions in Fortran.</description>
@@ -165,6 +165,22 @@ Fortran.</description>
 Passing Interface.</description>
  <dc:creator>Amasaki Shinobu</dc:creator>
  <pubDate>2023-08-10</pubDate>
+</item>
+<item>
+<title>Coarray FortranでMPI I/Oを使う [JA]</title>
+ <link>https://qiita.com/amasaki203/items/4beb0d2b6984bf701dec</link>
+ <description>This article describes how to use Coarray and MPI with
+Intel Fortran and GNU Fortran.</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2022-12-11</pubDate>
+</item>
+<item>
+<title>How to Install OpenPBS v20.0.1 into Gentoo Linux [EN]</title>
+ <link>https://dev.to/amasaki_shinobu/how-to-install-openpbs-v2001-into-gentoo-linux-3hnk</link>
+ <description>This article describes how to manually install the OpenPBS
+v20.0.1 cluster job scheduler on Gentoo Linux.</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2022-04-18</pubDate>
 </item>
 
 </channel>
