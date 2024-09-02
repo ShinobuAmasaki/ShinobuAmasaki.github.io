@@ -1,5 +1,5 @@
 ---
-title: Forgex v3.5 released, Moved CLI tool to a New Repository
+title: Forgex v3.5 released, Moved CLI tool to a New Repository [EN]
 date: 2024-09-02
 link: https://shinobuamasaki.github.io/items/forgex-v3.5-moved-cli-tool-to-separate-repository.html
 author: Amasaki Shinobu
@@ -23,7 +23,7 @@ None of the Forgex APIs have changed.
 
 ### Source Code Bloat
 
-Since the release of Forgex v3.4, the lines of code in the source files across the entire project have reached 9,000. Most of the increase comes from code that constructs the `forgex-cli` executable file, which is used for debugging, testing, and benchmarking. This has resulted in compilation times roughly twice as long as before. This situation is problematic for me as a developer and for most users who only need the library.
+Since the release of Forgex v3.2, the lines of code in the source files across the entire project have reached 9,000. Most of the increase comes from code that constructs the `forgex-cli` executable file, which is used for debugging, testing, and benchmarking. This has resulted in compilation times roughly twice as long as before. This situation is problematic for me as a developer and for most users who only need the library.
 
 ### C code
 
