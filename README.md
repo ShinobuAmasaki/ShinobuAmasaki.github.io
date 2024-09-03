@@ -2,7 +2,7 @@
 
 ## License
 
-Any unauthorized duplication of articles provided by this repository is prohibited. See [LICENSE](LICENSE).
+Unauthorized duplication of articles provided in this repository beyond that permitted by GitHub's Terms of Service is prohibited. See [LICENSE](LICENSE).
 
 However, the source code in the `sample-code` directory is provided under the MIT License. See [sample-code/LICENSE](sample-code/LICENSE).
 
