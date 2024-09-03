@@ -1,6 +1,12 @@
 # Amasaki Shinobu's site hosted by github.io
 
-## このサイト用のマークダウンの書き方
+## License
+
+Any unauthorized duplication of articles provided by this repository is prohibited. See [LICENSE](LICENSE).
+
+However, the source code in the `sample-code` directory is provided under the MIT License. See [sample-code/LICENSE](sample-code/LICENSE).
+
+## Writing Notes
 
 ### 大きい画像
 
@@ -15,9 +21,3 @@
 ```
 
 cf. https://pandoc-doc-ja.readthedocs.io/ja/latest/users-guide.html#divs-and-spans
-
-## License
-
-Any unauthorized duplication of articles provided by this repository is prohibited. See [LICENSE](LICENSE).
-
-However, the source code in the `sample-code` directory is provided under the MIT License. See [sample-code/LICENSE](sample-code/LICENSE).
