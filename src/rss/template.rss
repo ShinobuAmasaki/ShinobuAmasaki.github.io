@@ -6,7 +6,7 @@
 <description>Amasaki Shinobu's personal activities: Fortran, Parallel Processing, Comptational Geoscience</description>
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
-<docs>https://shinobuamasaki.github.io/feed_en.rss</docs>
+<docs>https://shinobuamasaki.github.io/feed.rss</docs>
 $if(pubDate)$<pubDate>$pubDate$</pubDate>$endif$
 $if(lastBuildDate)$<lastBuildDate>$lastBuildDate$</lastBuildDate>$endif$
 

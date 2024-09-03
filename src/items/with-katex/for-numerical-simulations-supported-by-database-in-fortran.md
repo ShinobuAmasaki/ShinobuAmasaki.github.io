@@ -418,7 +418,7 @@ This insert statement is executed using the `PQexecParams` function, which allow
 
 ### Execute Main Program
 
-All necessary ingredients are now in place. Write the main program and execute the simulations. [The entire code of main program can be obtained from this link on GitHub.](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-codes/sim-with-db/main.f90)
+All necessary ingredients are now in place. Write the main program and execute the simulations. [The entire code of main program can be obtained from this link on GitHub.](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-code/sim-with-db/main.f90)
 
 ```fortran
 program main

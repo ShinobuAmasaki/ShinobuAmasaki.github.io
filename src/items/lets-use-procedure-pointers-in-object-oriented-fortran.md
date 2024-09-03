@@ -146,7 +146,7 @@ Here, for simplicity, let's think about an application composed of the following
 2. `module class_Variable` defines the derived type `Variable`, and
 3. `program main` is the main program. 
 
-[The entire three source code files are available on the page of GitHub.](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/tree/42ebeab842f393e2082a2f30a1ea0bc268d752a8/sample-codes/procedure-pointers)
+[The entire three source code files are available on the page of GitHub.](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/tree/42ebeab842f393e2082a2f30a1ea0bc268d752a8/sample-code/procedure-pointers)
 
 ### `module kernel`
 

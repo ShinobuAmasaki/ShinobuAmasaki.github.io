@@ -570,7 +570,7 @@ contains
 end program main
 ```
 
-[The entire code is available from the file on GitHub repository](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-codes/netcdf-with-coarray_1-dim-block-division.f90).
+[The entire code is available from the file on GitHub repository](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/sample-code/netcdf-with-coarray_1-dim-block-division.f90).
  Compilation, execution, and the results are as follows.
 
 ```shell
