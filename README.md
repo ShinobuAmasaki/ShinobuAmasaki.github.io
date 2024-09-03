@@ -16,7 +16,8 @@
 
 cf. https://pandoc-doc-ja.readthedocs.io/ja/latest/users-guide.html#divs-and-spans
 
-## Lisence
+## License
 
 Any unauthorized duplication of articles provided by this repository is prohibited. See [LICENSE](LICENSE).
+
 However, the source code in the `sample-codes` directory is provided under the MIT License. See [sample-codes/LICENSE](sample-codes/LICENSE).
