@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang=en>
 <head>
    <meta charset="utf-8" />
    <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -25,12 +25,18 @@ Release | Amasaki Shinobu's Website</title>
    <link rel="icon" href="../favicon.ico" type="image/x-icon" >
    
    <link rel="stylesheet" type="text/css" href="../style/common.css">
-   <link rel="stylesheet" type="text/css" href="https://shinobuamasaki.github.io/style/highlight.css">
    <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
    <link rel="stylesheet" type="text/css" href="../style/header.css">
-   <script src="https://shinobuamasaki.github.io/style/highlight.min.js"></script>
-   <script>hljs.highlightAll();</script>
-   <link rel="stylesheet" type="text/css" href="../style/none-highlight.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 </head>
 <body>
    <header>
@@ -140,27 +146,20 @@ forgex = {git = &quot;https://github.com/shinobuamasaki/forgex&quot;}</code></pr
          <h4 id="alternative-building-with-cmake">(Alternative) Building
          with CMake</h4>
          <p>Forgex also supports building with CMake.</p>
-         <pre class="shell"><code># download forgex 
-wget https://github.com/ShinobuAmasaki/forgex/archive/refs/tags/v1.0.tar.gz
+         <pre class="shell"><code>% wget https://github.com/ShinobuAmasaki/forgex/archive/refs/tags/v1.0.tar.gz   # download forgex
 
-# decompress
-tar xvzf ./v1.0.tar.gz
+% tar xvzf ./v1.0.tar.gz    # decompress
 
-# change directory
-cd ./forgex-1.0
+% cd ./forgex-1.0           # change directory
 
-# make &#39;build&#39; directory 
-cmake -S . -B ./build
+% cmake -S . -B ./build     # make &#39;build&#39; directory 
 
-# build
-cmake --build ./build
+% cmake --build ./build     # build
 
-# install
-sudo cmake --install ./build --prefix /usr/local
+% sudo cmake --install ./build --prefix /usr/local    # install
 
-# test
-cd ./build
-ctest</code></pre>
+% cd ./build
+% ctest       # test</code></pre>
          <p>While it is possible to build using CMake, I recommend the
          more straightforward approach using FPM.</p>
          <h3 id="apis">APIs</h3>
