@@ -258,24 +258,24 @@ Development id: 7611
 Intel Macの場合：
 
 ```shell
-sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-amd64"
+% sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-amd64"
 ```
 
 Apple Silicon（M1など）の場合：
 
 ```shell
-sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-arm64"
+% sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-arm64"
 ```
 
 ダウンロードしたバイナリに対して実行可能属性を付与する
 
 ```shell
-sudo chmod +x /usr/local/bin/gitlab-runner
+% sudo chmod +x /usr/local/bin/gitlab-runner
 ```
 
 以下のコマンドで実行可能か確認できる。
 
-```
+```shell
 % gitlab-runner --version
 Version:      17.3.1
 Git revision: 66269445
