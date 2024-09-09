@@ -18,41 +18,26 @@ Posted on: 2023-08-10 JST
 ## Abstract
 
 1. Coarray is cooperatable with MPI on OpenCoarrays or Intel oneAPI environments.
-
 2. We can use MPI I/O, since the Fortran Standards does not define Parallel I/O.
-
 3. Then, let's use together Coarray feature and MPI I/O-based libraries. 
 
 ## Contents
 <div class="contents">
 
 - [Introduction](#introduction)
-
 - [Environments](#environments)
-
    - GNU Fortran Compiler + OpenCoarrays
    - Intel oneAPI Fortran Compiler
-
 - [Parallel I/O](#parallel-io)
-
    1. ["Each process, each file" approach](#each-process-each-file-approach)
-
    2. ["Aggregate data one process" approach](#aggregate-data-one-process-approach)
-
    3. ["Direct access to one file" approach](#direct-access-to-one-file-approach)
-
    4. [MPI I/O](#mpi-io)
-
 - [Let's Use Coarray with MPI I/O-based libraries.](#lets-use-coarray-with-mpi-io-based-libraries)
-
 - [Conclusion](#conclusion)
-
 - [Appendix](#appendix)
-
    - Tested enviromnets
-
    - Why can they use togather?
-
 - [Reference](#reference)
 
 </div>
@@ -626,54 +611,48 @@ This article discuss the compatibility of Fortran's Coarray feature with the MPI
 -  Hardware
    - HP Proliant ML350 Gen9 (dual Intel Xeon E5-2683 v4)
    - HP Proliant ML110 Gen9 (single Intel Xeon E5-2683 v4)
-
 -  Interconnection
    - Gigabit Ethernet
    - NFS v4
-
 - System (Linux)
    - Gentoo Linux (Kernel v6.1.31)
    - Ubuntu Server 22.04.3 LTS
-
 - Compilers
-  
    - GCC
-     
-      - GNU Fortran
-        
-         ```shell
-         % gfortran --version
-         GNU Fortran (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
-         Copyright (C) 2022 Free Software Foundation, Inc.
-         This is free software; see the source for copying conditions.  There is NO
-         warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-         ```
-
-      - OpenCoarrays
-      
-         ```shell
-         % caf --version
-         OpenCoarrays Coarray Fortran Compiler Wrapper (caf version 2.10.1)
-         Copyright (C) 2015-2022 Sourcery Institute
-         Copyright (C) 2015-2022 Archaeologic Inc.
-
-         OpenCoarrays comes with NO WARRANTY, to the extent permitted by law.
-         You may redistribute copies of OpenCoarrays under the terms of the
-         BSD 3-Clause License.  For more information about these matters, see
-         the file named LICENSE that is distributed with OpenCoarrays.
-         ```
-
-      - OpenMPI
-      
-         ```shell
-         % mpirun --version
-         mpirun (Open MPI) 4.1.4
-        
-         Report bugs to http://www.open-mpi.org/community/help/
-         ```
    
+      GNU Fortran
+
+      ```shell
+      % gfortran --version
+      GNU Fortran (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
+      Copyright (C) 2022 Free Software Foundation, Inc.
+      This is free software; see the source for copying conditions.  There is NO
+      warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+      ```
+      OpenCoarrays
+
+      ```shell
+      % caf --version
+      OpenCoarrays Coarray Fortran Compiler Wrapper (caf version 2.10.1)
+      Copyright (C) 2015-2022 Sourcery Institute
+      Copyright (C) 2015-2022 Archaeologic Inc.
+
+      OpenCoarrays comes with NO WARRANTY, to the extent permitted by law.
+      You may redistribute copies of OpenCoarrays under the terms of the
+      BSD 3-Clause License.  For more information about these matters, see
+      the file named LICENSE that is distributed with OpenCoarrays.
+      ```
+      OpenMPI
+
+      ```shell
+      % mpirun --version
+      mpirun (Open MPI) 4.1.4
+      
+      Report bugs to http://www.open-mpi.org/community/help/
+      ```
+
    - Intel oneAPI
-     
+
      ```shell
      % mpiifort --version
      ifort (IFORT) 2021.10.0 20230609

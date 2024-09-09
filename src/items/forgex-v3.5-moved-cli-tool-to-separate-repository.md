@@ -49,7 +49,7 @@ I tried to write the stub in Fortran to avoid relying on C code, but GNU Fortran
 
 Below is a list of predefined macros provided by GNU Fortran v13.1.0 in MinGW-W64 on Windows 10:
 
- ```
+```c
 PS> touch foo.f90
 PS> gfortran -cpp -E -dM .\foo.f90
 # 1 ".\\foo.f90"
