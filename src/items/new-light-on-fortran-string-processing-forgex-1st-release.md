@@ -100,27 +100,20 @@ forgex = {git = "https://github.com/shinobuamasaki/forgex"}
 Forgex also supports building with CMake. 
 
 ```shell
-# download forgex 
-wget https://github.com/ShinobuAmasaki/forgex/archive/refs/tags/v1.0.tar.gz
+% wget https://github.com/ShinobuAmasaki/forgex/archive/refs/tags/v1.0.tar.gz   # download forgex
 
-# decompress
-tar xvzf ./v1.0.tar.gz
+% tar xvzf ./v1.0.tar.gz    # decompress
 
-# change directory
-cd ./forgex-1.0
+% cd ./forgex-1.0           # change directory
 
-# make 'build' directory 
-cmake -S . -B ./build
+% cmake -S . -B ./build     # make 'build' directory 
 
-# build
-cmake --build ./build
+% cmake --build ./build     # build
 
-# install
-sudo cmake --install ./build --prefix /usr/local
+% sudo cmake --install ./build --prefix /usr/local    # install
 
-# test
-cd ./build
-ctest
+% cd ./build
+% ctest       # test
 ```
 
 While it is possible to build using CMake, I recommend the more straightforward approach using FPM.
