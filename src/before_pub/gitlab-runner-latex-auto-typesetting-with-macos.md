@@ -1,6 +1,7 @@
 ---
 title: GitLab RunnerでローカルMacにLaTeX組版サーバーを作る [JA]
 date: 2024-09-11
+language: ja
 link: https://shinobuamasaki.github.io/items/gitlab-runner-latex-auto-typesetting-with-macos.html
 description: GitLab Runnerを使ってLaTeX組版をローカルMacで自動化する方法に関する記事
 ---

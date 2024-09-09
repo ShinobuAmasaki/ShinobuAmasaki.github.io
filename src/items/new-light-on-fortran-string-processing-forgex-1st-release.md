@@ -1,6 +1,7 @@
 ---
 title: "New Light on Fortran String Processing: Forgex 1st Release"
 date: 2023-12-25
+language: en
 link: https://shinobuamasaki.github.io/items/new-light-on-fortran-string-processing-forgex-1st-release.html
 author: Amasaki Shinobu
 description: An article about Fortran Reguler Expression (Forgex).

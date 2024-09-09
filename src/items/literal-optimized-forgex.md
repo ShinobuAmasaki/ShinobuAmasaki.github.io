@@ -1,6 +1,7 @@
 ---
 title: "Forgex v3.4: Literal Search Optimizations [EN]"
 date: 2024-08-25
+language: en
 link: https://shinobuamasaki.github.io/items/literal-optimized-forgex.html
 author: Amasaki Shinobu
 description: Fortran Regular Expression version 3.4 have been released.

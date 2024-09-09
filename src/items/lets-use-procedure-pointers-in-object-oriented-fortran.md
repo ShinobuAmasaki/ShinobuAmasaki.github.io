@@ -1,6 +1,7 @@
 ---
-title: Let's Use Procedure Pointers in Object-Oriented Fortran [EN]
+title: Let\'s Use Procedure Pointers in Object-Oriented Fortran [EN]
 date: 2023-08-28
+language: en
 link: https://shinobuamasaki.github.io/items/lets-use-procedure-pointers-in-object-oriented-fortran.html
 author: Amasaki Shinobu
 description: An article about procedure pointers in modern Fortran.

@@ -1,6 +1,7 @@
 ---
 title: "Forgex v3.5: Moved CLI tool to a New Repository [EN]"
 date: 2024-09-02
+language: en
 link: https://shinobuamasaki.github.io/items/forgex-v3.5-moved-cli-tool-to-separate-repository.html
 author: Amasaki Shinobu
 description: A new version of Forgex, version 3.5, has been released. The command line tools provided in v3.2 and later have been moved to a separate repository starting with this version.
