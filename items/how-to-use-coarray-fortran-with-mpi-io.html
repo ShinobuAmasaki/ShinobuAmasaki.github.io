@@ -60,43 +60,42 @@ MPI I/O [EN]" />
          <p>Posted on: 2023-08-10 JST</p>
          <h2 id="abstract">Abstract</h2>
          <ol type="1">
-         <li><p>Coarray is cooperatable with MPI on OpenCoarrays or
-         Intel oneAPI environments.</p></li>
-         <li><p>We can use MPI I/O, since the Fortran Standards does not
-         define Parallel I/O.</p></li>
-         <li><p>Then, let’s use together Coarray feature and MPI
-         I/O-based libraries.</p></li>
+         <li>Coarray is cooperatable with MPI on OpenCoarrays or Intel
+         oneAPI environments.</li>
+         <li>We can use MPI I/O, since the Fortran Standards does not
+         define Parallel I/O.</li>
+         <li>Then, let’s use together Coarray feature and MPI I/O-based
+         libraries.</li>
          </ol>
          <h2 id="contents">Contents</h2>
          <div class="contents">
          <ul>
-         <li><p><a href="#introduction">Introduction</a></p></li>
-         <li><p><a href="#environments">Environments</a></p>
+         <li><a href="#introduction">Introduction</a></li>
+         <li><a href="#environments">Environments</a>
          <ul>
          <li>GNU Fortran Compiler + OpenCoarrays</li>
          <li>Intel oneAPI Fortran Compiler</li>
          </ul></li>
-         <li><p><a href="#parallel-io">Parallel I/O</a></p>
+         <li><a href="#parallel-io">Parallel I/O</a>
          <ol type="1">
-         <li><p><a href="#each-process-each-file-approach">“Each
-         process, each file” approach</a></p></li>
-         <li><p><a
-         href="#aggregate-data-one-process-approach">“Aggregate data one
-         process” approach</a></p></li>
-         <li><p><a href="#direct-access-to-one-file-approach">“Direct
-         access to one file” approach</a></p></li>
-         <li><p><a href="#mpi-io">MPI I/O</a></p></li>
+         <li><a href="#each-process-each-file-approach">“Each process,
+         each file” approach</a></li>
+         <li><a href="#aggregate-data-one-process-approach">“Aggregate
+         data one process” approach</a></li>
+         <li><a href="#direct-access-to-one-file-approach">“Direct
+         access to one file” approach</a></li>
+         <li><a href="#mpi-io">MPI I/O</a></li>
          </ol></li>
-         <li><p><a
+         <li><a
          href="#lets-use-coarray-with-mpi-io-based-libraries">Let’s Use
-         Coarray with MPI I/O-based libraries.</a></p></li>
-         <li><p><a href="#conclusion">Conclusion</a></p></li>
-         <li><p><a href="#appendix">Appendix</a></p>
+         Coarray with MPI I/O-based libraries.</a></li>
+         <li><a href="#conclusion">Conclusion</a></li>
+         <li><a href="#appendix">Appendix</a>
          <ul>
-         <li><p>Tested enviromnets</p></li>
-         <li><p>Why can they use togather?</p></li>
+         <li>Tested enviromnets</li>
+         <li>Why can they use togather?</li>
          </ul></li>
-         <li><p><a href="#reference">Reference</a></p></li>
+         <li><a href="#reference">Reference</a></li>
          </ul>
          </div>
          <h2 id="introduction">Introduction</h2>
@@ -748,32 +747,31 @@ data:
          <h2 id="appendix">Appendix</h2>
          <h3 id="tested-environments">Tested environments</h3>
          <ul>
-         <li><p>Hardware</p>
+         <li>Hardware
          <ul>
          <li>HP Proliant ML350 Gen9 (dual Intel Xeon E5-2683 v4)</li>
          <li>HP Proliant ML110 Gen9 (single Intel Xeon E5-2683 v4)</li>
          </ul></li>
-         <li><p>Interconnection</p>
+         <li>Interconnection
          <ul>
          <li>Gigabit Ethernet</li>
          <li>NFS v4</li>
          </ul></li>
-         <li><p>System (Linux)</p>
+         <li>System (Linux)
          <ul>
          <li>Gentoo Linux (Kernel v6.1.31)</li>
          <li>Ubuntu Server 22.04.3 LTS</li>
          </ul></li>
-         <li><p>Compilers</p>
+         <li>Compilers
          <ul>
          <li><p>GCC</p>
-         <ul>
-         <li><p>GNU Fortran</p>
+         <p>GNU Fortran</p>
          <pre class="shell"><code>% gfortran --version
 GNU Fortran (Gentoo 12.3.1_p20230526 p2) 12.3.1 20230526
 Copyright (C) 2022 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</code></pre></li>
-         <li><p>OpenCoarrays</p>
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</code></pre>
+         <p>OpenCoarrays</p>
          <pre class="shell"><code>% caf --version
 OpenCoarrays Coarray Fortran Compiler Wrapper (caf version 2.10.1)
 Copyright (C) 2015-2022 Sourcery Institute
@@ -782,13 +780,12 @@ Copyright (C) 2015-2022 Archaeologic Inc.
 OpenCoarrays comes with NO WARRANTY, to the extent permitted by law.
 You may redistribute copies of OpenCoarrays under the terms of the
 BSD 3-Clause License.  For more information about these matters, see
-the file named LICENSE that is distributed with OpenCoarrays.</code></pre></li>
-         <li><p>OpenMPI</p>
+the file named LICENSE that is distributed with OpenCoarrays.</code></pre>
+         <p>OpenMPI</p>
          <pre class="shell"><code>% mpirun --version
 mpirun (Open MPI) 4.1.4
 
 Report bugs to http://www.open-mpi.org/community/help/</code></pre></li>
-         </ul></li>
          <li><p>Intel oneAPI</p>
          <pre class="shell"><code>% mpiifort --version
 ifort (IFORT) 2021.10.0 20230609

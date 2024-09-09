@@ -92,6 +92,9 @@ li {
 ul ul {
 	padding-left: 1em;
 }
+ul ol {
+	padding-left: 1em;
+}
 
 .large-img {
 	width: auto;
