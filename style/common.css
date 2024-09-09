@@ -22,6 +22,10 @@ code {
    background-color: #f7f7f7;
 }
 
+a code {
+	color: #167abd
+}
+
 main {
 	margin: 0;
 	padding: 0;
