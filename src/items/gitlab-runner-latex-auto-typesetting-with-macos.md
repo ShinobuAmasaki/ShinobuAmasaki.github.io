@@ -39,11 +39,9 @@ Posted on: 2024-09-10 JST
     - [ハードウェア](#ハードウェア)
     - [ソフトウェア](#ソフトウェア)
     - [フォントファイルの場所に関する注意事項](#フォントファイルの場所に関する注意事項)
-
   - [LaTeX環境](#latex環境)
     - [MacPortsのインストール](#macportsのインストール)
     - [TeX Liveのインストール](#tex-liveのインストール)
-
   - [GitLab Runnerのインストール](#gitlab-runnerのインストール)
     - [ユーザーの作成](#ユーザーの作成)
     - [LuaLaTeXの初期設定](#lualatexの初期設定)
@@ -53,17 +51,16 @@ Posted on: 2024-09-10 JST
     - [設定ファイルの内容を編集する](#設定ファイルの内容を編集する)
     - [ランナーをサービスとして実行](#ランナーをサービスとして実行)
 - [ランナーを動かす](#ランナーを動かす)
-  - [`latexmkrc`と`.gitlab-ci.yml`](#latexmkrcと.gitlab-ci.yml)
+  - [`.gitlab-ci.yml`](#gitlab-ci.yml)
     - [キーの説明](#キーの説明)
     - [CI/CD環境変数の説明](#cicd環境変数の説明)
-
+  - [`latexmkrc`](#latexmkrc)
   - [`main.tex`](#main.tex)
   - [コミット&プッシュ](#コミットプッシュ)
   - [PDFを取得](#pdfを取得)
-- [トラブルシューティング](#トラブルシューティング)
-  - [プライベートリポジトリを`git clone`できない](#プライベートリポジトリをgit-cloneできない)
-  - [最初のパイプラインを実行できない](#最初のパイプラインを実行できない)
+- [おわりに](#おわりに)
 - [参考文献](#参考文献)
+- [トラブルシューティング](#トラブルシューティング)
 
 ## イントロダクション
 
@@ -91,7 +88,7 @@ GitLabのCI/CDで定義された一連の処理（パイプラインと呼ぶ、
 
 ### Mac環境の想定
 
-以下に、ランナーをインストールするMacの動作環境を記す。一人で使う限り、古い環境でも十分快適に動いた。なおパッケージマネージャーはMacPortsを例に用いる。
+以下に、ランナーをインストールするMacの動作環境を記す。なおパッケージマネージャーはMacPortsを例に用いる。
 
 #### ハードウェア
 
@@ -524,7 +521,9 @@ ci_test/
 
 ### `.gitlab-ci.yml`
 
-`.gitlab-ci.yml`の例を示す。
+まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの**パイプライン**は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。**ステージ**とは、CI/CDパイプラインの中で**ジョブを論理的にグループ化する単位**であり、**ジョブ**とは**実際に実行される処理単位**（一連のコマンドやスクリプトなど）である。リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに`stages:`にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。
+
+以下に、`.gitlab-ci.yml`の例を示す。
 
 ```yaml
 variables:
@@ -592,8 +591,6 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
 
 このファイルで実行されるCI/CDは、`prep_job`, `build_job`, `deploy_job`の3つのジョブに分かれており、それぞれ、ファイルの上方で定義された`stage:`の下にリストされた`preprocess`, `build`, `deploy`ステージに対応している。それぞれのジョブの定義には`stage`, `tags`, `only`, `before_script`, `script`, `artifacets`, `dependencies`などのキーが指定されている。これらの詳細は公式ドキュメントを参照してもらうこととして、各キーの重要なポイントに限定して述べる。
 
-まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの**パイプライン**は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。**ステージ**とは、CI/CDパイプラインの中で**ジョブを論理的にグループ化する単位**であり、**ジョブ**とは**実際に実行される処理単位**（一連のコマンドやスクリプトなど）である。リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに`stages:`にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。
-
 #### キーの説明
 
 以下に、上の例で使用したYAML書式のキーを簡単に説明する。
@@ -604,7 +601,6 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
 次に、ジョブの定義で使用されたキーについて説明しよう。上で述べた2つ以外のインデントされていない3つのキーはそれぞれのジョブ（`prep_job`、 `build_job`、`deploy_job`）を定義している。
 
 - `stage`：ジョブ定義の中で記述され、そのジョブが所属するステージを1つ指定する。
-
 - `tags`：そのジョブを実行するランナーが持つべきタグを指定する。リストとして複数指定することができ、その場合は指定されたすべてのキーを持っているランナーでのみジョブが実行される。
 - `only`：パイプラインがトリガーされた時、`only`で指定されたブランチに変更があった場合のみ、そのジョブを実行する。上の例では`main`ブランチに変更があった場合のみジョブが実行される構成になっている。
 - `before_script`：このキーがジョブ定義の中に記述された場合、後述の`script`が実行される前にジョブに固有のセットアップの処理を定義する。コマンドやスクリプトをリストの形式で記述する。
@@ -614,7 +610,7 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
 
 #### CI/CD環境変数の説明
 
-上の例で`.gitlab-ci.yml`に含まれる`LATEX_JOB_NAME`、`COMMIT_ACCESS_TOKEN`、`CI_PROJECT_NAME`、`GITLAB_USER_NAME`, `GITLAB_USER_EMAIL`、　`CI_SERVER_HOST`、`CI_PROJECT_PATH`はCI/CD変数と呼ばれる、ある種の環境変数のようなものである。これらは再利用したい値や、YAMLファイルに値をハードコーディングしないために使用される。最初の1つ（`LATEX_JOB_NAME`）はYAMLファイル内でユーザーによって定義されたCI/CD変数であり、2つ目はWEB UIから設定したCI/CD変数で、残る5つは事前定義されたCI/CD変数である。YAMLファイル内でユーザー定義CI/CD変数を使うには、`variables`キーを使って記述する。これは事前定義の変数と同様にジョブの`script:`などの中で参照することができる。後者の詳細は[公式ドキュメント](https://docs.gitlab.com/ee/ci/variables/)を参照してほしい。
+上の例で`.gitlab-ci.yml`に含まれる`LATEX_JOB_NAME`、`COMMIT_ACCESS_TOKEN`、`CI_PROJECT_NAME`、`GITLAB_USER_NAME`, `GITLAB_USER_EMAIL`、　`CI_SERVER_HOST`、`CI_PROJECT_PATH`はCI/CD変数と呼ばれる、ある種の環境変数のようなものである。これらは再利用したい値や、YAMLファイルに値をハードコーディングしないために使用される。最初の1つ（`LATEX_JOB_NAME`）はYAMLファイル内でユーザーによって定義されたCI/CD変数であり、2つ目はWEB UIから設定したCI/CD変数で、残る5つは事前定義されたCI/CD変数である。YAMLファイル内でユーザー定義CI/CD変数を使うには、`variables`キーを使って記述する。これは事前定義の変数と同様にジョブの`script:`などの中で参照することができる。後者の詳細は[公式ドキュメント](https://docs.gitlab.com/ee/ci/variables/)を参照されたい。
 
 これらの変数を参照するためには、変数名の先頭にドル記号`$`をつけ、二重引用符`"`を使って囲んで記述する必要がある。
 
@@ -673,6 +669,20 @@ JFRMQG+LMRoman10-Regular             CID Type 0C       Identity-H       yes yes 
 
 これにて本稿の目標は達成された。
 
+## おわりに
+
+以上、LaTeX文書の執筆に付随する作業をGitLabのCI/CDを使ってできるだけ自動化する方法について述べた。当初は筆者自身の備忘録としてメモを書いてすませるつもりであったが、この記事の提供する情報を自分以外にも必要とする人がいるかもしれないので記事として公開することにした。この方法を使えば、リモートリポジトリをマスターとして複数の端末から文書の編集を行うことができ、より便利になると思われる。
+
+## 参考文献
+
+1. [www.macports.org](https://www.macports.org/install.php)
+2. [#MacPortsによるインストール TeX Live/Mac - TeX Wiki](https://texwiki.texjp.org/?TeX%20Live%2FMac#texlive-install-port)
+3. [Install GitLab Runner on MacOS - GitLab Docs](https://docs.gitlab.com/runner/install/osx.html)
+4. [Registering runners - GitLab Docs](https://docs.gitlab.com/runner/register/index.html?tab=macOS)
+5. [CI/CD YAML syntax reference - GitLab Docs](https://docs.gitlab.com/ee/ci/yaml/)
+6. [GitLab CI/CD variables - GitLab Docs](https://docs.gitlab.com/ee/ci/variables/)
+7. [Personal Access Tokens - GitLab Docs](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
+
 ## トラブルシューティング
 
 **プライベートリポジトリを`git clone`できない**
@@ -711,17 +721,3 @@ Welcome to GitLab, @<USER>!
 **最初のパイプラインを実行できない**
 
 GitLab.comにユーザーを新しく登録した場合、CI/CDを動かす前にユーザーのSMS認証を終える必要があるかもしれない。これはGitLabのプロジェクトの管理画面に案内が表示されるので、それに従って認証を行う。
-
-## おわりに
-
-以上、LaTeX文書の執筆に付随する作業をGitLabのCI/CDを使ってできるだけ自動化する方法について述べた。当初は筆者自身の備忘録としてメモを書いてすませるつもりであったが、この記事の提供する情報を自分以外にも必要とする人がいるかもしれないので記事として公開することにした。この方法を使えば、リモートリポジトリをマスターとして複数の端末から文書の編集を行うことができ、より便利になると思われる。
-
-## 参考文献
-
-1. [www.macports.org](https://www.macports.org/install.php)
-2. [#MacPortsによるインストール TeX Live/Mac - TeX Wiki](https://texwiki.texjp.org/?TeX%20Live%2FMac#texlive-install-port)
-3. [Install GitLab Runner on MacOS - GitLab Docs](https://docs.gitlab.com/runner/install/osx.html)
-4. [Registering runners - GitLab Docs](https://docs.gitlab.com/runner/register/index.html?tab=macOS)
-5. [CI/CD YAML syntax reference - GitLab Docs](https://docs.gitlab.com/ee/ci/yaml/)
-6. [GitLab CI/CD variables - GitLab Docs](https://docs.gitlab.com/ee/ci/variables/)
-7. [Personal Access Tokens - GitLab Docs](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
