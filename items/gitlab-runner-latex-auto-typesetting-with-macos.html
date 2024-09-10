@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang=ja>
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+        <meta name="description" content="GitLab
+Runnerを使ってLaTeX組版をローカルMacで自動化する方法に関する記事" />
+   <meta name="twitter:description" content="GitLab
+Runnerを使ってLaTeX組版をローカルMacで自動化する方法に関する記事" />
+   <meta name="og:description" content="GitLab
+Runnerを使ってLaTeX組版をローカルMacで自動化する方法に関する記事" />
+      <meta property="og:title" content="GitLab
+RunnerでローカルMacにLaTeX組版サーバーを作る [JA]" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/gitlab-runner-latex-auto-typesetting-with-macos.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title>GitLab RunnerでローカルMacにLaTeX組版サーバーを作る
+[JA] | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1
+         id="gitlab-runnerでローカルmacにlatex組版サーバーを作る">GitLab
+         RunnerでローカルMacにLaTeX組版サーバーを作る</h1>
+         <p>Author: 雨崎しのぶ</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2024-09-10 JST</p>
+         <h2 id="概要">概要</h2>
+         <p>本稿では、Gitを使ってLaTeX文書を執筆していく過程における作業の自動化について、GitLab
+         Runnerを使ったアプローチについて解説する。GitLab
+         Runnerは、ローカルマシンを使って自由にカスタマイズされた環境でCI/CDを実行できる点が特徴的である。これに対し、GitHub
+         Actionsはクラウドベースで実行されるため、ローカルにインストールされたソフトウェアやフォントを利用したビルドには適していない。そのため両者を比較すると、ローカルリソースを使用する目的であればGitLab
+         Runnerが適しているだろう。</p>
+         <p>本稿は以下のような要求から執筆された。</p>
+         <ul>
+         <li>LaTeXを使った文書の執筆において、Gitを使ったバージョン管理をしたい。</li>
+         <li>データのバックアップや複数の端末からの利用を容易にするため、リモートリポジトリにもファイルを置きたい。</li>
+         <li>TeXファイルのコミット履歴とそれに対応する組版結果（PDFファイル）を管理したい。</li>
+         <li>TeXファイルのコンパイルはできるだけ自動化したい。</li>
+         <li>ローカルのOSに入っているフォントを使いたい。</li>
+         <li>文書の執筆は、非公開の内容を含むため、プライベートリポジトリで行いたい。</li>
+         </ul>
+         <p>これらの要件を満たすため、GitLab
+         RunnerとLuaLaTeXを使用して、Mac
+         miniを組版サーバーとして使用する方法について記述する。最終的な目標はTeXファイルをリポジトリに送信すると、自動的にPDFファイルが生成・登録されて、常に最新のドキュメントを利用できる状態を確保することである。</p>
+         <h2 id="目次">目次</h2>
+         <ul>
+         <li><a href="#概要">概要</a></li>
+         <li><a href="#イントロダクション">イントロダクション</a></li>
+         <li><a href="#インストール">インストール</a>
+         <ul>
+         <li><a href="#mac環境の想定">Mac環境の想定</a>
+         <ul>
+         <li><a href="#ハードウェア">ハードウェア</a></li>
+         <li><a href="#ソフトウェア">ソフトウェア</a></li>
+         <li><a
+         href="#フォントファイルの場所に関する注意事項">フォントファイルの場所に関する注意事項</a></li>
+         </ul></li>
+         <li><a href="#latex環境">LaTeX環境</a>
+         <ul>
+         <li><a
+         href="#macportsのインストール">MacPortsのインストール</a></li>
+         <li><a href="#tex-liveのインストール">TeX
+         Liveのインストール</a></li>
+         </ul></li>
+         <li><a href="#gitlab-runnerのインストール">GitLab
+         Runnerのインストール</a>
+         <ul>
+         <li><a href="#ユーザーの作成">ユーザーの作成</a></li>
+         <li><a href="#lualatexの初期設定">LuaLaTeXの初期設定</a></li>
+         <li><a href="#ダウンロード">ダウンロード</a></li>
+         <li><a href="#トークンを取得">トークンを取得</a></li>
+         <li><a href="#登録">登録</a></li>
+         <li><a
+         href="#設定ファイルの内容を編集する">設定ファイルの内容を編集する</a></li>
+         <li><a
+         href="#ランナーをサービスとして実行">ランナーをサービスとして実行</a></li>
+         </ul></li>
+         </ul></li>
+         <li><a href="#ランナーを動かす">ランナーを動かす</a>
+         <ul>
+         <li><a
+         href="#latexmkrcと.gitlab-ci.yml"><code>latexmkrc</code>と<code>.gitlab-ci.yml</code></a>
+         <ul>
+         <li><a href="#キーの説明">キーの説明</a></li>
+         <li><a href="#cicd環境変数の説明">CI/CD環境変数の説明</a></li>
+         </ul></li>
+         <li><a href="#main.tex"><code>main.tex</code></a></li>
+         <li><a href="#コミットプッシュ">コミット&amp;プッシュ</a></li>
+         <li><a href="#pdfを取得">PDFを取得</a></li>
+         </ul></li>
+         <li><a
+         href="#トラブルシューティング">トラブルシューティング</a>
+         <ul>
+         <li><a
+         href="#プライベートリポジトリをgit-cloneできない">プライベートリポジトリを<code>git clone</code>できない</a></li>
+         <li><a
+         href="#最初のパイプラインを実行できない">最初のパイプラインを実行できない</a></li>
+         </ul></li>
+         <li><a href="#参考文献">参考文献</a></li>
+         </ul>
+         <h2 id="イントロダクション">イントロダクション</h2>
+         <p>本稿では、GitLabで提供されるCI/CDの仕組みを活用して、LaTeX文書からPDFファイルを自動生成する方法について紹介する。この方法を使えば、手動でLaTeX文書をコンパイルしてリポジトリに登録する手間を削減し、履歴の管理や差分の取得がさらに容易になるだろう。また、これらの処理をローカルのmacOSマシンで行うことで、クラウドを使用した場合と比べて待ち時間が短くすることができる。また、幅広いフォントを選択肢を得られるため、より満足度の高いドキュメントを作成することができるだろう。</p>
+         <p>この方法は、以下のフェーズに分かれている。</p>
+         <ol type="1">
+         <li>GitLabのリポジトリに変更がプッシュされる。</li>
+         <li>ランナーの実行がトリガーされる。</li>
+         <li>ランナーをインストールしたローカルマシンにジョブが投入される。</li>
+         <li>ローカルマシンはLaTeX文書からPDFファイルを自動生成する。</li>
+         <li>生成物をリポジトリにコミット・プッシュする。</li>
+         </ol>
+         <p>本稿では、これらの一連の処理を自動化する方法について述べる。なお、LaTeX文書のコンパイルにLuaLaTeXを使用するが、その他のLaTeXでも同様に自動化することができるだろう。ただし、GitやLaTeXの基本的な使い方については説明せず、また非公開で複数人がリポジトリを使うことも想定しない。</p>
+         <h3 id="cicdとは">CI/CDとは</h3>
+         <p>CI/CDとは「継続的インテグレーション（Continuous Integration,
+         CI）」と「継続的デリバリー／デプロイメント（Continuous
+         Delivery/Deployment,
+         CD）」の略称で、主にソフトウェアの開発において効率的にコードの変更を、最終的な生成物（アプリケーションやドキュメントなど）を自動的に生成したり配布したりするための仕組みである。本稿ではこの仕組みを利用して、ソースファイルであるLaTeX文書から、生成物であるPDFファイルを自動的にGitリポジトリに登録する方法について述べる。</p>
+         <h3 id="gitlab-runnerとは">GitLab Runnerとは</h3>
+         <p>GitLabのCI/CDで定義された一連の処理（パイプラインと呼ぶ、後述）を自動的に実行するためのエージェントである（以下、ランナーと呼ぶ）。GitLabサーバーからパイプラインジョブを受け取り、そのジョブをローカルまたはクラウドのマシンで実行する。ランナーはGitLab.comでも提供されているが、ここではローカルのMacにリポジトリから独立してインストール・設定した環境を使用する。GitLab
+         Runner、<code>lualatex</code>やその他のフォントなどがインストールされたmacOS環境でランナーがジョブを実行することで、カスタマイズ自由度の高い（フォントの選択肢など）PDFドキュメントを自動生成することができるだろう。</p>
+         <h2 id="インストール">インストール</h2>
+         <h3 id="mac環境の想定">Mac環境の想定</h3>
+         <p>以下に、ランナーをインストールするMacの動作環境を記す。一人で使う限り、古い環境でも十分快適に動いた。なおパッケージマネージャーはMacPortsを例に用いる。</p>
+         <h4 id="ハードウェア">ハードウェア</h4>
+         <ul>
+         <li>Mac mini 2014 Late</li>
+         <li>CPU: Intel Core i5-4260U 1.4 GHz</li>
+         <li>RAM: 4GB</li>
+         <li>SSD: 240GB</li>
+         </ul>
+         <h4 id="ソフトウェア">ソフトウェア</h4>
+         <ul>
+         <li>macOS 12.7.6 Monterey</li>
+         <li>Xcode: <code>Xcode 14.2, Build version 14C18</code></li>
+         <li>Git: <code>git version 2.37.1 (Apple Git-137.1)</code></li>
+         <li>OpenSSH: <code>OpenSSH_8.6p1, LibreSSL 3.3.6</code></li>
+         <li>TeX Live 2024
+         <ul>
+         <li>LuaLaTeX:
+         <code>LuaHBTeX, Version 1.18.0 (TeX Live 2024/MacPorts 2024.70613_0)</code></li>
+         <li>Latexmk:
+         <code>Latexmk, John Collins, 6 Nov. 2023. Version 4.81</code></li>
+         </ul></li>
+         <li>GitLab Runner:
+         <code>Version 17.3.1, darwin/amd64</code></li>
+         <li>MacPorts: <code>MacPorts 2.10.1</code></li>
+         </ul>
+         <h4
+         id="フォントファイルの場所に関する注意事項">フォントファイルの場所に関する注意事項</h4>
+         <p>特定のユーザーに対してインストールされたフォントを本稿の紹介する方法で使いたい場合には、以下のいずれかの処理を行う必要がある。</p>
+         <ul>
+         <li>それらのフォントをmacOSのすべてのユーザーに対してインストールする。</li>
+         <li>それらのフォントを<code>gl-runner</code>ユーザーにもインストールする。</li>
+         <li>Runnerを実行する際にそのユーザーを指定する</li>
+         </ul>
+         <p>本稿では、LaTeXのビルドで使用するフォントはすべてのユーザーにインストールされたものと仮定する。</p>
+         <h3 id="latex環境">LaTeX環境</h3>
+         <p>先に述べたように、本稿ではMacPortsを使用し、これにより提供されるTeX
+         Live
+         2024とそれに含まれる<code>latexmk</code>と<code>lualatex</code>使用する。Homebrewでもインストールされたものでもおそらく問題ないだろう。ただし、PATH環境変数に追加するために、実行ファイルのあるディレクトリを確認しておく必要がある。また、パッケージマネージャーのインストールには<strong>Xcode</strong>と<strong>Xcode
+         Command Line
+         Toolsのインストール</strong>が必要だが、ここでは省略する。</p>
+         <h4 id="macportsのインストール">MacPortsのインストール</h4>
+         <p>MacPorts公式サイトを参照してインストールする。リンク先のQuickstartから、適当なバージョン（ここでは<code>macOS Monterey v12</code>）を選択してダウンロード、インストーラーを起動してインストールを行う。</p>
+         <p><a
+         href="https://www.macports.org/install.php">www.macports.org</a></p>
+         <p>インストールが完了したら環境変数<code>PATH</code>に<code>/opt/local/bin</code>を追加する。</p>
+         <pre class="shell"><code>export PATH=&quot;/opt/local/bin:$PATH&quot;</code></pre>
+         <p>をターミナルで実行、もしくは<code>~/.zshrc</code>に書き込んでから<code>source ~/.zshrc</code>を実行するなどしてシェルをリロードする。なお、MacPortsに関係するファイルは基本的に<code>/opt/local</code>以下に配置されるので、パッケージのインストールや更新、削除を行うにはスーパーユーザーの権限が必要になるため、以下では適宜<code>sudo</code>を使用する。</p>
+         <h4 id="tex-liveのインストール">TeX Liveのインストール</h4>
+         <p>最初に<code>port</code>のアップデートを行う。</p>
+         <pre class="shell"><code>% sudo port selfupdate</code></pre>
+         <p>次にTeX
+         Liveのインストールを行う。ここでは参考文献2の「MacPortsによるインストール」の方法に従い、日本語関連のパッケージとtexlive-luatex、texlive-xetex,
+         およびtexliveパッケージをインストールする。</p>
+         <pre class="shell"><code>% sudo port install texlive-lang-japanese texlive-luatex texlive-xetex texlive</code></pre>
+         <p>なおパッケージをフルインストールする場合は以下を実行する。</p>
+         <pre class="shell"><code>% sudo port install texlive +full</code></pre>
+         <p>インストールが完了したら、以下のコマンドで確認することができる。</p>
+         <pre class="shell"><code>% latexmk --version
+Latexmk, John Collins, 6 Nov. 2023. Version 4.81
+
+% lualatex --credits
+This is LuaHBTeX, Version 1.18.0 (TeX Live 2024/MacPorts 2024.70613_0)
+
+The LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater, Luigi Scarso.
+
+LuaHBTeX merges and builds upon (parts of) the code from these projects:
+
+tex       : Donald Knuth
+etex      : Peter Breitenlohner, Phil Taylor and friends
+omega     : John Plaice and Yannis Haralambous
+aleph     : Giuseppe Bilotta
+pdftex    : Han The Thanh and friends
+kpathsea  : Karl Berry, Olaf Weber and others
+lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo
+metapost  : John Hobby, Taco Hoekwater, Luigi Scarso, Hans Hagen and friends
+pplib     : Paweł Jackowski
+fontforge : George Williams (partial)
+luajit    : Mike Pall (used in LuajitTeX)
+
+Compiled with libharfbuzz 8.3.0; using 8.5.0
+Compiled with libpng 1.6.43; using 1.6.43
+Compiled with lua version 5.3.6
+Compiled with mplib version 2.10
+Compiled with zlib 1.3.1; using 1.3.1
+
+Development id: 7611</code></pre>
+         <h3 id="gitlab-runnerのインストール">GitLab
+         Runnerのインストール</h3>
+         <h4 id="ユーザーの作成">ユーザーの作成</h4>
+         <p>このセクションではRunnerを動かすユーザー<code>gl-runner</code>を作成する。なお、<strong>ランナーの実行に既存ユーザーを使う場合はこれらを行う必要はない</strong>。</p>
+         <p><code>dscl</code>コマンドを使用して新規ユーザーを作成する。まずは既存のグループIDとユーザーIDのリストを取得しよう。グループIDの一覧を取得するには次のコマンドを使用する。</p>
+         <pre class="shell"><code>% dscl . -list groups gid
+...</code></pre>
+         <p>このリストに含まれるものと重複しないグループIDを<code>gl-runner</code>のプライマリグループにする必要がある。仮にここでは<code>1111</code>とする。次に、ユーザーIDのリストを次のコマンドで取得する。</p>
+         <pre class="shell"><code>% dscl . -list users uid
+...</code></pre>
+         <p>先ほどと同様に、このリストに含まれるものと重複しないユーザーIDを<code>gl-runner</code>に割り当てる必要がある。仮にここでは<code>1111</code>とする。以下のコマンドでユーザー<code>gl-runner</code>を作成する。</p>
+         <pre class="shell"><code>% sudo dscl . -create /Users/gl-runner
+% sudo dscl . -create /Users/gl-runner UserShell /bin/zsh
+% sudo dscl . -create /Users/gl-runner RealName GitLab Runner</code></pre>
+         <p>次にグループを作成する（もしくはオプションとして<code>staff</code>グループに所属させる運用でも良いだろう）。</p>
+         <pre class="shell"><code>% sudo dscl . -create /Groups/gl-runner PrimaryGroupID 1111</code></pre>
+         <p>そして、ユーザーIDとグループIDを設定する。</p>
+         <pre class="shell"><code>% sudo dscl . -create /Users/gl-runner UniqueID 1111
+% sudo dscl . -create /Users/gl-runner PrimaryGroupID 1111</code></pre>
+         <p>ホームディレクトリを作成し、所有権を書き換える</p>
+         <pre class="shell"><code>% sudo mkdir /Users/gl-runner
+% sudo dscl . -create /Users/gl-runner NFSHomeDirectory /Users/gl-runner
+% sudo chown -R gl-runner:gl-runner /Users/gl-runner</code></pre>
+         <p>以上で<code>gl-runner</code>ユーザーの作成は完了した。</p>
+         <h4 id="lualatexの初期設定">LuaLaTeXの初期設定</h4>
+         <p>ユーザー<code>gl-runner</code>で<code>luaotfload-tool</code>を実行してシステムにインストールされたフォントの情報を更新し、LuaLaTeXで使えるようにする。</p>
+         <pre class="shell"><code>% sudo su gl-runner
+% luaotfload-tool --update</code></pre>
+         <h4 id="ダウンロード">ダウンロード</h4>
+         <p>以下のコマンドを実行し、GitLab
+         Runnerの実行バイナリファイルをダウンロードする</p>
+         <p>Intel Macの場合：</p>
+         <pre class="shell"><code>sudo curl --output /usr/local/bin/gitlab-runner &quot;https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-amd64&quot;</code></pre>
+         <p>Apple Silicon（M1など）の場合：</p>
+         <pre class="shell"><code>sudo curl --output /usr/local/bin/gitlab-runner &quot;https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-arm64&quot;</code></pre>
+         <p>ダウンロードしたバイナリに対して実行可能属性を付与する</p>
+         <pre class="shell"><code>sudo chmod +x /usr/local/bin/gitlab-runner</code></pre>
+         <p>以下のコマンドで実行可能か確認できる。</p>
+         <div class="none-highlight-user">
+         <pre><code>% gitlab-runner --version
+Version:      17.3.1
+Git revision: 66269445
+Git branch:   17-3-stable
+GO version:   go1.22.5
+Built:        2024-08-21T15:23:40+0000
+OS/Arch:      darwin/amd64</code></pre>
+         </div>
+         <h4 id="トークンを取得">トークンを取得</h4>
+         <p>プロジェクトの管理画面の左ペインから”Settings”&gt;“CI/CD”を選択し、右ペインの”Runners”を開いて、“Project
+         runners”の”New project runner”ボタンをクリックする。</p>
+         <div class="large-img">
+         <figure>
+         <img
+         src="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/5ae2b54d5e903298474301165f5d613ae826e202/img/gitlab-latex/new-project-runner_1.png?raw=true"
+         alt="Fig. 1: New Project Runner 1" />
+         <figcaption aria-hidden="true">Fig. 1: New Project Runner
+         1</figcaption>
+         </figure>
+         </div>
+         <p>設定次にランナーのTagをするが、ここでは<code>macos, latex, amd64</code>とする。また、オプションで構成の情報を設定することができる。最後に”Create
+         Runner”ボタンをクリックする。</p>
+         <div class="large-img">
+         <figure>
+         <img
+         src="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/5ae2b54d5e903298474301165f5d613ae826e202/img/gitlab-latex/new-project-runner_2.png?raw=true"
+         alt="Fig. 2: New Project Runner 2" />
+         <figcaption aria-hidden="true">Fig. 2: New Project Runner
+         2</figcaption>
+         </figure>
+         </div>
+         <p>次の画面”Register runner”で、“Runner
+         created.”と表示されれば成功である。その画面でプラットフォームにmacOSを指定する。さらに<strong>“runner
+         authentication
+         token”の部分にトークン文字列が表示されるのでこれを控えておく</strong>。このトークンは次のセクションで使用する。</p>
+         <div class="large-img">
+         <figure>
+         <img
+         src="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/5ae2b54d5e903298474301165f5d613ae826e202/img/gitlab-latex/register-runner_1.png?raw=true"
+         alt="Fig.3 Register runner 1" />
+         <figcaption aria-hidden="true">Fig.3 Register runner
+         1</figcaption>
+         </figure>
+         </div>
+         <div class="large-img">
+         <figure>
+         <img
+         src="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/5ae2b54d5e903298474301165f5d613ae826e202/img/gitlab-latex/register-runner_2.png?raw=true"
+         alt="Fig. 4:" />
+         <figcaption aria-hidden="true">Fig. 4:</figcaption>
+         </figure>
+         </div>
+         <h4 id="登録">登録</h4>
+         <p><code>gitlab-runner</code>をスーパーユーザーで実行し、対話的にランナーを登録することができる。</p>
+         <ol type="1">
+         <li><p>コマンドを起動する。</p>
+         <pre><code>sudo gitlab-runner register</code></pre></li>
+         <li><p>GitLabインスタンスのURLを聞かれる。本稿ではGitLab.comにて管理されているグループにランナーを追加するので、<code>https://gitlab.com/</code>を指定する。</p>
+         <pre><code>Enter the GitLab instance URL (for example, https://gitlab.com/):
+https://gitlab.com/</code></pre></li>
+         <li><p>トークンを指定する（<code>x</code>は伏せ字、前のセクションでブラウザに表示されたものを入力する）。</p>
+         <pre><code>Enter the registration token:
+xxxxxxxxxxxxxxxxxxxxxxxxx</code></pre>
+         <p>以下の表示が出力されれば、トークンの照合に成功している。</p>
+         <pre><code>Verifying runner... is valid                        runner=xxxxxxxxx</code></pre></li>
+         <li><p>このランナーの名前を指定する。このMac
+         miniのホスト名は<code>mini</code>なので、例えばここでは<code>mini.local</code>とする。</p>
+         <pre><code>Enter a name for the runner. This is stored only in the local config.toml file:
+[mini.local]: mini.local</code></pre></li>
+         <li><p>Executerとして、<code>shell</code>を指定する。</p>
+         <pre><code>Enter an executor: parallels, virtualbox, kubernetes, docker-autoscaler, shell, ssh, docker-windows, docker+machine, instance, custom, docker:
+shell</code></pre></li>
+         <li><p>5を終えると、以下の表示が出力されて登録は成功となる。</p>
+         <pre><code>Runner registered successfully. Feel free to start it, but if it&#39;s running already the config should be automatically reloaded!
+
+Configuration (with the authentication token) was saved in &quot;/etc/gitlab-runner/config.toml&quot; </code></pre>
+         <p>ここで、<code>gitlab-runner</code>の設定ファイルが<code>/etc/gitlab-runner/config.toml</code>に保存されたことを覚えておこう。なお、この時点で、GitLab.comのプロジェクトの管理画面から登録されたランナーの情報を閲覧することができる（プロジェクトの左ペインから”Settings”&gt;“CI/CD”を選択して、右ペインの”Runners”を展開すると、“Assigned
+         project
+         runners”の項目に先ほど登録したランナーが追加されているはずである）。</p></li>
+         </ol>
+         <h4
+         id="設定ファイルの内容を編集する">設定ファイルの内容を編集する</h4>
+         <p>システムにインストールされた<code>config.toml</code>の内容を確認しよう。</p>
+         <pre><code>% sudo cat /etc/gitlab-runner/config.toml</code></pre>
+         <p>このコマンドを実行すると、以下のような出力を得る。<code>[[runners]]</code>の各項目に登録時に指定した値が書かれているはずである。</p>
+         <pre class="toml"><code>concurrent = 1
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = &quot;mini.local&quot;
+  url = &quot;https://gitlab.com/&quot;
+  id = XXXXXXXX
+  token = &quot;xxxxxxxxxxxxxxxxxxxxxxxxx&quot;
+  token_obtained_at = 2024-09-06T11:41:00Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = &quot;shell&quot;
+  [runners.custom_build_dir]
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]</code></pre>
+         <p>ここで上のセクションで登録した<code>gl-user</code>のディレクトリでビルドを行うように設定する。<code>[[runners]]</code>の項目リストに次のような<code>builds_dir</code>の項目を追加する。</p>
+         <pre class="toml"><code>[[runners]]
+  builds_dir = &quot;/Users/gl-runner/builds&quot;</code></pre>
+         <p>また、<strong>MacPortsを使用している場合</strong>は、<code>[[runners]]</code>の項目に<code>environment</code>文を追加で指定して、以下のように環境変数<code>PATH</code>を上書きする。</p>
+         <pre class="toml"><code>[[runners]]
+  environment = [&quot;PATH=/opt/local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin&quot;]</code></pre>
+         <p>結果として<code>config.toml</code>は以下のようになった。</p>
+         <pre class="toml"><code>concurrent = 1
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = &quot;mini.local&quot;
+  url = &quot;https://gitlab.com/&quot;
+  id = XXXXXXXX
+  token = &quot;xxxxxxxxxxxxxxxxxxxxxxxxx&quot;
+  token_obtained_at = 2024-09-06T11:41:00Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = &quot;shell&quot;
+  builds_dir = &quot;/Users/gl-runner/builds&quot;
+  environment = [&quot;PATH=/opt/local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin&quot;]
+  [runners.custom_build_dir]
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]</code></pre>
+         <p>注：筆者の環境では最初、<code>environment = ["PATH=/opt/local/bin:$PATH"]</code>を指定していたが、環境変数の追加が期待通りにできなかったため<code>PATH</code>変数を完全に上書きすることで解決した。</p>
+         <p>注：Homebrewを使用している場合は、<code>/usr/local/bin</code>はデフォルトで<code>PATH</code>に含まれているはずなので<code>environment</code>文は必要ないだろう。</p>
+         <h4
+         id="ランナーをサービスとして実行">ランナーをサービスとして実行</h4>
+         <p>ランナーを起動する準備ができたので、以下のコマンドでランナーをインストールし起動する。ランナーのユーザーに<code>gl-runner</code>以外を使用する場合は<code>--user</code>の引数値で指定する。</p>
+         <pre><code>% sudo gitlab-runner install --user gl-runner
+Runtime platform                                    arch=amd64 os=darwin pid=44959 revision=66269445 version=17.3.1</code></pre>
+         <pre><code>% sudo gitlab-runner start               
+Runtime platform                                    arch=amd64 os=darwin pid=45010 revision=66269445 version=17.3.1</code></pre>
+         <pre><code>% sudo gitlab-runner status
+Runtime platform                                    arch=amd64 os=darwin pid=45023 revision=66269445 version=17.3.1
+gitlab-runner: Service is running</code></pre>
+         <p>これでランナーのインストールは完了した。ローカルホストのランナーがGitLab.comのプロジェクトとコミュニケーションできているかについては、プロジェクトの管理画面の”Settings”&gt;“CI/CD”&gt;“Runners”&gt;“Assigned
+         project
+         runners”を参照して、登録したランナーをクリックしその状態を確認することができる。以上でRunnerのインストールは完了した。GitLab.comの管理画面を開き、Assigned
+         project
+         runnersの一覧に緑色にマークされたランナーを確認することができるはずである。</p>
+         <h2 id="ランナーを動かす">ランナーを動かす</h2>
+         <p>このセクションではGitLab.comのリポジトリにプッシュして、実際にCIを動かしてみる。</p>
+         <p>GitLab.comで空のリポジトリ（例えば<code>ci_test</code>）を作成し、ローカルにクローンする。クローンしたディレクトリに、次のような3つのファイルを作成する。</p>
+         <pre><code>ci_test/
+ ├──.gitlab-ci.yaml
+ ├──latexmkrc
+ └──main.tex</code></pre>
+         <p>ここで、各ファイルの役割を記しておこう。</p>
+         <ul>
+         <li><code>.gitlab-ci.yml</code>は、GitLabのCI/CDの実行において、パイプラインの行う処理を定義する設定ファイルである。このファイルには、ジョブの実行環境や依存関係、実行するスクリプト、環境変数、生成物の受け渡し、などパイプラインの動作に必要な設定が含まれている。このファイルはリポジトリのルートに配置し、GitLabがパイプラインを実行するときに参照される。</li>
+         <li><code>latexmkrc</code>は、<code>latexmk</code>コマンドに渡すLaTeXビルドの構成ファイルである。通常は<code>~/.latexmkrc</code>としてOSユーザーのホームディレクトリに置かれることが多いが、ここではリポジトリのルートに置いて<code>latexmk -r ./latexmkrc</code>としてコマンドライン引数にファイルを渡す方法を採用する。</li>
+         <li><code>main.tex</code>は、テスト用のLaTeX原稿である。本稿ではLuaLaTeXで書かれたものを扱う。</li>
+         </ul>
+         <p>それぞれのファイルの中身についての詳細は後述する。</p>
+         <h3 id="personal-access-tokenの取得登録">Personal Access
+         Tokenの取得・登録</h3>
+         <p>ランナーからGitLab.comのリポジトリにコミットできるようにするために、Personal
+         Access
+         Token（個人用アクセストークン）を取得する。このアクセストークンは、後述の<code>.gitlab-ci.yml</code>で変数<code>COMMIT_ACCESS_TOKEN</code>として使用され、パスワードの代替として認証を通す役割を担う。これを取得するにはGitLab.comの管理画面から以下の手順を実行する。</p>
+         <ol type="1">
+         <li>左ペインのアバターをクリックし、<strong>Edit
+         profile</strong>を選択する。</li>
+         <li>次のページで、左ペインの<strong>Access
+         tokens</strong>を選択する。</li>
+         <li>さらに<strong>Add new token</strong>を選択する。</li>
+         <li>トークンの名前と有効期限を入力する。</li>
+         <li><strong>Select
+         scopes</strong>において、<code>write_repository</code>を選択する。</li>
+         <li><strong>Create personal access
+         token</strong>のボタンをクリックする。</li>
+         <li>表示されたアクセストークンを安全な場所に控える（このページを離れるとトークンを再び見ることはできない）。</li>
+         </ol>
+         <p>次に、取得したアクセストークンをCI/CDの変数に加える。GitLab.comのプロジェクトのページを開き、左ペインの”Settings”
+         &gt; “CI/CD”を開き、“Variables”を展開すると、“CI/CD
+         Variables”が表示される。ここで”Add
+         variable”のボタンをクリックする。“Add
+         variable”の画面が出てくるので、以下のように入力する。</p>
+         <ul>
+         <li>Visibilityを<code>Masked</code>にする（これを選択することでログにアクセストークンの値が表示されない）。</li>
+         <li>Flagsは指定する必要はないのでチェックを外す（<code>Protect variable</code>は<code>main</code>ブランチのみで運用する限りは必要ないだろう）。</li>
+         <li>Keyに、<code>COMMIT_ACCESS_TOKEN</code>と入力する。</li>
+         <li>Valueに、先ほど取得したトークン文字列を入力する。</li>
+         <li>オプションで、Descriptionを記述する。</li>
+         <li>最後に”Add variable”のボタンをクリックする。</li>
+         </ul>
+         <p>以上で、<code>COMMIT_ACCESS_TOKEN</code>のCI/CD変数が利用可能になる。使い方については次のセクションにおいて述べる。</p>
+         <h3 id="gitlab-ci.yml"><code>.gitlab-ci.yml</code></h3>
+         <p><code>.gitlab-ci.yml</code>の例を示す。</p>
+         <pre class="yaml"><code>variables:
+  LATEX_JOB_NAME: &quot;${CI_PROJECT_NAME}&quot;
+
+stages: # 3つのステージを定義する
+  - preprocess
+  - build
+  - deploy
+
+prep_job:  # 必要なソフトウェアがインストールされていて、パスが通っていることを確認するジョブ
+  stage: preprocess
+  tags:
+   - macos
+   - latex
+  only:
+    - main # mainブランチに変更があった場合のみジョブを実行する
+  script:
+    - uname -a
+    - latexmk --version
+    - lualatex -v
+    - git --version
+
+build_job:  # LuaLaTeXでビルドを実行するジョブ
+  stage: build
+  tags:
+    - macos
+    - latex
+  only:
+    - main
+  script:
+    - latexmk -lualatex -r ./latexmkrc -g -jobname=&quot;${LATEX_JOB_NAME}&quot; ./main.tex
+  artifacts: # 次以降のジョブに受け渡す生成ファイルを定義する
+    paths:
+      - output/
+    when: on_success
+    access: all
+    expire_in: &quot;1 hours&quot;
+
+deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに追加するジョブ
+  stage: deploy
+  tags:
+    - macos
+    - latex
+  only:
+    - main
+  before_script:
+    - git config --local user.name &quot;${GITLAB_USER_NAME}&quot;
+    - git config --local user.email &quot;${GITLAB_USER_EMAIL}&quot;
+    - git fetch origin pdf
+  script:
+    - git checkout pdf
+    - git pull origin pdf
+    - rm ${LATEX_JOB_NAME}.pdf
+    - cp ./output/&quot;${LATEX_JOB_NAME}.pdf&quot; .
+    - if [ -n &quot;$(git status --porcelain)&quot; ]; then
+    - git add &quot;${LATEX_JOB_NAME}.pdf&quot;
+    - git commit -m &quot;Deploying to pdf by ${GITLAB_USER_NAME} from ${CI_COMMIT_SHA}&quot;
+    - git push &quot;https://oauth2:${COMMIT_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git&quot; pdf
+    - echo &quot;Commit successful&quot;
+    - fi
+  dependencies:
+    - build_job</code></pre>
+         <p>このファイルで実行されるCI/CDは、<code>prep_job</code>,
+         <code>build_job</code>,
+         <code>deploy_job</code>の3つのジョブに分かれており、それぞれ、ファイルの上方で定義された<code>stage:</code>の下にリストされた<code>preprocess</code>,
+         <code>build</code>,
+         <code>deploy</code>ステージに対応している。それぞれのジョブの定義には<code>stage</code>,
+         <code>tags</code>, <code>only</code>,
+         <code>before_script</code>, <code>script</code>,
+         <code>artifacets</code>,
+         <code>dependencies</code>などのキーが指定されている。これらの詳細は公式ドキュメントを参照してもらうこととして、各キーの重要なポイントに限定して述べる。</p>
+         <p>まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの<strong>パイプライン</strong>は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。<strong>ステージ</strong>とは、CI/CDパイプラインの中で<strong>ジョブを論理的にグループ化する単位</strong>であり、<strong>ジョブ</strong>とは<strong>実際に実行される処理単位</strong>（一連のコマンドやスクリプトなど）である。リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに<code>stages:</code>にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。</p>
+         <h4 id="キーの説明">キーの説明</h4>
+         <p>以下に、上の例で使用したYAML書式のキーを簡単に説明する。</p>
+         <ul>
+         <li><code>stages</code>：このキーはパイプラインに含まれるステージをリストの形で定義する。</li>
+         <li><code>variables</code>：パイプラインを通してグローバルに使用可能なCI/CD変数を定義する。</li>
+         </ul>
+         <p>次に、ジョブの定義で使用されたキーについて説明しよう。上で述べた2つ以外のインデントされていない3つのキーはそれぞれのジョブ（<code>prep_job</code>、
+         <code>build_job</code>、<code>deploy_job</code>）を定義している。</p>
+         <ul>
+         <li><p><code>stage</code>：ジョブ定義の中で記述され、そのジョブが所属するステージを1つ指定する。</p></li>
+         <li><p><code>tags</code>：そのジョブを実行するランナーが持つべきタグを指定する。リストとして複数指定することができ、その場合は指定されたすべてのキーを持っているランナーでのみジョブが実行される。</p></li>
+         <li><p><code>only</code>：パイプラインがトリガーされた時、<code>only</code>で指定されたブランチに変更があった場合のみ、そのジョブを実行する。上の例では<code>main</code>ブランチに変更があった場合のみジョブが実行される構成になっている。</p></li>
+         <li><p><code>before_script</code>：このキーがジョブ定義の中に記述された場合、後述の<code>script</code>が実行される前にジョブに固有のセットアップの処理を定義する。コマンドやスクリプトをリストの形式で記述する。</p></li>
+         <li><p><code>script</code>：このキーは、そのジョブにおけるメインの処理を、コマンドおよびスクリプトのリストの形式で定義する。上の例では<code>build_job</code>において<code>latexmk</code>コマンドを実行している。また<code>deploy_job</code>においては<code>build_job</code>の生成ファイルで既存ファイルを上書きし、変更があればコミットしてリモートリポジトリへプッシュする操作を実行している。</p></li>
+         <li><p><code>artifacts</code>：ジョブが終了した後に保存される生成物（ビルド生成物やテスト結果、ログファイルなど）を指し、ここで指定したファイルは次のジョブで利用したり、パイプライン完了後にWeb
+         UIからダウンロードすることができる。詳細は<a
+         href="https://docs.gitlab.com/ee/ci/yaml/#artifacts">公式ドキュメント</a>を参照されたい。</p></li>
+         <li><p><code>dependencies</code>：このキーは、アーティファクトを特定のジョブから引き継ぐことを明示的に指定する。このキーを指定しない場合は、以前のすべてのジョブに依存しているとみなされ、生成されたアーティファクトをすべて引き継ぐことになる。</p></li>
+         </ul>
+         <h4 id="cicd環境変数の説明">CI/CD環境変数の説明</h4>
+         <p>上の例で<code>.gitlab-ci.yml</code>に含まれる<code>LATEX_JOB_NAME</code>、<code>COMMIT_ACCESS_TOKEN</code>、<code>CI_PROJECT_NAME</code>、<code>GITLAB_USER_NAME</code>,
+         <code>GITLAB_USER_EMAIL</code>、　<code>CI_SERVER_HOST</code>、<code>CI_PROJECT_PATH</code>はCI/CD変数と呼ばれる、ある種の環境変数のようなものである。これらは再利用したい値や、YAMLファイルに値をハードコーディングしないために使用される。最初の1つ（<code>LATEX_JOB_NAME</code>）はYAMLファイル内でユーザーによって定義されたCI/CD変数であり、2つ目はWEB
+         UIから設定したCI/CD変数で、残る5つは事前定義されたCI/CD変数である。YAMLファイル内でユーザー定義CI/CD変数を使うには、<code>variables</code>キーを使って記述する。これは事前定義の変数と同様にジョブの<code>script:</code>などの中で参照することができる。後者の詳細は<a
+         href="https://docs.gitlab.com/ee/ci/variables/">公式ドキュメント</a>を参照してほしい。</p>
+         <p>これらの変数を参照するためには、変数名の先頭にドル記号<code>$</code>をつけ、二重引用符<code>"</code>を使って囲んで記述する必要がある。</p>
+         <h3 id="latexmkrc"><code>latexmkrc</code></h3>
+         <p>次に<code>latexmkrc</code>ファイルの内容を以下に示す。このファイルはPerlで記述され、<code>latexmk</code>コマンドの実行に関する指示が含まれる。ここで<code>$out_dir</code>に<code>'output'</code>が指定されていることに注目してほしい。これはこのコマンドにより生成されたファイルを、カレントディレクトリの<code>output</code>ディレクトリ内に配置するための命令で、前述のYAMLファイルの<code>artifacts</code>キーにおいて使用される。</p>
+         <pre><code>#!/usr/bin/env perl
+$pdf_mode = 4;
+$latex = &#39;lualatex -halt-on-error -interact=nonstopmode -syntax=1 %O %S&#39;;
+$shell_escape = 1;
+$out_dir = &#39;output&#39;</code></pre>
+         <h3 id="main.tex"><code>main.tex</code></h3>
+         <p>以下のようなシンプルなTeXファイルをビルドする。ここでは、ヒラギノフォントファミリーを指定することにする。</p>
+         <pre class="tex"><code>\documentclass[a4j,]{ltjsarticle}
+\usepackage{luatexja-fontspec}
+\usepackage[hiragino-pron]{luatexja-preset} % ヒラギノフォントを使用する
+
+\begin{document}
+テスト
+\end{document}</code></pre>
+         <h3 id="コミットプッシュ">コミット＆プッシュ</h3>
+         <p>以下のコマンドでこれら3つのファイルをコミットしてプッシュする。</p>
+         <pre class="shell"><code>% git add .gitlab-ci.yml latexmkrc main.tex
+% git commit
+% git push origin main</code></pre>
+         <p>そしてGitLab.comのWeb
+         UIを開き、プロジェクトのページの左ペインから”Build”&gt;“Pipeline”を選択すると、プッシュによってトリガーされたパイプラインが追加されているのを確認することができるはずである。追加されてしばらく待つとパイプラインが実行され、成功した場合はステータスが<code>Passed</code>となり、失敗した場合は<code>Failed</code>となる。</p>
+         <h3 id="pdfを取得">PDFを取得</h3>
+         <p>パイプラインが成功した場合は、プロジェクトのディレクトリで<code>git fetch origin pdf</code>/<code>git pull origin pdf</code>を実行し、<code>pdf</code>ブランチにスイッチすると成果物のPDFファイルを得ることができる。もしくは、アーティファクトの保存期間内ならば、Web
+         UIのパイプラインのページからアーティファクトのアーカイブをダウンロードすることができる。</p>
+         <p>入手したPDFファイルに<code>pdffonts</code>コマンドを実行すると以下のように出力され、確かにヒラギノフォントが埋め込まれていることを確認できる。</p>
+         <pre><code>% pdffonts ci_test.pdf 
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+ROGHWJ+HiraMinProN-W3                CID Type 0C       Identity-H       yes yes yes      4  0
+JFRMQG+LMRoman10-Regular             CID Type 0C       Identity-H       yes yes yes      5  0</code></pre>
+         <p>これにて本稿の目標は達成された。</p>
+         <h2 id="トラブルシューティング">トラブルシューティング</h2>
+         <p><strong>プライベートリポジトリを<code>git clone</code>できない</strong></p>
+         <p>GitLabとの接続に<code>ssh-agent</code>を使うと解決するかもしれない。まず<code>~/.ssh/config</code>に以下の記述を加える。</p>
+         <pre><code>Host gitlab.com
+   HostName gitlab.com
+   User    git
+   IdentityFile /path/to/secret-key</code></pre>
+         <p>SSHエージェントを起動し、秘密鍵を登録する。</p>
+         <pre><code>% eval `ssh-agent`
+% ssh-add ~/.ssh/&lt;secret_key&gt;</code></pre>
+         <p>鍵認証で接続できるか試してみるには<code>ssh -T gitlab</code>コマンドを使用する。<code>Welcome ...</code>と表示されれば成功である。</p>
+         <pre><code>% ssh -T gitlab
+Welcome to GitLab, @&lt;USER&gt;!</code></pre>
+         <p>これを設定したあとに<code>git clone</code>を行う。</p>
+         <pre class="shell"><code>% git clone git@gitlab.com:&lt;project&gt;/&lt;repos&gt;.git</code></pre>
+         <p>なお、<code>ssh-add -L</code>でエージェントに登録された鍵を表示できる。</p>
+         <p><strong>最初のパイプラインを実行できない</strong></p>
+         <p>GitLab.comにユーザーを新しく登録した場合、CI/CDを動かす前にユーザーのSMS認証を終える必要があるかもしれない。これはGitLabのプロジェクトの管理画面に案内が表示されるので、それに従って認証を行う。</p>
+         <h2 id="おわりに">おわりに</h2>
+         <p>以上、LaTeX文書の執筆に付随する作業をGitLabのCI/CDを使ってできるだけ自動化する方法について述べた。当初は筆者自身の備忘録としてメモを書いてすませるつもりであったが、この記事の提供する情報を自分以外にも必要とする人がいるかもしれないので記事として公開することにした。この方法を使えば、リモートリポジトリをマスターとして複数の端末から文書の編集を行うことができ、より便利になると思われる。</p>
+         <h2 id="参考文献">参考文献</h2>
+         <ol type="1">
+         <li><a
+         href="https://www.macports.org/install.php">www.macports.org</a></li>
+         <li><a
+         href="https://texwiki.texjp.org/?TeX%20Live%2FMac#texlive-install-port">#MacPortsによるインストール
+         TeX Live/Mac - TeX Wiki</a></li>
+         <li><a
+         href="https://docs.gitlab.com/runner/install/osx.html">Install
+         GitLab Runner on MacOS - GitLab Docs</a></li>
+         <li><a
+         href="https://docs.gitlab.com/runner/register/index.html?tab=macOS">Registering
+         runners - GitLab Docs</a></li>
+         <li><a href="https://docs.gitlab.com/ee/ci/yaml/">CI/CD YAML
+         syntax reference - GitLab Docs</a></li>
+         <li><a href="https://docs.gitlab.com/ee/ci/variables/">GitLab
+         CI/CD variables - GitLab Docs</a></li>
+         <li><a
+         href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html">Personal
+         Access Tokens - GitLab Docs</a></li>
+         </ol>
+      </div>
+   </div>
+</main>
+</body>
+</html>
