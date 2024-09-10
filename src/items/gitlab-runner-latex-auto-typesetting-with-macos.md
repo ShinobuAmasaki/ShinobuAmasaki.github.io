@@ -1,8 +1,7 @@
 ---
 title: GitLab RunnerでローカルMacにLaTeX組版サーバーを作る [JA]
-date: 2024-09-11
+date: 2024-09-10
 language: ja
-link: https://shinobuamasaki.github.io/items/gitlab-runner-latex-auto-typesetting-with-macos.html
 description: GitLab Runnerを使ってLaTeX組版をローカルMacで自動化する方法に関する記事
 ---
 
@@ -16,7 +15,7 @@ Posted on: 2024-09-11 JST
 
 ## 概要
 
-本稿では、Gitを使ってLaTeX文書を執筆していく過程における作業の自動化について、GitLab Runnerを使ったアプローチについて解説する。GitリポジトリにおいてCI/CDを実行できるサービスはGitLabやGitHubなどで提供されている。前者のCI/CDであるGitLab Runnerは、ローカルマシンを使って自由にカスタマイズされた環境で実行できる点が特徴的である。これに対し、後者のGitHub Actionsはクラウドベースで実行されるため、ローカルにインストールされたソフトウェアやフォントを利用したビルドには適していない。そのため、ローカルリソースを使用する目的であればGitLab Runnerが適しているだろう。
+本稿では、Gitを使ってLaTeX文書を執筆していく過程における作業の自動化について、GitLab Runnerを使ったアプローチについて解説する。GitLab Runnerは、ローカルマシンを使って自由にカスタマイズされた環境でCI/CDを実行できる点が特徴的である。これに対し、GitHub Actionsはクラウドベースで実行されるため、ローカルにインストールされたソフトウェアやフォントを利用したビルドには適していない。そのため両者を比較すると、ローカルリソースを使用する目的であればGitLab Runnerが適しているだろう。
 
 本稿は以下のような要求から執筆された。
 
@@ -48,25 +47,27 @@ Posted on: 2024-09-11 JST
     - [LuaLaTeXの初期設定](#lualatexの初期設定)
     - [ダウンロード](#ダウンロード)
     - [トークンを取得](#トークンを取得)
-    - [ランナーの登録](#ランナーの登録)
+    - [登録](#登録)
     - [設定ファイルの内容を編集する](#設定ファイルの内容を編集する)
     - [ランナーをサービスとして実行](#ランナーをサービスとして実行)
 - [ランナーを動かす](#ランナーを動かす)
-  - [Personal Access Tokenの取得・登録](#personal-access-tokenの取得登録)
   - [`latexmkrc`と`.gitlab-ci.yml`](#latexmkrcと.gitlab-ci.yml)
     - [キーの説明](#キーの説明)
     - [CI/CD環境変数の説明](#cicd環境変数の説明)
+
   - [`main.tex`](#main.tex)
   - [コミット&プッシュ](#コミットプッシュ)
   - [PDFを取得](#pdfを取得)
 - [トラブルシューティング](#トラブルシューティング)
+  - [プライベートリポジトリを`git clone`できない](#プライベートリポジトリをgit-cloneできない)
+  - [最初のパイプラインを実行できない](#最初のパイプラインを実行できない)
 - [参考文献](#参考文献)
 
 ## イントロダクション
 
 本稿では、GitLabで提供されるCI/CDの仕組みを活用して、LaTeX文書からPDFファイルを自動生成する方法について紹介する。この方法を使えば、手動でLaTeX文書をコンパイルしてリポジトリに登録する手間を削減し、履歴の管理や差分の取得がさらに容易になるだろう。また、これらの処理をローカルのmacOSマシンで行うことで、クラウドを使用した場合と比べて待ち時間が短くすることができる。また、幅広いフォントを選択肢を得られるため、より満足度の高いドキュメントを作成することができるだろう。
 
-この方法は、具体的には以下のフェーズに分かれている。
+この方法は、以下のフェーズに分かれている。
 
 1. GitLabのリポジトリに変更がプッシュされる。
 2. ランナーの実行がトリガーされる。
@@ -74,7 +75,7 @@ Posted on: 2024-09-11 JST
 4. ローカルマシンはLaTeX文書からPDFファイルを自動生成する。
 5. 生成物をリポジトリにコミット・プッシュする。
 
-以下では、これらの一連の処理を自動化する方法について述べる。本稿ではLaTeX文書のコンパイルにLuaLaTeXを使用するが、その他のLaTeXでも同様に自動化することができるだろう。なお、GitやLaTeXの基本的な使い方については説明せず、また非公開で複数人がリポジトリを使うことも想定しない。
+本稿では、これらの一連の処理を自動化する方法について述べる。なお、LaTeX文書のコンパイルにLuaLaTeXを使用するが、その他のLaTeXでも同様に自動化することができるだろう。ただし、GitやLaTeXの基本的な使い方については説明せず、また非公開で複数人がリポジトリを使うことも想定しない。
 
 ### CI/CDとは
 
@@ -82,13 +83,13 @@ CI/CDとは「継続的インテグレーション（Continuous Integration, CI�
 
 ### GitLab Runnerとは
 
-GitLabのCI/CDで定義された一連の処理（パイプライン、後述）を自動的に実行するためのエージェントである。GitLabサーバーからパイプラインジョブを受け取り、そのジョブをローカルまたはクラウドのマシンで実行する。RunnerはGitLab.comでも提供されているが、本稿ではローカルのMacにリポジトリから独立してインストール・設定した環境を使用する。GitLab Runner、`lualatex`やその他のフォントなどがインストールされたmacOS環境でランナーがジョブを実行することで、カスタマイズ自由度の高い（フォントの選択肢など）PDFドキュメントを自動生成することができるだろう。
+GitLabのCI/CDで定義された一連の処理（パイプラインと呼ぶ、後述）を自動的に実行するためのエージェントである（以下、ランナーと呼ぶ）。GitLabサーバーからパイプラインジョブを受け取り、そのジョブをローカルまたはクラウドのマシンで実行する。ランナーはGitLab.comでも提供されているが、ここではローカルのMacにリポジトリから独立してインストール・設定した環境を使用する。GitLab Runner、`lualatex`やその他のフォントなどがインストールされたmacOS環境でランナーがジョブを実行することで、カスタマイズ自由度の高い（フォントの選択肢など）PDFドキュメントを自動生成することができるだろう。
 
 ## インストール
 
 ### Mac環境の想定
 
-以下に、ランナーをインストールするMacの動作環境を記す。なおパッケージマネージャーはMacPortsを例に用いる。
+以下に、ランナーをインストールするMacの動作環境を記す。一人で使う限り、古い環境でも十分快適に動いた。なおパッケージマネージャーはMacPortsを例に用いる。
 
 #### ハードウェア
 
@@ -111,7 +112,7 @@ GitLabのCI/CDで定義された一連の処理（パイプライン、後述）
 
 #### フォントファイルの場所に関する注意事項
 
-今回紹介する方法で特定のユーザーに対してインストールされたフォントを使いたい場合には、以下のいずれかの処理を行う必要がある。
+特定のユーザーに対してインストールされたフォントを本稿の紹介する方法で使いたい場合には、以下のいずれかの処理を行う必要がある。
 
 - それらのフォントをmacOSのすべてのユーザーに対してインストールする。
 - それらのフォントを`gl-runner`ユーザーにもインストールする。
@@ -234,7 +235,7 @@ Development id: 7611
 
 ホームディレクトリを作成し、所有権を書き換える
 
-```shell
+```shell 
 % sudo mkdir /Users/gl-runner
 % sudo dscl . -create /Users/gl-runner NFSHomeDirectory /Users/gl-runner
 % sudo chown -R gl-runner:gl-runner /Users/gl-runner
@@ -258,24 +259,25 @@ Development id: 7611
 Intel Macの場合：
 
 ```shell
-% sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-amd64"
+sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-amd64"
 ```
 
 Apple Silicon（M1など）の場合：
 
 ```shell
-% sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-arm64"
+sudo curl --output /usr/local/bin/gitlab-runner "https://s3.dualstack.us-east-1.amazonaws.com/gitlab-runner-downloads/latest/binaries/gitlab-runner-darwin-arm64"
 ```
 
 ダウンロードしたバイナリに対して実行可能属性を付与する
 
 ```shell
-% sudo chmod +x /usr/local/bin/gitlab-runner
+sudo chmod +x /usr/local/bin/gitlab-runner
 ```
 
 以下のコマンドで実行可能か確認できる。
 
-```shell
+::: {class=none-highlight-user}
+```
 % gitlab-runner --version
 Version:      17.3.1
 Git revision: 66269445
@@ -283,7 +285,8 @@ Git branch:   17-3-stable
 GO version:   go1.22.5
 Built:        2024-08-21T15:23:40+0000
 OS/Arch:      darwin/amd64
-``` 
+```
+::: 
 
 #### トークンを取得
 
@@ -318,13 +321,13 @@ OS/Arch:      darwin/amd64
 ![Fig. 4: ](https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/5ae2b54d5e903298474301165f5d613ae826e202/img/gitlab-latex/register-runner_2.png?raw=true)
 :::
 
-#### ランナーの登録
+#### 登録
 
 `gitlab-runner`をスーパーユーザーで実行し、対話的にランナーを登録することができる。
 
 1. コマンドを起動する。
 
-   ```shell
+   ```
    sudo gitlab-runner register
    ```
 
@@ -376,12 +379,12 @@ OS/Arch:      darwin/amd64
 
 システムにインストールされた`config.toml`の内容を確認しよう。
 
-```shell
+```
 % sudo cat /etc/gitlab-runner/config.toml
 ```
 このコマンドを実行すると、以下のような出力を得る。`[[runners]]`の各項目に登録時に指定した値が書かれているはずである。
 
-```
+```toml
 concurrent = 1
 check_interval = 0
 shutdown_timeout = 0
@@ -421,7 +424,7 @@ shutdown_timeout = 0
 
 結果として`config.toml`は以下のようになった。
 
-```
+```toml
 concurrent = 1
 check_interval = 0
 shutdown_timeout = 0
@@ -480,18 +483,15 @@ gitlab-runner: Service is running
 GitLab.comで空のリポジトリ（例えば`ci_test`）を作成し、ローカルにクローンする。クローンしたディレクトリに、次のような3つのファイルを作成する。
 
 ```
-ci_test
- │
+ci_test/
  ├──.gitlab-ci.yaml
- │
  ├──latexmkrc
- │
  └──main.tex
 ```
 
 ここで、各ファイルの役割を記しておこう。
 
-- `.gitlab-ci.yml`は、GitLabのCI/CDパイプラインの実行において、ジョブやステージの定義を記述する設定ファイルである。このファイルには、ジョブの実行環境や依存関係、実行するスクリプト、環境変数、生成物の受け渡し、などパイプラインの動作に必要な設定が含まれている。このファイルはリポジトリのルートに配置され、GitLabがパイプラインを実行するときに参照される。
+- `.gitlab-ci.yml`は、GitLabのCI/CDの実行において、パイプラインの行う処理を定義する設定ファイルである。このファイルには、ジョブの実行環境や依存関係、実行するスクリプト、環境変数、生成物の受け渡し、などパイプラインの動作に必要な設定が含まれている。このファイルはリポジトリのルートに配置し、GitLabがパイプラインを実行するときに参照される。
 - `latexmkrc`は、`latexmk`コマンドに渡すLaTeXビルドの構成ファイルである。通常は`~/.latexmkrc`としてOSユーザーのホームディレクトリに置かれることが多いが、ここではリポジトリのルートに置いて`latexmk -r ./latexmkrc`としてコマンドライン引数にファイルを渡す方法を採用する。
 - `main.tex`は、テスト用のLaTeX原稿である。本稿ではLuaLaTeXで書かれたものを扱う。
 
@@ -518,21 +518,11 @@ ci_test
 - オプションで、Descriptionを記述する。
 - 最後に"Add variable"のボタンをクリックする。
 
-以上を完了すると、`COMMIT_ACCESS_TOKEN`のCI/CD変数が設定ファイル`.gitlab-ci.yml`の中で利用可能になる。使い方については次のセクションにおいて述べる。
+以上で、`COMMIT_ACCESS_TOKEN`のCI/CD変数が利用可能になる。使い方については次のセクションにおいて述べる。
 
-### `latexmkrc`と`.gitlab-ci.yml`
+### `.gitlab-ci.yml`
 
-`latexmkrc`ファイルの内容を以下に示す。このファイルはPerlで記述され、`latexmk`コマンドの実行に関する指示が含まれる。ここで`$out_dir`に`'output'`が指定されていることに注目してほしい。これはこのコマンドにより生成されたファイルを、カレントディレクトリの`output`ディレクトリ内に配置するための命令で、後述のYAMLファイルの`artifacts`キーにおいて使用される。
-
-```perl
-#!/usr/bin/env perl
-$pdf_mode = 4;
-$latex = 'lualatex -halt-on-error -interact=nonstopmode -syntax=1 %O %S';
-$shell_escape = 1;
-$out_dir = 'output'
-```
-
-次に`.gitlab-ci.yml`の例を示す。
+`.gitlab-ci.yml`の例を示す。
 
 ```yaml
 variables:
@@ -600,9 +590,7 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
 
 このファイルで実行されるCI/CDは、`prep_job`, `build_job`, `deploy_job`の3つのジョブに分かれており、それぞれ、ファイルの上方で定義された`stage:`の下にリストされた`preprocess`, `build`, `deploy`ステージに対応している。それぞれのジョブの定義には`stage`, `tags`, `only`, `before_script`, `script`, `artifacets`, `dependencies`などのキーが指定されている。これらの詳細は公式ドキュメントを参照してもらうこととして、各キーの重要なポイントに限定して述べる。
 
-まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの**パイプライン**は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。**ステージ**とは、CI/CDパイプラインの中で**ジョブを論理的にグループ化する単位**であり、**ジョブ**とは**実際に実行される処理単位**（一連のコマンドやスクリプトなど）である。
-
-リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに`stages:`にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。
+まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの**パイプライン**は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。**ステージ**とは、CI/CDパイプラインの中で**ジョブを論理的にグループ化する単位**であり、**ジョブ**とは**実際に実行される処理単位**（一連のコマンドやスクリプトなど）である。リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに`stages:`にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。
 
 #### キーの説明
 
@@ -614,11 +602,12 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
 次に、ジョブの定義で使用されたキーについて説明しよう。上で述べた2つ以外のインデントされていない3つのキーはそれぞれのジョブ（`prep_job`、 `build_job`、`deploy_job`）を定義している。
 
 - `stage`：ジョブ定義の中で記述され、そのジョブが所属するステージを1つ指定する。
+
 - `tags`：そのジョブを実行するランナーが持つべきタグを指定する。リストとして複数指定することができ、その場合は指定されたすべてのキーを持っているランナーでのみジョブが実行される。
 - `only`：パイプラインがトリガーされた時、`only`で指定されたブランチに変更があった場合のみ、そのジョブを実行する。上の例では`main`ブランチに変更があった場合のみジョブが実行される構成になっている。
 - `before_script`：このキーがジョブ定義の中に記述された場合、後述の`script`が実行される前にジョブに固有のセットアップの処理を定義する。コマンドやスクリプトをリストの形式で記述する。
 - `script`：このキーは、そのジョブにおけるメインの処理を、コマンドおよびスクリプトのリストの形式で定義する。上の例では`build_job`において`latexmk`コマンドを実行している。また`deploy_job`においては`build_job`の生成ファイルで既存ファイルを上書きし、変更があればコミットしてリモートリポジトリへプッシュする操作を実行している。
-- `artifacts`：ジョブが終了した後に保存される生成物（ビルド生成物やテスト結果、ログファイルなど）を指してアーティファクトと呼ぶ。ここで指定したファイルは次のジョブで利用したり、パイプライン完了後にWeb UIからダウンロードすることができる。詳細は[公式ドキュメント](https://docs.gitlab.com/ee/ci/yaml/#artifacts)を参照されたい。
+- `artifacts`：ジョブが終了した後に保存される生成物（ビルド生成物やテスト結果、ログファイルなど）を指し、ここで指定したファイルは次のジョブで利用したり、パイプライン完了後にWeb UIからダウンロードすることができる。詳細は[公式ドキュメント](https://docs.gitlab.com/ee/ci/yaml/#artifacts)を参照されたい。
 - `dependencies`：このキーは、アーティファクトを特定のジョブから引き継ぐことを明示的に指定する。このキーを指定しない場合は、以前のすべてのジョブに依存しているとみなされ、生成されたアーティファクトをすべて引き継ぐことになる。
 
 #### CI/CD環境変数の説明
@@ -627,11 +616,24 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
 
 これらの変数を参照するためには、変数名の先頭にドル記号`$`をつけ、二重引用符`"`を使って囲んで記述する必要がある。
 
+### `latexmkrc`
+
+次に`latexmkrc`ファイルの内容を以下に示す。このファイルはPerlで記述され、`latexmk`コマンドの実行に関する指示が含まれる。ここで`$out_dir`に`'output'`が指定されていることに注目してほしい。これはこのコマンドにより生成されたファイルを、カレントディレクトリの`output`ディレクトリ内に配置するための命令で、前述のYAMLファイルの`artifacts`キーにおいて使用される。
+
+```
+#!/usr/bin/env perl
+$pdf_mode = 4;
+$latex = 'lualatex -halt-on-error -interact=nonstopmode -syntax=1 %O %S';
+$shell_escape = 1;
+$out_dir = 'output'
+```
+
+
 ### `main.tex`
 
 以下のようなシンプルなTeXファイルをビルドする。ここでは、ヒラギノフォントファミリーを指定することにする。
 
-```latex
+```tex
 \documentclass[a4j,]{ltjsarticle}
 \usepackage{luatexja-fontspec}
 \usepackage[hiragino-pron]{luatexja-preset} % ヒラギノフォントを使用する
@@ -684,7 +686,7 @@ Host gitlab.com
 
 SSHエージェントを起動し、秘密鍵を登録する。
 
-```shell
+```
 % eval `ssh-agent`
 % ssh-add ~/.ssh/<secret_key>
 ```
@@ -710,7 +712,7 @@ GitLab.comにユーザーを新しく登録した場合、CI/CDを動かす前�
 
 ## おわりに
 
-以上、LaTeX文書の執筆に付随する作業をGitLabのCI/CDを使ってできるだけ自動化する方法について述べた。当初は筆者自身の備忘録としてメモを書いて済ませるつもりであったが、この記事の提供する情報を自分以外にも必要とする人がいるかもしれないので公開することにした。この方法を使えばリモートリポジトリをマスターとして複数の端末から文書の編集を行うことができるようになる。読者のドキュメントの執筆がより便利になれば幸いである。
+以上、LaTeX文書の執筆に付随する作業をGitLabのCI/CDを使ってできるだけ自動化する方法について述べた。当初は筆者自身の備忘録としてメモを書いてすませるつもりであったが、この記事の提供する情報を自分以外にも必要とする人がいるかもしれないので記事として公開することにした。この方法を使えば、リモートリポジトリをマスターとして複数の端末から文書の編集を行うことができ、より便利になると思われる。
 
 ## 参考文献
 
