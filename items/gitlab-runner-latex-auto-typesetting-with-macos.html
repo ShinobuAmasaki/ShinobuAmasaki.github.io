@@ -113,25 +113,20 @@ RunnerでローカルMacにLaTeX組版サーバーを作る [JA]" />
          </ul></li>
          <li><a href="#ランナーを動かす">ランナーを動かす</a>
          <ul>
-         <li><a
-         href="#latexmkrcと.gitlab-ci.yml"><code>latexmkrc</code>と<code>.gitlab-ci.yml</code></a>
+         <li><a href="#gitlab-ci.yml"><code>.gitlab-ci.yml</code></a>
          <ul>
          <li><a href="#キーの説明">キーの説明</a></li>
          <li><a href="#cicd環境変数の説明">CI/CD環境変数の説明</a></li>
          </ul></li>
+         <li><a href="#latexmkrc"><code>latexmkrc</code></a></li>
          <li><a href="#main.tex"><code>main.tex</code></a></li>
          <li><a href="#コミットプッシュ">コミット&amp;プッシュ</a></li>
          <li><a href="#pdfを取得">PDFを取得</a></li>
          </ul></li>
-         <li><a
-         href="#トラブルシューティング">トラブルシューティング</a>
-         <ul>
-         <li><a
-         href="#プライベートリポジトリをgit-cloneできない">プライベートリポジトリを<code>git clone</code>できない</a></li>
-         <li><a
-         href="#最初のパイプラインを実行できない">最初のパイプラインを実行できない</a></li>
-         </ul></li>
+         <li><a href="#おわりに">おわりに</a></li>
          <li><a href="#参考文献">参考文献</a></li>
+         <li><a
+         href="#トラブルシューティング">トラブルシューティング</a></li>
          </ul>
          <h2 id="イントロダクション">イントロダクション</h2>
          <p>本稿では、GitLabで提供されるCI/CDの仕組みを活用して、LaTeX文書からPDFファイルを自動生成する方法について紹介する。この方法を使えば、手動でLaTeX文書をコンパイルしてリポジトリに登録する手間を削減し、履歴の管理や差分の取得がさらに容易になるだろう。また、これらの処理をローカルのmacOSマシンで行うことで、クラウドを使用した場合と比べて待ち時間が短くすることができる。また、幅広いフォントを選択肢を得られるため、より満足度の高いドキュメントを作成することができるだろう。</p>
@@ -154,7 +149,7 @@ RunnerでローカルMacにLaTeX組版サーバーを作る [JA]" />
          Runner、<code>lualatex</code>やその他のフォントなどがインストールされたmacOS環境でランナーがジョブを実行することで、カスタマイズ自由度の高い（フォントの選択肢など）PDFドキュメントを自動生成することができるだろう。</p>
          <h2 id="インストール">インストール</h2>
          <h3 id="mac環境の想定">Mac環境の想定</h3>
-         <p>以下に、ランナーをインストールするMacの動作環境を記す。一人で使う限り、古い環境でも十分快適に動いた。なおパッケージマネージャーはMacPortsを例に用いる。</p>
+         <p>以下に、ランナーをインストールするMacの動作環境を記す。なおパッケージマネージャーはMacPortsを例に用いる。</p>
          <h4 id="ハードウェア">ハードウェア</h4>
          <ul>
          <li>Mac mini 2014 Late</li>
@@ -479,7 +474,8 @@ gitlab-runner: Service is running</code></pre>
          </ul>
          <p>以上で、<code>COMMIT_ACCESS_TOKEN</code>のCI/CD変数が利用可能になる。使い方については次のセクションにおいて述べる。</p>
          <h3 id="gitlab-ci.yml"><code>.gitlab-ci.yml</code></h3>
-         <p><code>.gitlab-ci.yml</code>の例を示す。</p>
+         <p>まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの<strong>パイプライン</strong>は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。<strong>ステージ</strong>とは、CI/CDパイプラインの中で<strong>ジョブを論理的にグループ化する単位</strong>であり、<strong>ジョブ</strong>とは<strong>実際に実行される処理単位</strong>（一連のコマンドやスクリプトなど）である。リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに<code>stages:</code>にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。</p>
+         <p>以下に、<code>.gitlab-ci.yml</code>の例を示す。</p>
          <pre class="yaml"><code>variables:
   LATEX_JOB_NAME: &quot;${CI_PROJECT_NAME}&quot;
 
@@ -550,7 +546,6 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
          <code>before_script</code>, <code>script</code>,
          <code>artifacets</code>,
          <code>dependencies</code>などのキーが指定されている。これらの詳細は公式ドキュメントを参照してもらうこととして、各キーの重要なポイントに限定して述べる。</p>
-         <p>まず、パイプラインやステージ、ジョブといった用語について説明しておこう。GitLabの<strong>パイプライン</strong>は、コードをビルド、テストそしてデプロイする一連の処理を自動化するフローの全体像であり、これによってCI/CDが実現される。パイプラインは複数のステージから構成され、ステージの中ではジョブという単位で実行される。<strong>ステージ</strong>とは、CI/CDパイプラインの中で<strong>ジョブを論理的にグループ化する単位</strong>であり、<strong>ジョブ</strong>とは<strong>実際に実行される処理単位</strong>（一連のコマンドやスクリプトなど）である。リポジトリへのプッシュやマージリクエストがトリガーとなりパイプラインが起動され、定義されたステージの順番に、ステージに含まれるジョブが実行される。ここで、YAMLファイルに<code>stages:</code>にリストされたステージは逐次実行されるが、同じステージに属するジョブは並列実行されうるという点に気をつけなければならない。</p>
          <h4 id="キーの説明">キーの説明</h4>
          <p>以下に、上の例で使用したYAML書式のキーを簡単に説明する。</p>
          <ul>
@@ -560,21 +555,21 @@ deploy_job:  # 得られた生成物をgitリポジトリのpdfブランチに�
          <p>次に、ジョブの定義で使用されたキーについて説明しよう。上で述べた2つ以外のインデントされていない3つのキーはそれぞれのジョブ（<code>prep_job</code>、
          <code>build_job</code>、<code>deploy_job</code>）を定義している。</p>
          <ul>
-         <li><p><code>stage</code>：ジョブ定義の中で記述され、そのジョブが所属するステージを1つ指定する。</p></li>
-         <li><p><code>tags</code>：そのジョブを実行するランナーが持つべきタグを指定する。リストとして複数指定することができ、その場合は指定されたすべてのキーを持っているランナーでのみジョブが実行される。</p></li>
-         <li><p><code>only</code>：パイプラインがトリガーされた時、<code>only</code>で指定されたブランチに変更があった場合のみ、そのジョブを実行する。上の例では<code>main</code>ブランチに変更があった場合のみジョブが実行される構成になっている。</p></li>
-         <li><p><code>before_script</code>：このキーがジョブ定義の中に記述された場合、後述の<code>script</code>が実行される前にジョブに固有のセットアップの処理を定義する。コマンドやスクリプトをリストの形式で記述する。</p></li>
-         <li><p><code>script</code>：このキーは、そのジョブにおけるメインの処理を、コマンドおよびスクリプトのリストの形式で定義する。上の例では<code>build_job</code>において<code>latexmk</code>コマンドを実行している。また<code>deploy_job</code>においては<code>build_job</code>の生成ファイルで既存ファイルを上書きし、変更があればコミットしてリモートリポジトリへプッシュする操作を実行している。</p></li>
-         <li><p><code>artifacts</code>：ジョブが終了した後に保存される生成物（ビルド生成物やテスト結果、ログファイルなど）を指し、ここで指定したファイルは次のジョブで利用したり、パイプライン完了後にWeb
+         <li><code>stage</code>：ジョブ定義の中で記述され、そのジョブが所属するステージを1つ指定する。</li>
+         <li><code>tags</code>：そのジョブを実行するランナーが持つべきタグを指定する。リストとして複数指定することができ、その場合は指定されたすべてのキーを持っているランナーでのみジョブが実行される。</li>
+         <li><code>only</code>：パイプラインがトリガーされた時、<code>only</code>で指定されたブランチに変更があった場合のみ、そのジョブを実行する。上の例では<code>main</code>ブランチに変更があった場合のみジョブが実行される構成になっている。</li>
+         <li><code>before_script</code>：このキーがジョブ定義の中に記述された場合、後述の<code>script</code>が実行される前にジョブに固有のセットアップの処理を定義する。コマンドやスクリプトをリストの形式で記述する。</li>
+         <li><code>script</code>：このキーは、そのジョブにおけるメインの処理を、コマンドおよびスクリプトのリストの形式で定義する。上の例では<code>build_job</code>において<code>latexmk</code>コマンドを実行している。また<code>deploy_job</code>においては<code>build_job</code>の生成ファイルで既存ファイルを上書きし、変更があればコミットしてリモートリポジトリへプッシュする操作を実行している。</li>
+         <li><code>artifacts</code>：ジョブが終了した後に保存される生成物（ビルド生成物やテスト結果、ログファイルなど）を指し、ここで指定したファイルは次のジョブで利用したり、パイプライン完了後にWeb
          UIからダウンロードすることができる。詳細は<a
-         href="https://docs.gitlab.com/ee/ci/yaml/#artifacts">公式ドキュメント</a>を参照されたい。</p></li>
-         <li><p><code>dependencies</code>：このキーは、アーティファクトを特定のジョブから引き継ぐことを明示的に指定する。このキーを指定しない場合は、以前のすべてのジョブに依存しているとみなされ、生成されたアーティファクトをすべて引き継ぐことになる。</p></li>
+         href="https://docs.gitlab.com/ee/ci/yaml/#artifacts">公式ドキュメント</a>を参照されたい。</li>
+         <li><code>dependencies</code>：このキーは、アーティファクトを特定のジョブから引き継ぐことを明示的に指定する。このキーを指定しない場合は、以前のすべてのジョブに依存しているとみなされ、生成されたアーティファクトをすべて引き継ぐことになる。</li>
          </ul>
          <h4 id="cicd環境変数の説明">CI/CD環境変数の説明</h4>
          <p>上の例で<code>.gitlab-ci.yml</code>に含まれる<code>LATEX_JOB_NAME</code>、<code>COMMIT_ACCESS_TOKEN</code>、<code>CI_PROJECT_NAME</code>、<code>GITLAB_USER_NAME</code>,
          <code>GITLAB_USER_EMAIL</code>、　<code>CI_SERVER_HOST</code>、<code>CI_PROJECT_PATH</code>はCI/CD変数と呼ばれる、ある種の環境変数のようなものである。これらは再利用したい値や、YAMLファイルに値をハードコーディングしないために使用される。最初の1つ（<code>LATEX_JOB_NAME</code>）はYAMLファイル内でユーザーによって定義されたCI/CD変数であり、2つ目はWEB
          UIから設定したCI/CD変数で、残る5つは事前定義されたCI/CD変数である。YAMLファイル内でユーザー定義CI/CD変数を使うには、<code>variables</code>キーを使って記述する。これは事前定義の変数と同様にジョブの<code>script:</code>などの中で参照することができる。後者の詳細は<a
-         href="https://docs.gitlab.com/ee/ci/variables/">公式ドキュメント</a>を参照してほしい。</p>
+         href="https://docs.gitlab.com/ee/ci/variables/">公式ドキュメント</a>を参照されたい。</p>
          <p>これらの変数を参照するためには、変数名の先頭にドル記号<code>$</code>をつけ、二重引用符<code>"</code>を使って囲んで記述する必要がある。</p>
          <h3 id="latexmkrc"><code>latexmkrc</code></h3>
          <p>次に<code>latexmkrc</code>ファイルの内容を以下に示す。このファイルはPerlで記述され、<code>latexmk</code>コマンドの実行に関する指示が含まれる。ここで<code>$out_dir</code>に<code>'output'</code>が指定されていることに注目してほしい。これはこのコマンドにより生成されたファイルを、カレントディレクトリの<code>output</code>ディレクトリ内に配置するための命令で、前述のYAMLファイルの<code>artifacts</code>キーにおいて使用される。</p>
@@ -609,24 +604,6 @@ name                                 type              encoding         emb sub 
 ROGHWJ+HiraMinProN-W3                CID Type 0C       Identity-H       yes yes yes      4  0
 JFRMQG+LMRoman10-Regular             CID Type 0C       Identity-H       yes yes yes      5  0</code></pre>
          <p>これにて本稿の目標は達成された。</p>
-         <h2 id="トラブルシューティング">トラブルシューティング</h2>
-         <p><strong>プライベートリポジトリを<code>git clone</code>できない</strong></p>
-         <p>GitLabとの接続に<code>ssh-agent</code>を使うと解決するかもしれない。まず<code>~/.ssh/config</code>に以下の記述を加える。</p>
-         <pre><code>Host gitlab.com
-   HostName gitlab.com
-   User    git
-   IdentityFile /path/to/secret-key</code></pre>
-         <p>SSHエージェントを起動し、秘密鍵を登録する。</p>
-         <pre><code>% eval `ssh-agent`
-% ssh-add ~/.ssh/&lt;secret_key&gt;</code></pre>
-         <p>鍵認証で接続できるか試してみるには<code>ssh -T gitlab</code>コマンドを使用する。<code>Welcome ...</code>と表示されれば成功である。</p>
-         <pre><code>% ssh -T gitlab
-Welcome to GitLab, @&lt;USER&gt;!</code></pre>
-         <p>これを設定したあとに<code>git clone</code>を行う。</p>
-         <pre class="shell"><code>% git clone git@gitlab.com:&lt;project&gt;/&lt;repos&gt;.git</code></pre>
-         <p>なお、<code>ssh-add -L</code>でエージェントに登録された鍵を表示できる。</p>
-         <p><strong>最初のパイプラインを実行できない</strong></p>
-         <p>GitLab.comにユーザーを新しく登録した場合、CI/CDを動かす前にユーザーのSMS認証を終える必要があるかもしれない。これはGitLabのプロジェクトの管理画面に案内が表示されるので、それに従って認証を行う。</p>
          <h2 id="おわりに">おわりに</h2>
          <p>以上、LaTeX文書の執筆に付随する作業をGitLabのCI/CDを使ってできるだけ自動化する方法について述べた。当初は筆者自身の備忘録としてメモを書いてすませるつもりであったが、この記事の提供する情報を自分以外にも必要とする人がいるかもしれないので記事として公開することにした。この方法を使えば、リモートリポジトリをマスターとして複数の端末から文書の編集を行うことができ、より便利になると思われる。</p>
          <h2 id="参考文献">参考文献</h2>
@@ -650,6 +627,24 @@ Welcome to GitLab, @&lt;USER&gt;!</code></pre>
          href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html">Personal
          Access Tokens - GitLab Docs</a></li>
          </ol>
+         <h2 id="トラブルシューティング">トラブルシューティング</h2>
+         <p><strong>プライベートリポジトリを<code>git clone</code>できない</strong></p>
+         <p>GitLabとの接続に<code>ssh-agent</code>を使うと解決するかもしれない。まず<code>~/.ssh/config</code>に以下の記述を加える。</p>
+         <pre><code>Host gitlab.com
+   HostName gitlab.com
+   User    git
+   IdentityFile /path/to/secret-key</code></pre>
+         <p>SSHエージェントを起動し、秘密鍵を登録する。</p>
+         <pre><code>% eval `ssh-agent`
+% ssh-add ~/.ssh/&lt;secret_key&gt;</code></pre>
+         <p>鍵認証で接続できるか試してみるには<code>ssh -T gitlab</code>コマンドを使用する。<code>Welcome ...</code>と表示されれば成功である。</p>
+         <pre><code>% ssh -T gitlab
+Welcome to GitLab, @&lt;USER&gt;!</code></pre>
+         <p>これを設定したあとに<code>git clone</code>を行う。</p>
+         <pre class="shell"><code>% git clone git@gitlab.com:&lt;project&gt;/&lt;repos&gt;.git</code></pre>
+         <p>なお、<code>ssh-add -L</code>でエージェントに登録された鍵を表示できる。</p>
+         <p><strong>最初のパイプラインを実行できない</strong></p>
+         <p>GitLab.comにユーザーを新しく登録した場合、CI/CDを動かす前にユーザーのSMS認証を終える必要があるかもしれない。これはGitLabのプロジェクトの管理画面に案内が表示されるので、それに従って認証を行う。</p>
       </div>
    </div>
 </main>
