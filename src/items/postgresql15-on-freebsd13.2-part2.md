@@ -1,7 +1,7 @@
 ---
 title:  FreeBSD 13.2にPostgreSQL 15をインストールする（後編）[JA]
 date: 2023-09-14
-language: en
+language: ja
 link: https://shinobuamasaki.github.io/items/postgresql15-on-freebsd13.2-part2.html
 author: 雨崎しのぶ（Amasaki Shinobu）
 description: 本稿では、FreeBSD 13.2のサーバーに、前編でインストールしたPostgreSQLについて、phpPgAdminを経由してウェブブラウザ上からアクセスする方法について、できるだけ詳細に述べる。ウェブサーバーApache HTTP Server 2.4（apache24）とPHP FastCGI Process Manager（php-fpm）をインストールして、ウェブアプリケーションphpPgAdminを実行できる環境を提供するのが本稿の目標である。

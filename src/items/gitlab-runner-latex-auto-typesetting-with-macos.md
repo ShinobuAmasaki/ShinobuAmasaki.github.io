@@ -1,7 +1,9 @@
 ---
 title: GitLab RunnerでローカルMacにLaTeX組版サーバーを作る [JA]
 date: 2024-09-10
+link: https://shinobuamasaki.github.io/items/gitlab-runner-latex-auto-typesetting-with-macos.html
 language: ja
+author: 雨崎しのぶ（Amasaki Shinobu）
 description: GitLab Runnerを使ってLaTeX組版をローカルMacで自動化する方法に関する記事
 ---
 
@@ -11,7 +13,7 @@ Author: 雨崎しのぶ
 
 Twitter: [@amasaki203](https://x.com/amasaki203)
 
-Posted on: 2024-09-11 JST
+Posted on: 2024-09-10 JST
 
 ## 概要
 
@@ -298,7 +300,7 @@ OS/Arch:      darwin/amd64
 
 :::
 
-次にランナーのTagを設定するが、ここでは`macos, latex, shared, amd64`とする。オプションで構成の情報を設定する。最後に"Create Runner"ボタンをクリックする。
+設定次にランナーのTagをするが、ここでは`macos, latex, amd64`とする。また、オプションで構成の情報を設定することができる。最後に"Create Runner"ボタンをクリックする。
 
 ::: {class=large-img}
 
