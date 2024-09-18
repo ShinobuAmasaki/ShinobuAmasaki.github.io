@@ -51,6 +51,8 @@ div#links {
 img#myicon {
    margin: 40px;
    border-radius: 0.8em;
+   width: 512px;
+   height: 512px;
 }
 
 @media screen and (max-width:820px) {
