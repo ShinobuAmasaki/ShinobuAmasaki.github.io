@@ -49,7 +49,7 @@ div#links {
    font-size: 300%;
 }
 img#myicon {
-   margin: 40px;
+   margin: 78px 40px 40px 40px;
    border-radius: 0.8em;
    width: 512px;
    height: 512px;
@@ -65,7 +65,7 @@ img#myicon {
       -webkit-text-size-adjust: 100%;
    }
    img#myicon {
-      margin: 15px;
+      margin: 33px 15px 15px 15px;
       width: 256px;
       height: 256px;
    }
