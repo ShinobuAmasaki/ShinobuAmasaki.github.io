@@ -69,6 +69,7 @@ img#myicon {
       aspect-ratio: 1/1;
       width: 90%;
       object-fit: contain;
+      clip-path: inset(0);
    }
    .window img {
       width: 240px;
