@@ -66,7 +66,8 @@ img#myicon {
    }
    img#myicon {
       margin: 15px;
-      width: 100%;
+      aspect-ratio: 1;
+      width: 90%;
    }
    .window img {
       width: 240px;
