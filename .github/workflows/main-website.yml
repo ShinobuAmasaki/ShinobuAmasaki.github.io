@@ -1,5 +1,6 @@
 name: main-website
 on:
+   workflow_dispatch:
    push:
       branches: [ "main" ]
    pull_request:
@@ -17,7 +18,7 @@ jobs:
       
       steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -46,17 +47,17 @@ jobs:
 
       - name: Generate HTML files
         run: |
-         mkdir -p site/items
-         pandoc -f markdown -t html --template=src/templates/index-template.html --eol=lf --toc --no-highlight -V pagetitle="index.html" src/index.md > site/index.html
+         mkdir -p items
+         pandoc -f markdown -t html --template=src/templates/index-template.html --eol=lf --toc --no-highlight -V pagetitle="index.html" src/index.md > index.html
          for file in src/items/*.md; do
             filename=$(basename -- $file)
             filename="${filename%.*}.html"
-            pandoc -f markdown -t html --template=src/templates/template.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "site/items/$filename"
+            pandoc -f markdown -t html --template=src/templates/template.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "items/$filename"
          done
          for file in src/items/with-katex/*.md; do
             filename=$(basename -- $file)
             filename="${filename%.*}.html"
-            pandoc -f markdown -t html5 --template=src/templates/template-with-katex.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "site/items/$filename"
+            pandoc -f markdown -t html5 --template=src/templates/template-with-katex.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "items/$filename"
          done
 
       - name: Generate RSS feed
@@ -70,6 +71,20 @@ jobs:
          cp -r style site/style
          cp favicon.ico site/.
          cp feed.rss site/rss/.
+
+      - name: Generate the sitemap
+        id: sitemap
+        uses: cicirello/generate-sitemap@v1
+        with:
+          exclude-paths: /src/templates /googlece7ee72c5edeb81f.html
+          base-url-path: https://shinobuamasaki.github.io/
+
+      - name: Copy index.html, items and sitemap.xml
+        run: |
+         cp index.html site/.
+         cp -r items site/items
+         cp sitemap.xml site/.
+         cp googlece7ee72c5edeb81f.html site/.
 
       - name: Deploy Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.3
