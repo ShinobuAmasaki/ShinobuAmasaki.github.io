@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Fri, 13 Dec 2024 08:31:03 +0900</pubDate>
+<pubDate>Fri, 13 Dec 2024 08:49:26 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,14 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>Fortranから使うPLplot入門 #1 [JA]</title>
+ <link>https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d</link>
+ <description>FortranにおけるPLplotの使い方についての記事
+その1：インストールとHello World</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2024-12-12</pubDate>
+</item>
 <item>
 <title>GitLab RunnerでローカルMacにLaTeX組版サーバーを作る [JA]</title>
  <link>https://shinobuamasaki.github.io/items/gitlab-runner-latex-auto-typesetting-with-macos.html</link>
