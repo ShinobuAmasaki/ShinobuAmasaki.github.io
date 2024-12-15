@@ -67,7 +67,7 @@ jobs:
       - name: Copy image and style files
         run: |
          mkdir -p site/rss
-         cp -r img site/img
+         cp -r src/img site/img
          cp -r style site/style
          cp favicon.ico site/.
          cp feed.rss site/rss/.
