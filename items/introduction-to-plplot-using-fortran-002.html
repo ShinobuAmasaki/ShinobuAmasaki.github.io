@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+        <meta name="description" content="FortranからPLplotライブラリを使う解説記事
+その2: 直線・曲線・散布図を描く" />
+   <meta name="twitter:description" content="FortranからPLplotライブラリを使う解説記事
+その2: 直線・曲線・散布図を描く" />
+   <meta name="og:description" content="FortranからPLplotライブラリを使う解説記事
+その2: 直線・曲線・散布図を描く" />
+      <meta property="og:title" content="Fortranから使うPLplot入門 #2:
+直線・曲線・散布図 [JA]" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/introduction-to-plplot-using-fortran-002.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title>Fortranから使うPLplot入門 #2: 直線・曲線・散布図
+[JA] | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1 id="fortranから使うplplot入門-2">Fortranから使うPLplot入門
+         #2</h1>
+         <ol type="1">
+         <li><a
+         href="https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d">Fortranから使うPLplot入門
+         #1</a> - インストールとHello World</li>
+         <li>Fortranから使うPLplot入門 #2 -
+         直線と曲線、散布図を描く（この記事）</li>
+         </ol>
+         <h2 id="はじめに">はじめに</h2>
+         <p><a
+         href="https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d">Qiitaに挙げた初回の記事</a>に引き続きPLplotの使い方について解説します。本稿では直線や曲線と、散布図の描き方について紹介します。</p>
+         <p>前回は、以下のメインプログラムでHello
+         Worldを描きました。このコードの<code>frame</code>ブロックと<code>plot</code>ブロックに注目して、線分や曲線を引く方法についてみていきましょう。</p>
+         <pre class="fortran"><code>program main
+   use plplot
+   implicit none
+
+   initialize: block
+      call plinit
+   end block initialize
+
+   frame: block
+      real(PLFLT), parameter :: xmin = 0d0, xmax = 1d0
+      real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
+      integer :: just, axis
+      
+      just = 0
+      axis = 0
+      call plenv( xmin, xmax, ymin, ymax, just, axis)
+      call pllab(&quot;x&quot;, &quot;y&quot;, &quot;Title&quot;)
+   end block frame
+
+   plot: block
+      real(PLFLT) :: cx, cy, dx, dy
+      
+      call plschr(12._plflt, 1._plflt)
+
+      cx = 0.5d0
+      cy = 0d0
+      dx = 1d0
+      dy = 0.5d0
+      call plptex(cx, cy, dx, dy, 0.5_plflt, &quot;Hello World!&quot;)
+   end block plot
+
+   finalize: block
+      call plend
+   end block finalize
+ 
+end program main</code></pre>
+         <h2 id="目次">目次</h2>
+         <ul>
+         <li><a href="#はじめに">はじめに</a></li>
+         <li><a href="#線を引く">線を引く</a>
+         <ul>
+         <li><a href="#線分を引く">線分を引く</a></li>
+         <li><a href="#曲線を描く">曲線を描く</a>
+         <ul>
+         <li><a href="#サインカーブ">サインカーブ</a></li>
+         <li><a href="#コサインを追加">コサインを追加</a></li>
+         </ul></li>
+         </ul></li>
+         <li><a href="#散布図を描く">散布図を描く</a></li>
+         <li><a href="#まとめ">まとめ</a></li>
+         <li><a href="#参考文献">参考文献</a></li>
+         </ul>
+         <h2 id="線を引く">線を引く</h2>
+         <h3 id="線分を引く">線分を引く</h3>
+         <p>線を引くためには、<code>plot</code>ブロックに<code>plline</code>手続を呼ぶ行を追加します。</p>
+         <p><code>plline</code>は、x-y平面上の複数の点を線分で繋いだものを書き出します。引数には実数型ランク1の配列を2つとります。配列の添字が同じになる2つの値を、点のx座標とy座標の値とみなして、2つの点を結びます。例えば<code>call plline(x(:), y(:))</code>とすると、最初の点の座標は(<code>x(1)</code>,
+         <code>y(1)</code>)、2番目の点は(<code>x(2)</code>,
+         <code>y(2)</code>)というようになります。</p>
+         <pre class="fortran"><code>plot: block
+   real(PLFLT) :: cx, cy, dx, dy
+   call plschr(12._plflt, 1._plflt)
+
+   cx = 0.5d0
+   cy = 0d0
+   dx = 1d0
+   dy = 0.5d0
+   call plptex(cx, cy, dx, dy, 0.5_plflt, &quot;Hello World!&quot;)
+   
+   call plline([0d0,dx], [0d0,dy])  
+    ! ここでは線分を引くためにサイズ2の配列を与えている。
+end block plot</code></pre>
+         <p>このコードを実行すると、次のような図が出力されます。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/plplot/plplot-helloworld-02.png"
+         alt="Hello World #2" />
+         <figcaption aria-hidden="true">Hello World #2</figcaption>
+         </figure>
+         </div>
+         <p>この図では原点と点(1,
+         0.5)に線が引かれていますが、このままでは線分であることが明確ではないので<code>frame</code>ブロックを少し変更します。</p>
+         <pre class="fortran"><code> frame: block
+    real(PLFLT), parameter :: xmin = -0.1d0, xmax = 1.1d0 ! xminとxmaxを変更
+    real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
+    integer :: just, axis
+
+    just = 0
+    axis = 0
+    call plenv( xmin, xmax, ymin, ymax, just, axis)
+    call pllab(&quot;x&quot;, &quot;y&quot;, &quot;Title&quot;)
+ end block frame</code></pre>
+         <p>これを反映したプログラムを実行すると、次のようになります。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/plplot/plplot-helloworld-03.png"
+         alt="Hello World #3" />
+         <figcaption aria-hidden="true">Hello World #3</figcaption>
+         </figure>
+         </div>
+         <p>これで線分を引くことができました。これに加えて、前回の記事で
+         「<code>plptex</code>手続では、文字列を置く座標を<code>cx = 0.5d0; cy = 0d0</code>とし、その傾きを原点と点<code>dx = 1d0; dy = 0.5d0</code>のなす直線に並行になるように指定しています」
+         と書きましたが、この図はまさに、文字列の傾きが原点と点(<code>dx</code>,
+         <code>dy</code>)を結ぶ直線に並行であることを示しています。</p>
+         <h3 id="曲線を描く">曲線を描く</h3>
+         <h4 id="サインカーブ">サインカーブ</h4>
+         <p>前節では<code>plline</code>を使って線分を引きました。この手続は、与える配列のサイズを十分大きいものにすると、曲線を引くことができます。</p>
+         <p>まずは簡単なSin曲線を引いてみましょう。まずは<code>frame</code>ブロックの<code>xmin</code>,
+         <code>xmax</code>, <code>ymin</code>,
+         <code>ymax</code>をグローバル定数に移し、<code>xmax</code>には2πを代入します。</p>
+         <pre class="fortran"><code>program main
+   use plplot
+   implcit none
+   real(PLFLT), parameter :: pi = acos(-1d0)
+   real(PLFLT), parameter :: xmin = 0d0, xmax = 2*pi
+   real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
+   ...
+
+   frame: block
+      integer :: just, axis
+
+      just = 0
+      axis = 0
+      call plenv( xmin, xmax, ymin, ymax, just, axis)
+      call pllab(&quot;x&quot;, &quot;y&quot;, &quot;Title&quot;)
+   end block frame
+   ...</code></pre>
+         <p>次に<code>plot</code>ブロックを次のように変更します。</p>
+         <pre class="fortran"><code>plot: block
+   integer, parameter :: n = 101
+   integer, :: i
+	 real(PLFLT) :: x(n), y_sine(n)
+	 
+	 do i = 1, n
+      x(i) = (i-1)*(xmax - xmin)/(n-1)
+      y_sine(i) = sin(x(i))
+   end do
+   call plline(x, y_sine)
+end block plot</code></pre>
+         <p>配列<code>x</code>には、x軸方向の区間を<code>n-1</code>個に分割したものの境界（<code>n</code>個）の座標値を代入しています。配列<code>y</code>の第<code>i</code>要素には、x座標上の位置<code>x(i)</code>のSin関数の値を代入しています。</p>
+         <p>以上の変更を行い、プログラムを実行すると、次のような図が出力されるでしょう。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/plplot/plplot-sine.png" alt="Sine curve" />
+         <figcaption aria-hidden="true">Sine curve</figcaption>
+         </figure>
+         </div>
+         <h4 id="コサインを追加">コサインを追加</h4>
+         <p>次にCos関数の曲線を追加しますが、ここでは線の色を変えてみましょう。<code>plot</code>ブロックを以下のように変更します。</p>
+         <pre class="fortran"><code> plot: block
+    integer, parameter :: n = 101
+    integer :: i
+    real(PLFLT) :: x(n), y_sine(n), y_cosine(n)
+
+    do i = 1, n
+       x(i) = (i-1)*(xmax - xmin)/(n-1)
+       y_sine(i) = sin(x(i))
+       y_cosine(i) = cos(x(i))
+    end do
+    call plline(x, y_sine)
+
+    call plcol0(2)
+    call plline(x, y_cosine)
+ end block plot</code></pre>
+         <p>新しいこのコードでは、配列<code>y_cosine</code>を追加しています。8行目でこの配列にCos関数の値を代入しています。次に<code>plcol0(2)</code>を呼び出して、その後に描画する色を変更しています。最後に<code>plline(x, y_cosine)</code>を呼び出して曲線を描画しています。これを実行すると以下のようなプロットを得られます。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/plplot/plplot-sine-cosine.png"
+         alt="Sine and Cosine" />
+         <figcaption aria-hidden="true">Sine and Cosine</figcaption>
+         </figure>
+         </div>
+         <p>プロットする色を変更する<code>plcol0</code>手続について解説します。このサブルーチンは<code>0</code>以上の整数値を引数に取り、その手続を呼び出して以降に描画するものの色を番号で対応づけられたものに変更します。番号と色の対応は<code>cmap0_default.pal</code>というファイルにHEXカラーコードで定義されています。以下のコマンドは、macOS上でMacPortsを使ってPLplotをインストールしている場合の例です。</p>
+         <pre><code>% ls /opt/local/share/plplot5.15.0 | grep .pal
+cmap0_alternate.pal
+cmap0_black_on_white.pal
+cmap0_default.pal
+cmap0_white_bg.pal
+cmap1_blue_red.pal
+cmap1_blue_yellow.pal
+cmap1_default.pal
+cmap1_gray.pal
+cmap1_highfreq.pal
+cmap1_lowfreq.pal
+cmap1_radar.pal
+
+% cat /opt/local/share/plplot5.15.0/cmap0_default.pal
+16
+#000000
+#ff0000
+#ffff00
+#00ff00
+#7fffd4
+#ffc0cb
+#f5deb3
+#bebebe
+#a52a2a
+#0000ff
+#8a2be2
+#00ffff
+#40e0d0
+#ff00ff
+#fa8072
+#ffffff</code></pre>
+         <p><code>call plcol0(2)</code>の<code>2</code>に対応するのは、<code>cmap0_default.pal</code>にリストされている値の3番目（0-basedのため）、つまり<code>#ffff00</code>なので黄色に変更しています。</p>
+         <h2 id="散布図を描く">散布図を描く</h2>
+         <p>前節までに、文字列を書くことと線を引くことができるようになりました。この節では、点を打って散布図を描く方法について解説します。ここでは、次のような図をプロットすることを目標にします。</p>
+         <div class="large-img">
+         <figure>
+         <img src="../img/plplot/plplot-scatter-01.png"
+         alt="Scatter plot" />
+         <figcaption aria-hidden="true">Scatter plot</figcaption>
+         </figure>
+         </div>
+         <p>プロットするデータの例として、国際天文学連合の<a
+         href="https://www.minorplanetcenter.net/iau/MPCORB.html">Minor
+         Planet
+         Center</a>からMOBCORB.DATのデータをダウンロードして使用します。このデータファイルは小天体の軌道に関するデータなどが含まれています。小惑星は楕円軌道で運行しているので、軌道を特徴づけるパラメーターの一部である<strong>軌道長半径a</strong>と<strong>軌道離心率e</strong>の値を取り出します。</p>
+         <p>ダウンロードできたら、まずはこのファイルをFortranで読み取りやすいように加工します（完全なデータフォーマットは<a
+         href="https://www.minorplanetcenter.net/iau/info/MPOrbitFormat.html">Export
+         Format for Minor-Planet Orbits -
+         IAU/MPC</a>に書かれています）。ファイルには説明文とヘッダが含まれているので、以下のコマンドを実行してこれを取り除きます（もしくはテキストエディタでデータ部分以外を切り取ってもかまいません）。</p>
+         <pre><code>% cat MPCORB.DAT | awk &#39;NR&gt;= 44&#39; &gt; MPCORB_modified.DAT</code></pre>
+         <p>次にデータを読み込んでプロットを描くコードについて説明していきます。プログラムの先頭は以下のように記述します。</p>
+         <pre class="fortran"><code>program main
+   use plplot
+   implicit none
+   real(PLFLT), parameter :: xmin = 0d0, xmax = 6d0
+   real(PLFLT), parameter :: ymin = 0d0, ymax = 1d0
+   integer, parameter :: n = 1500000
+   real(PLFLT) :: x(n), y(n)
+
+   ! 値をプロット範囲外の値で初期化する。
+   x(:) = -1d0
+   y(:) = -1d0</code></pre>
+         <p>そして、次のような<code>read_data</code>ブロックを追加して、<code>MPCORB_modified.DAT</code>からデータを読み込みます。</p>
+         <pre class="fortran"><code> read_data: block
+    character(7) :: id
+    character(5) :: epoch
+    real(PLFLT) :: h, g, perihelion, epoch_ano, lon_asc, inclination, ecc, mean_motion, a
+    	! 使用するのはeccとaのみで、他はダミー変数
+    integer :: uni, i, ierr
+
+    open(newunit=uni, file=&#39;MPCORB_modified.DAT&#39;, status=&#39;old&#39;)
+
+    i = 1
+    ierr = 0
+    do while (.true.)
+       if (ierr /= 0) then
+          exit
+       end if
+       read(uni, *, iostat=ierr)  &amp;
+          id, h, g, epoch, epoch_ano, perihelion, &amp;
+          lon_asc, inclination, ecc, mean_motion, a
+          ! 1レコードには、第9列に軌道離心率eが、第11列に軌道長半径aが配置されているので、
+          ! これらを変数eccとaに読み込む
+
+       x(i) = a
+       y(i) = ecc
+       i = i + 1
+    end do
+    close(uni)
+ end block read_data</code></pre>
+         <p>次に<code>initialize</code>, <code>frame</code>,
+         <code>plot</code>ブロックを次のように記述します。</p>
+         <pre class="fortran"><code>initialize: block
+   call plspal0(&#39;cmap0_white_bg.pal&#39;)  ! このパレットファイルを使用して、背景色を白にする
+   call plspage(0._plflt, 0._plflt, 1440, 1080, 0, 0)
+      ! 画像の大きさを1440x1080ピクセルに設定する
+   call plinit
+end block initialize
+
+frame: block
+   integer :: just, axis
+
+   just = 0
+   axis = 0
+   call plcol0(15) ! 色を黒に切り替える（座標軸とラベルのため）
+   call plenv( xmin, xmax, ymin, ymax, just, axis)
+   call pllab(&quot;Semimajor Axis (AU)&quot;, &quot;Eccentricity&quot;, &quot;Axis-Eccentricity Plot&quot;)
+end block frame
+
+plot: block
+   integer :: code
+
+   code = -1
+   call plcol0(9) ! 色を青に切り替える（プロットする点のため）
+   call plpoin(x, y, code)
+end block plot</code></pre>
+         <p><code>plot</code>ブロックでは、<code>plpoin</code>手続を使用して点をプロットする処理を実行しています。<code>plpoin</code>に配列<code>x</code>,
+         <code>y</code>を与えるのは<code>plline</code>と同様ですが、引数としてもう一つ、点として打つグリフ（字体）を指定する値を第3引数に渡す必要があります（ここでは<code>code</code>）。変数<code>code</code>は-1以上127以下の値を指定します。上のコードでは<code>code = -1</code>としていますが、これは単に点を描画するだけを意味します。そのほかにプロット可能なグリフは<a
+         href="https://plplot.sourceforge.net/examples.php?demo=06&amp;lbind=Fortran">公式サイトのExample
+         6</a>で見ることができます。</p>
+         <p>なお、<a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/plspal0.html"><code>plspal0</code></a>,
+         <a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/plspage.html"><code>plspage</code></a>
+         の手続に関しては次回以降の記事で解説したいと思います。</p>
+         <p>以下にプログラム全体を示します。</p>
+         <pre class="fortran"><code>program main
+   use plplot
+   implicit none
+   real(PLFLT), parameter :: xmin = 0d0, xmax = 6d0
+   real(PLFLT), parameter :: ymin = 0d0, ymax = 1d0
+
+   integer, parameter :: n = 1500000
+   real(PLFLT) :: x(n), y(n)
+
+   x(:) = -1d0
+   y(:) = -1d0
+
+   read_data: block
+      character(7) :: id
+      character(5) :: epoch
+      real(PLFLT) :: h, g, perihelion, epoch_ano, lon_asc, inclination, ecc, mean_motion, a
+      integer :: uni, i, ierr
+
+      open(newunit=uni, file=&#39;MPCORB_modified.DAT&#39;, status=&#39;old&#39;)
+   
+      i = 1
+      ierr = 0
+      do while (.true.)
+         if (ierr /= 0) then
+            exit
+         end if
+         read(uni, *, iostat=ierr)  &amp;
+            id, h, g, epoch, epoch_ano, perihelion, &amp;
+            lon_asc, inclination, ecc, mean_motion, a
+
+         x(i) = a
+         y(i) = ecc
+         i = i + 1
+      end do
+      close(uni)
+   end block read_data
+
+   initialize: block
+      call plspal0(&#39;cmap0_white_bg.pal&#39;)  ! このパレットファイルを使用して、背景色を白にする
+      call plspage(0._plflt, 0._plflt, 1440, 1080, 0, 0) 
+         ! 画像の大きさを1440x1080ピクセルに設定する
+      call plinit
+   end block initialize
+
+   frame: block
+      integer :: just, axis
+   
+      just = 0
+      axis = 0
+      call plcol0(15) ! 色を黒に切り替える（座標軸とラベルのため）
+      call plenv( xmin, xmax, ymin, ymax, just, axis)
+      call pllab(&quot;Semimajor Axis (AU)&quot;, &quot;Eccentricity&quot;, &quot;Axis-Eccentricity Plot&quot;)
+   end block frame
+
+   plot: block
+      integer :: code
+      
+      code = -1
+      call plcol0(9) ! 色を青に切り替える（プロットする点のため）
+      call plpoin(x, y, code)
+   end block plot
+
+   finalize: block
+      call plend
+   end block finalize
+
+end program main</code></pre>
+         <p>このコードを実行すると、この節の冒頭で示したような画像が出力されます。これで散布図を描くことができるようになりました。</p>
+         <h2 id="まとめ">まとめ</h2>
+         <p>今回はPLplotを使って、直線と曲線、散布図の書き方について説明しました。線を引くには<code>plline</code>を使い、点を打つには<code>plpoin</code>を使いますが、x軸とy軸の値を配列としてまとめて引数として渡すことは共通しています。座標軸や背景色等を変更する方法の詳細にはほとんど触れていませんが、次回以降の記事で解説したいと思います。</p>
+         <h2 id="参考文献">参考文献</h2>
+         <ol type="1">
+         <li><a
+         href="https://www.minorplanetcenter.net/iau/MPCORB.html">IAU/Minor
+         Planet Center</a></li>
+         <li><a
+         href="https://www.minorplanetcenter.net/iau/info/MPOrbitFormat.html">Export
+         Format for Minor-Planet Orbits - IAU/MPC</a></li>
+         <li><a
+         href="https://plplot.sourceforge.net/examples.php">PLplot -
+         Examples</a>: <a
+         href="https://plplot.sourceforge.net/examples.php?demo=06&amp;lbind=Fortran">Example
+         6</a></li>
+         <li><a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/index.html">Documentation
+         of the PLplot plotting software - v5.15.0</a>: <a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/plline.html"><code>plline</code></a>,
+         <a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/plpoin.html"><code>plpoin</code></a>,
+         <a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/plspal0.html"><code>plspal0</code></a>,
+         <a
+         href="https://plplot.sourceforge.net/docbook-manual/plplot-html-5.15.0/plspage.html"><code>plspage</code></a></li>
+         </ol>
+      </div>
+   </div>
+</main>
+</body>
+</html>

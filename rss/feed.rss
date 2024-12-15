@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Fri, 13 Dec 2024 08:49:26 +0900</pubDate>
+<pubDate>Sun, 15 Dec 2024 23:24:43 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,14 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>Fortranから使うPLplot入門 #2: 直線・曲線・散布図 [JA]</title>
+ <link>https://shinobuamasaki.github.io/items/introduction-to-plplot-using-fortran-002.html</link>
+ <description>FortranからPLplotライブラリを使う解説記事 その2:
+直線・曲線・散布図を描く</description>
+ <dc:creator>雨崎しのぶ（Amasaki Shinobu）</dc:creator>
+ <pubDate>2024-12-16</pubDate>
+</item>
 <item>
 <title>Fortranから使うPLplot入門 #1 [JA]</title>
  <link>https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d</link>
