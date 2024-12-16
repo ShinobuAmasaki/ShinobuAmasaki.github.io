@@ -4,7 +4,7 @@ date: 2024-12-16
 link: https://shinobuamasaki.github.io/items/introduction-to-plplot-using-fortran-002.html
 language: ja
 author: 雨崎しのぶ（Amasaki Shinobu）
-description: "FortranからPLplotライブラリを使う解説記事 その2: 直線・曲線・散布図を描く"
+description: "FortranからPLplotライブラリを使う解説記事 その2\\: 直線・曲線・散布図を描く"
 ---
 # Fortranから使うPLplot入門 #2
 
