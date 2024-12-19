@@ -8,6 +8,12 @@ description: "FortranからPLplotライブラリを使う解説記事 その2\\:
 ---
 # Fortranから使うPLplot入門 #2
 
+Author: 雨崎しのぶ
+
+Twitter: [@amasaki203](https://x.com/amasaki203)
+
+Posted on: 2024-12-16 JST
+
 1. [Fortranから使うPLplot入門 #1](https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d) - インストールとHello World
 2. Fortranから使うPLplot入門 #2 - 直線と曲線、散布図を描く（この記事）
 
