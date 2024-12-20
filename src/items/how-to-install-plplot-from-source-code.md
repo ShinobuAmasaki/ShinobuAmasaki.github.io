@@ -186,7 +186,7 @@ CMakeで構成を実行します。
 
 `libhpdf.so`などのライブラリファイルは`$HOME/.local/lib`に、ヘッダーファイルは`$HOME/.local/include`にインストールされます。
 
-これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして[PLplotのインストール](#pLplotのインストール)に進んでください
+これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして[PLplotのインストール](#plplotのインストール)に進んでください
 
 ### Cairo（中級者向け）
 
@@ -336,7 +336,7 @@ TARファイルをダウンロードして展開します。
 % cd pango-1.55.5
 ```
 
-ここで、Pangoのインストール時にCairoのライブラリをリンカとMesonに伝えるため環境変数`PKG_CONFIGO_PATH`と`LD_LIBRARY_PATH`を設定しておきます（なお、既に別のライブラリを使用する目的でこの環境変数が設定されている場合には、追記する形でセットしてください）。
+ここで、Pangoのインストール時にCairoのライブラリをリンカとMesonに伝えるため環境変数`LD_LIBRARY_PATH`を設定しておきます（なお、既に別のライブラリを使用する目的でこの環境変数が設定されている場合には、追記する形でセットしてください）。
 
 ```
 % export LD_LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib/x86_64-linux-gnu
