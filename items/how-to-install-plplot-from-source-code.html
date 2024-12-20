@@ -57,26 +57,26 @@
          href="https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d">『Fortranから使うPLplot入門』</a>という一連の記事を書いていて、主にPLplotの使い方について解説しています。その記事では、このソフトウェアのインストールの方法について各OSごとに説明しましたが、Linuxでは管理者権限が必要な方法しか書いていませんでした。</p>
          <p>本稿では、Linuxの計算機で管理者権限がない（<code>sudo</code>が使えない）場合でも、PLplotを試してみるための方法を解説します。依存関係ライブラリとPLplotライブラリをできる限り自分でビルドして、管理者権限の必要ない<code>~/.local</code>ディレクトリにインストールします。</p>
          <p>ただし、コンパイラとビルドツールは利用可能であることを前提とします（<a
-         href="#Ubuntuの準備">Ubuntuの準備</a>を参照）。</p>
+         href="#ubuntuの準備">Ubuntuの準備</a>を参照）。</p>
          <p>今回はUbuntu Server 22.04.5
          LTSを例に使っていきますが、他のディストリビューションでもほぼ同様にできると思います。</p>
          <p>なお、クロスコンパイルするアプローチについては触れません。</p>
          <h2 id="目次">目次</h2>
          <ul>
          <li><a href="#はじめに">はじめに</a></li>
-         <li><a href="#Ubuntuの準備">Ubuntuの準備</a>
+         <li><a href="#ubuntuの準備">Ubuntuの準備</a>
          <ul>
          <li><a
          href="#必要なパッケージの追加">必要なパッケージの追加</a></li>
          <li><a
-         href="#Cairoをインストールする場合（オプショナル）">Cairoをインストールする場合</a></li>
+         href="#cairoをインストールする場合オプショナル">Cairoをインストールする場合</a></li>
          </ul></li>
          <li><a href="#レギュレーション">レギュレーション</a></li>
          <li><a
          href="#依存関係のインストール">依存関係のインストール</a>
          <ul>
          <li><a href="#libharu">libHaru</a></li>
-         <li><a href="#cairo（中級者向け）">Cairo</a>
+         <li><a href="#cairo中級者向け">Cairo</a>
          <ul>
          <li><a href="#cairoのインストール">Cairoのインストール</a></li>
          <li><a href="#pangoのインストール">Pangoのインストール</a></li>
@@ -189,7 +189,7 @@ pip install --user ninja</code></pre>
 % cmake --install build</code></pre>
          <p><code>libhpdf.so</code>などのライブラリファイルは<code>$HOME/.local/lib</code>に、ヘッダーファイルは<code>$HOME/.local/include</code>にインストールされます。</p>
          <p>これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして<a
-         href="#PLplotのインストール">PLplotのインストール</a>に進んでください</p>
+         href="#pLplotのインストール">PLplotのインストール</a>に進んでください</p>
          <h3 id="cairo中級者向け">Cairo（中級者向け）</h3>
          <p>PNGやEPSで出力したい方はCairoをインストールする必要があります。</p>
          <p>ここで、MesonやNinjaが使えることを確認しておきましょう（ユーザー名<code>shinobu</code>は例なので各自読み替えてください）。</p>
@@ -320,6 +320,8 @@ Found ninja-1.11.1.git.kitware.jobserver-1 at /home/shinobu/.local/bin/ninja</co
          <p>依存関係のプログラムをインストールした場合には以下の環境変数を設定します。</p>
          <pre><code>% export CMAKE_LIBRARY_PATH=~/.local/lib
 % export CMAKE_INCLUDE_PATH=~/.local/include</code></pre>
+         <p>Cairoをインストールした場合には次の環境変数も設定します。</p>
+         <pre><code>% export PKG_CONFIG_PATH=$HOME/.local/lib/x86_64-linux-gnu/pkgconfig</code></pre>
          <p>CMakeでビルド構成を実行します。</p>
          <pre><code>% cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$HOME/.local</code></pre>
          <p>ビルドしてインストールします。</p>
