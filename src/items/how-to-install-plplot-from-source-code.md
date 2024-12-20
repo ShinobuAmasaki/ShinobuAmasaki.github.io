@@ -21,7 +21,7 @@ Posted on: 2024-12-20 JST
 
 本稿では、Linuxの計算機で管理者権限がない（`sudo`が使えない）場合でも、PLplotを試してみるための方法を解説します。依存関係ライブラリとPLplotライブラリをできる限り自分でビルドして、管理者権限の必要ない`~/.local`ディレクトリにインストールします。
 
-ただし、コンパイラとビルドツールは利用可能であることを前提とします（[Ubuntuの準備](#Ubuntuの準備)を参照）。
+ただし、コンパイラとビルドツールは利用可能であることを前提とします（[Ubuntuの準備](#ubuntuの準備)を参照）。
 
 今回はUbuntu Server 22.04.5 LTSを例に使っていきますが、他のディストリビューションでもほぼ同様にできると思います。
 
@@ -30,13 +30,13 @@ Posted on: 2024-12-20 JST
 ## 目次
 
 - [はじめに](#はじめに)
-- [Ubuntuの準備](#Ubuntuの準備)
+- [Ubuntuの準備](#ubuntuの準備)
    - [必要なパッケージの追加](#必要なパッケージの追加)
-   - [Cairoをインストールする場合](#Cairoをインストールする場合（オプショナル）)
+   - [Cairoをインストールする場合](#cairoをインストールする場合オプショナル)
 - [レギュレーション](#レギュレーション)
 - [依存関係のインストール](#依存関係のインストール)
    - [libHaru](#libharu)
-   - [Cairo](#cairo（中級者向け）)
+   - [Cairo](#cairo中級者向け)
       - [Cairoのインストール](#cairoのインストール)
       - [Pangoのインストール](#pangoのインストール)
 - [PLplotのインストール](#plplotのインストール)
@@ -186,7 +186,7 @@ CMakeで構成を実行します。
 
 `libhpdf.so`などのライブラリファイルは`$HOME/.local/lib`に、ヘッダーファイルは`$HOME/.local/include`にインストールされます。
 
-これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして[PLplotのインストール](#PLplotのインストール)に進んでください
+これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして[PLplotのインストール](#pLplotのインストール)に進んでください
 
 ### Cairo（中級者向け）
 
@@ -373,6 +373,12 @@ curl -L https://sourceforge.net/projects/plplot/files/latest/download > plplot.t
 ```
 % export CMAKE_LIBRARY_PATH=~/.local/lib
 % export CMAKE_INCLUDE_PATH=~/.local/include
+```
+
+Cairoをインストールした場合には次の環境変数も設定します。
+
+```
+% export PKG_CONFIG_PATH=$HOME/.local/lib/x86_64-linux-gnu/pkgconfig
 ```
 
 CMakeでビルド構成を実行します。
