@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+        <meta name="description" content="LinuxにおいてPLplotライブラリをソースコードからビルドしてインストールする方法についての記事" />
+   <meta name="twitter:description" content="LinuxにおいてPLplotライブラリをソースコードからビルドしてインストールする方法についての記事" />
+   <meta name="og:description" content="LinuxにおいてPLplotライブラリをソースコードからビルドしてインストールする方法についての記事" />
+      <meta property="og:title" content="できるだけ全部ビルドするPLplotインストール【Linux編】" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+   <meta name="twitter:image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true" />
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/how-to-install-plplot-from-source-code.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+   <meta property="og:image" itemprop="image" content="https://github.com/ShinobuAmasaki/ShinobuAmasaki.github.io/blob/main/img/shinobu.png?raw=true">
+
+   <title>できるだけ全部ビルドするPLplotインストール【Linux編】 | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1
+         id="できるだけ全部ビルドするplplotインストールlinux編">できるだけ全部ビルドするPLplotインストール【Linux編】</h1>
+         <p>Author: 雨崎しのぶ</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2024-12-20 JST</p>
+         <h2 id="はじめに">はじめに</h2>
+         <p>先日から<a
+         href="https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d">『Fortranから使うPLplot入門』</a>という一連の記事を書いていて、主にPLplotの使い方について解説しています。その記事では、このソフトウェアのインストールの方法について各OSごとに説明しましたが、Linuxでは管理者権限が必要な方法しか書いていませんでした。</p>
+         <p>本稿では、Linuxの計算機で管理者権限がない（<code>sudo</code>が使えない）場合でも、PLplotを試してみるための方法を解説します。依存関係ライブラリとPLplotライブラリをできる限り自分でビルドして、管理者権限の必要ない<code>~/.local</code>ディレクトリにインストールします。</p>
+         <p>ただし、コンパイラとビルドツールは利用可能であることを前提とします（<a
+         href="#Ubuntuの準備">Ubuntuの準備</a>を参照）。</p>
+         <p>今回はUbuntu Server 22.04.5
+         LTSを例に使っていきますが、他のディストリビューションでもほぼ同様にできると思います。</p>
+         <p>なお、クロスコンパイルするアプローチについては触れません。</p>
+         <h2 id="目次">目次</h2>
+         <ul>
+         <li><a href="#はじめに">はじめに</a></li>
+         <li><a href="#Ubuntuの準備">Ubuntuの準備</a>
+         <ul>
+         <li><a
+         href="#必要なパッケージの追加">必要なパッケージの追加</a></li>
+         <li><a
+         href="#Cairoをインストールする場合（オプショナル）">Cairoをインストールする場合</a></li>
+         </ul></li>
+         <li><a href="#レギュレーション">レギュレーション</a></li>
+         <li><a
+         href="#依存関係のインストール">依存関係のインストール</a>
+         <ul>
+         <li><a href="#libharu">libHaru</a></li>
+         <li><a href="#cairo（中級者向け）">Cairo</a>
+         <ul>
+         <li><a href="#cairoのインストール">Cairoのインストール</a></li>
+         <li><a href="#pangoのインストール">Pangoのインストール</a></li>
+         </ul></li>
+         </ul></li>
+         <li><a
+         href="#plplotのインストール">PLplotのインストール</a></li>
+         <li><a href="#プログラムの実行">プログラムの実行</a></li>
+         <li><a href="#まとめ">まとめ</a></li>
+         <li><a href="#参考文献">参考文献</a></li>
+         </ul>
+         <h2 id="ubuntuの準備">Ubuntuの準備</h2>
+         <p>まっさらな状態のUbuntu Server 22.04.5 LTS
+         (minimized)からスタートします。</p>
+         <p>最初に<code>~/.local</code>ディレクトリを作成しておきます。また、インストール直後の場合には<code>sudo apt update</code>を実行しておきましょう。</p>
+         <pre><code>% mkdir -p $HOME/.local/bin
+% sudo apt update</code></pre>
+         <p>ここで<code>$HOME/.local/bin</code>にパスが通っていることを確認しておきましょう。通っていない場合は以下のコマンドを実行します。</p>
+         <pre><code>% export PATH=$HOME/.local/bin:$PATH</code></pre>
+         <h3 id="必要なパッケージの追加">必要なパッケージの追加</h3>
+         <p>LinuxでPLplotをビルドするには、最低限、<code>make</code>,
+         <code>cmake</code>, <code>ld</code>, <code>gcc</code>,
+         <code>g++</code>, <code>gfortran</code>, <code>curl</code>,
+         <code>tar</code>,
+         <code>gzip</code>のコマンドが必要となります。はじめにこれらが利用可能かどうか調べてみましょう。</p>
+         <p>Bashにビルドインされた<code>type</code>コマンドで、これらがインストールされているかどうか調べます。</p>
+         <pre><code>% type make
+-bash: type: make: not found
+% type cmake
+-bash: type: cmake: not found
+% type ld
+ld is /usr/bin/ld
+% type gcc
+-bash: type: gcc: not found
+% type g++
+-bash: type: g++: not found
+% type gfortran
+-bash: type: gfortran: not found
+% type curl
+curl is /usr/bin/curl
+% type tar
+tar is hashed (/usr/bin/tar)
+$ type gzip
+gzip is /usr/bin/gzip</code></pre>
+         <p><code>make</code>, <code>cmake</code>, <code>gcc</code>,
+         <code>gfortran</code>,
+         がインストールされていないので、これらを<code>apt</code>コマンドでインストールします。</p>
+         <pre><code>% sudo apt install make cmake gcc g++ gfortran</code></pre>
+         <h3
+         id="cairoをインストールする場合オプショナル">Cairoをインストールする場合（オプショナル）</h3>
+         <p>Cairoは2次元グラフィックスのライブラリで、PLplotから使うとさまざまな出力形式が追加される強力なオプションです。便利ですが依存関係のライブラリが多く、自分でビルドして使うにはやや複雑なので、このセクションの内容は中級者向けとなります。ここではCairoをインストールする場合の必要なパッケージをインストールしておきます。</p>
+         <p>Cairoをビルドするには<code>git</code>, <code>python3</code>,
+         <code>pip</code>, <code>pkg-config</code>が必要となります。</p>
+         <pre><code>% type git
+-bash: type: git: not found
+% type python3
+python3 is /usr/bin/pytho
+% type pip
+-bash: type: pip: not found
+% type pkg-config
+-bash: type: pkg-config: not found</code></pre>
+         <p>デフォルトでは<code>git</code>, <code>pip</code>,
+         <code>pkg-config</code>が含まれていないのでこれらをインストールします。</p>
+         <pre><code>sudo apt install git python3-pip pkg-config</code></pre>
+         <p>Python3がインストールされたら、<code>pip</code>コマンドを使用して<code>ninja</code>と<code>meson</code>をユーザーディレクトリにインストールします。<code>apt</code>コマンドでインストールされるMesonはバージョンが古いので<code>pip</code>でインストールしましょう。</p>
+         <pre><code>pip install --user meson
+pip install --user ninja</code></pre>
+         <p><strong><code>sudo</code>コマンドを使用するのはここまでです。</strong></p>
+         <h2 id="レギュレーション">レギュレーション</h2>
+         <p>今回は管理者権限無しにPLplotをビルド、インストールすることに挑戦するので、以下のような制約を課します</p>
+         <ul>
+         <li><code>sudo</code>を使わない</li>
+         <li><code>make</code>, <code>cmake</code>, <code>ld</code>,
+         <code>gcc</code>, <code>g++</code>, <code>gfortran</code>,
+         <code>curl</code>, <code>tar</code>のみでビルドする
+         <ul>
+         <li>ただしCairoをインストールする場合には<code>git</code>,
+         <code>meson</code>, <code>ninja</code>, <code>python3</code>,
+         <code>pip</code>, <code>pkg-config</code>を使用してよい</li>
+         </ul></li>
+         <li>ライブラリは<code>$HOME/.local</code>下に置く</li>
+         <li><strong>Fortranバインディングを構成する</strong>（ここが唯一のFortran要素）</li>
+         <li>PDFを生成できれば成功
+         <ul>
+         <li>Cairoをインストールする場合にはPNGも生成する</li>
+         </ul></li>
+         </ul>
+         <h2 id="依存関係のインストール">依存関係のインストール</h2>
+         <p>このセクションではPLplotの依存関係ライブラリをインストールする方法について解説します。</p>
+         <p>PDFを生成せずにSVGで十分という方はスキップしてください。その場合には、PLplotの出力形式は以下の6つに限定されます。</p>
+         <pre><code>Plotting Options:
+ &lt; 1&gt; ps         PostScript File (monochrome)
+ &lt; 2&gt; psc        PostScript File (color)
+ &lt; 3&gt; xfig       Xfig file
+ &lt; 4&gt; null       Null device
+ &lt; 5&gt; mem        User-supplied memory device
+ &lt; 6&gt; svg        Scalable Vector Graphics (SVG 1.1)</code></pre>
+         <p>PDFを生成するためにはlibHaruを、PNGを生成するためにはCairoをインストールします。</p>
+         <h3 id="libharu">libHaru</h3>
+         <p><a
+         href="http://libharu.org/">libHaru</a>はC言語で書かれたPDF生成のためのライブラリです。現在の最新版は2.4.4のようです。これを公式サイトまたはGitHubのリポジトリからダウンロードします。</p>
+         <pre><code>% curl https://codeload.github.com/libharu/libharu/tar.gz/refs/tags/v2.4.4 -o libharu.tar.gz</code></pre>
+         <p>ファイル<code>libharu.tar.gz</code>がダウンロードされるので、<code>tar</code>コマンドで展開し、展開先に移動します。</p>
+         <pre><code>% tar xvzf libharu.tar.gz
+% cd libharu-2.4.4</code></pre>
+         <p>CMakeで構成を実行します。</p>
+         <pre><code>% cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$HOME/.local</code></pre>
+         <p>ビルドしてインストールします。</p>
+         <pre><code>% cmake --build build
+% cmake --install build</code></pre>
+         <p><code>libhpdf.so</code>などのライブラリファイルは<code>$HOME/.local/lib</code>に、ヘッダーファイルは<code>$HOME/.local/include</code>にインストールされます。</p>
+         <p>これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして<a
+         href="#PLplotのインストール">PLplotのインストール</a>に進んでください</p>
+         <h3 id="cairo中級者向け">Cairo（中級者向け）</h3>
+         <p>PNGやEPSで出力したい方はCairoをインストールする必要があります。</p>
+         <p>ここで、MesonやNinjaが使えることを確認しておきましょう（ユーザー名<code>shinobu</code>は例なので各自読み替えてください）。</p>
+         <pre class="shell"><code>% type meson
+meson is /home/shinobu/.local/bin/meson
+% type ninja
+ninja is /home/shinobu/.local/bin/ninja</code></pre>
+         <h4 id="cairoのインストール">Cairoのインストール</h4>
+         <p>Cairoの最新版は1.18.2です。これのソースコードを<a
+         href="https://gitlab.freedesktop.org/cairo/cairo">公式リポジトリ</a>からダウンロードしてインストールします。ホームディレクトリに戻ってtarファイルをダウンロードします（やや時間がかかります）。</p>
+         <pre><code>% cd
+% curl https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.2/cairo-1.18.2.tar.gz -O</code></pre>
+         <p>展開して、展開先のディレクトリに移動します。</p>
+         <pre><code>% tar xvzf cairo-1.18.2.tar.gz 
+% cd cairo-1.18.2</code></pre>
+         <p><code>meson</code>コマンドでビルドの構成を行いますが、この際にインストール先を<code>$HOME/.local</code>にするためのオプションを指定します。</p>
+         <pre><code>% meson setup build -Dprefix=$HOME/.local</code></pre>
+         <p>このコマンドでMesonは、Cairoの依存関係を自動的に解決してくれるのでとても便利です（この時に<code>git</code>が使用されます）。</p>
+         <p><code>fontconfig</code>と<code>freetype</code>、<code>cairo</code>について以下のような出力が得られれば構成は成功です。</p>
+         <pre><code>fontconfig 2.14.2
+
+  General
+    Documentation              : NO
+    NLS                        : YES
+    Tests                      : YES
+    Tools                      : YES
+
+  Defaults
+    Hinting                    : slight
+    Font directories           : /usr/share/fonts, /usr/local/share/fonts
+    Additional font directories:
+
+  Paths
+    Cache directory            : /home/shinobu/.local/var/cache/fontconfig
+    Template directory         : /home/shinobu/.local/share/fontconfig/conf.avail
+    Base config directory      : /home/shinobu/.local/etc/fonts
+    Config directory           : /home/shinobu/.local/etc/fonts/conf.d
+    XML directory              : /home/shinobu/.local/share/xml/fontconfig
+
+freetype2 2.13.2
+
+  Operating System
+    OS      : linux
+
+  Used Libraries
+    Zlib    : system
+    Bzip2   : no
+    Png     : yes
+    Harfbuzz: no
+    Brotli  : no
+
+cairo 1.18.2
+
+  Surface Backends
+    Image                   : YES
+    Recording               : YES
+    Observer                : YES
+    Mime                    : YES
+    Tee                     : YES
+    Xlib                    : NO
+    Xlib Xrender            : NO
+    Quartz                  : NO
+    Quartz-image            : NO
+    XCB                     : NO
+    Win32                   : NO
+    CairoScript             : YES
+    PostScript              : YES
+    PDF                     : YES
+    SVG                     : YES
+
+  Font Backends
+    User                    : YES
+    FreeType                : YES
+    Fontconfig              : YES
+    Win32                   : NO
+    Win32 DWrite            : NO
+    Quartz                  : NO
+
+  Functions
+    PNG functions           : YES
+    X11-xcb                 : NO
+    XCB-shm                 : NO
+
+  Features and Utilities
+    cairo-trace:            : YES
+    cairo-script-interpreter: YES
+    API reference           : NO
+
+  Subprojects
+    fontconfig              : YES
+    freetype2               : YES (from fontconfig)
+    glib                    : YES 3 warnings
+    gperf                   : YES (from fontconfig)
+    gvdb                    : YES (from glib)
+    libffi                  : YES (from glib)
+    libpng                  : YES
+    pcre2                   : YES (from glib)
+    pixman                  : YES
+
+  User defined options
+    prefix                  : /home/shinobu/.local
+
+Found ninja-1.11.1.git.kitware.jobserver-1 at /home/shinobu/.local/bin/ninja</code></pre>
+         <p><code>ninja</code>コマンドでビルドを実行し、インストールします。コンパイルするオブジェクトの数が多いので気長に待ちましょう。</p>
+         <pre><code>% ninja -C build
+% ninja -C build install</code></pre>
+         <p>ここで、<code>libcairo.so</code>や<code>libfontconfig.so</code>といったライブラリは<code>$HOME/.local/lib/x86_64-linux-gnu</code>にインストールされることに注意してください。</p>
+         <h4 id="pangoのインストール">Pangoのインストール</h4>
+         <p>Pangoは文字のレンダリングのためのライブラリで、PLplotではCairoを使用する際に必要となります。GTKプロジェクトの一部ですが、<a
+         href="https://gitlab.gnome.org/GNOME/pango">GNOMEのリポジトリから単体で入手できます</a>。最新版はバージョン1.55.5です。</p>
+         <p>TARファイルをダウンロードして展開します。</p>
+         <pre><code>% cd
+% curl https://gitlab.gnome.org/GNOME/pango/-/archive/1.55.5/pango-1.55.5.tar.gz -O
+% tar xvzf pango-1.55.5.tar.gz
+% cd pango-1.55.5</code></pre>
+         <p>ここで、Pangoのインストール時にCairoのライブラリをリンカとMesonに伝えるため環境変数<code>PKG_CONFIGO_PATH</code>と<code>LD_LIBRARY_PATH</code>を設定しておきます（なお、既に別のライブラリを使用する目的でこの環境変数が設定されている場合には、追記する形でセットしてください）。</p>
+         <pre><code>% export LD_LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib/x86_64-linux-gnu</code></pre>
+         <p>Mesonを実行します。この時、<code>--pkg-config-path</code>オプションを指定して、Cairoをインストールした際に生成される<code>pkg-config</code>用のファイルが入ったディレクトリをMesonに伝えます。</p>
+         <pre><code>% meson setup build -Dprefix=$HOME/.local --pkg-config-path=$HOME/.local/lib/x86_64-linux-gnu/pkgconfig</code></pre>
+         <p>ビルド構成が完了したら、ビルドしてインストールします。</p>
+         <pre><code>% ninja -C build
+% ninja -C build install</code></pre>
+         <h2 id="plplotのインストール">PLplotのインストール</h2>
+         <pre><code>curl -L https://sourceforge.net/projects/plplot/files/latest/download &gt; plplot.tar.gz</code></pre>
+         <p>ダウンロードできたらTARファイルを展開し、展開先に移動します。</p>
+         <pre><code>% tar xvzf plplot.tar.gz 
+% cd plplot-5.15.0</code></pre>
+         <p>依存関係のプログラムをインストールした場合には以下の環境変数を設定します。</p>
+         <pre><code>% export CMAKE_LIBRARY_PATH=~/.local/lib
+% export CMAKE_INCLUDE_PATH=~/.local/include</code></pre>
+         <p>CMakeでビルド構成を実行します。</p>
+         <pre><code>% cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$HOME/.local</code></pre>
+         <p>ビルドしてインストールします。</p>
+         <pre><code>% cmake --build build
+% cmake --install build</code></pre>
+         <p>この時、<code>libplplot</code>や<code>libplplotfortran</code>は<code>$HOME/.local/lib</code>にインストールされますが、Fortran用のMODファイルは<code>$HOME/.local/lib/fortran/modules/plplot</code>ディレクトリに配置されることに注意してください。</p>
+         <h2 id="プログラムの実行">プログラムの実行</h2>
+         <p>以下のようなFortranプログラム<code>main.f90</code>を実行します（詳細は<a
+         href="https://qiita.com/amasaki203/items/1dbeb02a2adb7265654d">「Fortranから使うPLplot入門
+         #1」</a>を参照してください）。</p>
+         <pre class="fortran"><code>program main
+   use plplot
+   implicit none
+
+   initialize: block
+      call plinit
+   end block initialize
+
+   frame: block
+      real(PLFLT), parameter :: xmin = 0d0, xmax = 1d0
+      real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
+      integer :: just, axis
+      
+      just = 0
+      axis = 0
+      call plenv( xmin, xmax, ymin, ymax, just, axis)
+      call pllab(&quot;x&quot;, &quot;y&quot;, &quot;Title&quot;)
+   end block frame
+
+   plot: block
+      real(PLFLT) :: cx, cy, dx, dy
+      
+      call plschr(12._plflt, 1._plflt)
+
+      cx = 0.5d0
+      cy = 0d0
+      dx = 1d0
+      dy = 0.5d0
+      call plptex(cx, cy, dx, dy, 0.5_plflt, &quot;Hello World!&quot;)
+   end block plot
+
+   finalize: block
+      call plend
+   end block finalize
+ 
+end program main</code></pre>
+         <p>ここで、改めて<code>LD_LIBRARY_PATH</code>を設定します。libHaruのみインストールした場合は次のようにします。（なお、既に別のライブラリを使用する目的でこの環境変数が設定されている場合には、追記する形でセットしてください）。</p>
+         <pre class="shell"><code>% export LD_LIBRARY_PATH=$HOME/.local/lib</code></pre>
+         <p>Cairoもインストールした場合には以下のようにします。</p>
+         <pre class="shell"><code>% export LD_LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib/x86_64-linux-gnu</code></pre>
+         <p>コンパイルするには次のオプションをつけて<code>gfortran</code>コマンドを実行します</p>
+         <pre><code>% gfortran main.f90 -I$HOME/.local/lib/fortran/modules/plplot -L$HOME/.local/lib -lplplot -lplplotfortran -o helloworld</code></pre>
+         <p>実行ファイル<code>helloworld</code>を実行すると、ドライバの一覧が表示されます（以下はCairoもインストールした場合）。</p>
+         <pre><code>% ./helloworld
+
+Plotting Options:
+ &lt; 1&gt; ps         PostScript File (monochrome)
+ &lt; 2&gt; psc        PostScript File (color)
+ &lt; 3&gt; xfig       Xfig file
+ &lt; 4&gt; null       Null device
+ &lt; 5&gt; mem        User-supplied memory device
+ &lt; 6&gt; svg        Scalable Vector Graphics (SVG 1.1)
+ &lt; 7&gt; pdf        Portable Document Format PDF
+ &lt; 8&gt; pdfcairo   Cairo PDF Driver
+ &lt; 9&gt; epscairo   Cairo EPS Driver
+ &lt;10&gt; pscairo    Cairo PS Driver
+ &lt;11&gt; svgcairo   Cairo SVG Driver
+ &lt;12&gt; pngcairo   Cairo PNG Driver
+ &lt;13&gt; memcairo   Cairo memory driver
+ &lt;14&gt; extcairo   Cairo external context driver
+
+Enter device number or keyword: </code></pre>
+         <p>これでデバイスと出力ファイル名を指定すれば、成功です。</p>
+         <h2 id="まとめ">まとめ</h2>
+         <p>今回はLinuxでPLplotを使ってFortranプログラムを書くために、ライブラリをホームディレクトリにインストールする方法について解説しました。上で述べた方法で構築することで、（ルート権限が使えない）共用計算機でもPLplotを使うことができると思います。</p>
+         <p>なお、この方法でビルドしたライブラリを継続的に使用する場合には、環境変数<code>LD_LIBRARY_PATH</code>や<code>PATH</code>の設定を<code>.bashrc</code>などに追加しておくのがおすすめです。</p>
+         <h2 id="参考文献">参考文献</h2>
+         <ul>
+         <li>https://sourceforge.net/p/plplot/wiki/Home/</li>
+         <li>https://gitlab.freedesktop.org/cairo/cairo</li>
+         <li>https://gitlab.gnome.org/GNOME/pango</li>
+         <li>http://libharu.org/</li>
+         <li>https://github.com/libharu/libharu/wiki/Installation</li>
+         <li>https://sourceforge.net/p/plplot/wiki/Building_PLplot/</li>
+         </ul>
+      </div>
+   </div>
+</main>
+</body>
+</html>

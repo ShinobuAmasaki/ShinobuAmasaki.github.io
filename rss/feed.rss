@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Thu, 19 Dec 2024 11:21:32 +0900</pubDate>
+<pubDate>Fri, 20 Dec 2024 23:56:49 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,13 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>できるだけ全部ビルドするPLplotインストール【Linux編】</title>
+ <link>https://shinobuamasaki.github.io/items/how-to-install-plplot-from-source-code.html</link>
+ <description>LinuxにおいてPLplotライブラリをソースコードからビルドしてインストールする方法についての記事</description>
+ <dc:creator>雨崎しのぶ（Amasaki Shinobu）</dc:creator>
+ <pubDate>2024-12-20</pubDate>
+</item>
 <item>
 <title>Fortranから使うPLplot入門 #2: 直線・曲線・散布図 [JA]</title>
  <link>https://shinobuamasaki.github.io/items/introduction-to-plplot-using-fortran-002.html</link>
