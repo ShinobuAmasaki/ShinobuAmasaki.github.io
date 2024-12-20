@@ -189,7 +189,7 @@ pip install --user ninja</code></pre>
 % cmake --install build</code></pre>
          <p><code>libhpdf.so</code>などのライブラリファイルは<code>$HOME/.local/lib</code>に、ヘッダーファイルは<code>$HOME/.local/include</code>にインストールされます。</p>
          <p>これでlibHaruのインストールは完了です。PDFを出力できればよいという方は、次のセクションをスキップして<a
-         href="#pLplotのインストール">PLplotのインストール</a>に進んでください</p>
+         href="#plplotのインストール">PLplotのインストール</a>に進んでください</p>
          <h3 id="cairo中級者向け">Cairo（中級者向け）</h3>
          <p>PNGやEPSで出力したい方はCairoをインストールする必要があります。</p>
          <p>ここで、MesonやNinjaが使えることを確認しておきましょう（ユーザー名<code>shinobu</code>は例なので各自読み替えてください）。</p>
@@ -305,7 +305,7 @@ Found ninja-1.11.1.git.kitware.jobserver-1 at /home/shinobu/.local/bin/ninja</co
 % curl https://gitlab.gnome.org/GNOME/pango/-/archive/1.55.5/pango-1.55.5.tar.gz -O
 % tar xvzf pango-1.55.5.tar.gz
 % cd pango-1.55.5</code></pre>
-         <p>ここで、Pangoのインストール時にCairoのライブラリをリンカとMesonに伝えるため環境変数<code>PKG_CONFIGO_PATH</code>と<code>LD_LIBRARY_PATH</code>を設定しておきます（なお、既に別のライブラリを使用する目的でこの環境変数が設定されている場合には、追記する形でセットしてください）。</p>
+         <p>ここで、Pangoのインストール時にCairoのライブラリをリンカとMesonに伝えるため環境変数<code>LD_LIBRARY_PATH</code>を設定しておきます（なお、既に別のライブラリを使用する目的でこの環境変数が設定されている場合には、追記する形でセットしてください）。</p>
          <pre><code>% export LD_LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib/x86_64-linux-gnu</code></pre>
          <p>Mesonを実行します。この時、<code>--pkg-config-path</code>オプションを指定して、Cairoをインストールした際に生成される<code>pkg-config</code>用のファイルが入ったディレクトリをMesonに伝えます。</p>
          <pre><code>% meson setup build -Dprefix=$HOME/.local --pkg-config-path=$HOME/.local/lib/x86_64-linux-gnu/pkgconfig</code></pre>
