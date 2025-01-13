@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Mon, 30 Dec 2024 20:23:24 +0900</pubDate>
+<pubDate>Mon, 13 Jan 2025 14:58:58 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,13 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>Fortranコンパイラ一覧 [JA]</title>
+ <link>https://qiita.com/amasaki203/items/18d6cf8528202b2c81f3</link>
+ <description>This article lists Fortran compilers [JA].</description>
+ <dc:creator>雨崎しのぶ (Amasaki Shinobu)</dc:creator>
+ <pubDate>2025-01-13</pubDate>
+</item>
 <item>
 <title>できるだけ全部ビルドするPLplotインストール【Linux編】</title>
  <link>https://shinobuamasaki.github.io/items/how-to-install-plplot-from-source-code.html</link>
