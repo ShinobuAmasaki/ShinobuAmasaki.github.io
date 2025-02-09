@@ -38,7 +38,7 @@ for filename in os.listdir(markdown_dir):
             # Extract YAML header
             front_matter = content.split('---')[1]
             item = yaml.safe_load(front_matter)
-            appended_date = subprocess.run(f'git log --diff-filter=A --format="%ci" -- {filepath}', capture_output=True)
+            appended_date = subprocess.run(f'git log --diff-filter=A --format="%ci" -- ./{filepath}', capture_output=True)
             item["appended_date"] = appended_date.stdout.decode("utf-8").strip()
         items.append(item)
 
