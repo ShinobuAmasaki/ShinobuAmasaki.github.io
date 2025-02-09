@@ -35,7 +35,7 @@ jobs:
         run: python src/script/generate_rss_feed_yaml.py
 
       - name: Construct index.md
-        run: |　　　　
+        run: |
          python src/script/generate_index_header.py # >> index_header.md
          python src/script/generate_posts_list.py # >> index_posts.md
          cat index_header.md src/index_contents.md index_posts.md src/index_footer.md > src/index.md
