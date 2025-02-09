@@ -1,8 +1,10 @@
 import os
 import yaml
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import pytz
 import platform
+import subprocess
 
 class FixIndentDumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
@@ -22,9 +24,11 @@ else:
 
 rss_yaml_file = "feed.yaml"
 
+tz = pytz.timezone('Asia/Tokyo')
+zi = ZoneInfo("Asia/Tokyo")
+now =datetime.now(zi)
+
 items = []
-timezone = pytz.timezone('Asia/Tokyo')
-now =datetime.now(timezone)
 
 for filename in os.listdir(markdown_dir):
     if filename.endswith('.md'):
@@ -34,7 +38,9 @@ for filename in os.listdir(markdown_dir):
             # Extract YAML header
             front_matter = content.split('---')[1]
             item = yaml.safe_load(front_matter)
-            items.append(item)
+            appended_date = subprocess.run(f'git log --diff-filter=A --format="%ci" -- {filepath}', capture_output=True)
+            item["appended_date"] = appended_date.stdout.decode("utf-8").strip()
+        items.append(item)
 
 for filename in os.listdir(markdown_katex_dir):
     if filename.endswith('.md'):
@@ -44,7 +50,9 @@ for filename in os.listdir(markdown_katex_dir):
             # Extract YAML header
             front_matter = content.split('---')[1]
             item = yaml.safe_load(front_matter)
-            items.append(item)
+            appended_date = subprocess.run(f'git log --diff-filter=A --format="%ci" -- {filepath}', capture_output=True)
+            item["appended_date"] = appended_date.stdout.decode("utf-8").strip()
+        items.append(item)
 
 for filename in os.listdir(articles_on_qiita):
     if filename.endswith('.md'):
@@ -54,18 +62,35 @@ for filename in os.listdir(articles_on_qiita):
             # Extract YAML header
             front_matter = content.split('---')[1]
             item = yaml.safe_load(front_matter)
-            items.append(item)
+            appended_date = subprocess.run(f'git log --diff-filter=A --format="%ci" -- {filepath}', capture_output=True)
+            item["appended_date"] = appended_date.stdout.decode("utf-8").strip()
+        items.append(item)
+        
 
 pub_date = now.strftime('%a, %d %b %Y %H:%M:%S %z')
 
 for item in items:
     if 'date' not in item:
-        print("Error: 'date'key is missing: ", item)
+        if item['appended_date'] != "":
+            dt = datetime.strptime(item['appended_date'][:19], "%Y-%m-%d %H:%M:%S")
+            item['date'] = dt
+            item['date'] = item['date'].astimezone(zi)
+        else:
+            item['date'] = now
+            item['date'] = item['date'].astimezone(zi)
+
+    else:
+        item['date'] = datetime.combine(item['date'], datetime.min.time())
+        item['date'] = item['date'].astimezone(zi)
+
+items = sorted(items, key=lambda x:x['date'], reverse=True) # 新しい順に並び替え
+for item in items:
+    item['date'] = item['date'].strftime("%Y-%m-%d %H:%M:%S %Z") #%a, %d %b %Y %H:%M:%S %Z")
 
 rss_feed = {
     'title': "RSS feed for Amasaki Shinobu's Website",
     'pubDate': pub_date,
-    'item': sorted(items, key=lambda x: x['date'], reverse=True) # 新しい順に並び替え
+    'item': items
 }
 
 with open(rss_yaml_file, 'w', encoding='utf-8') as file:

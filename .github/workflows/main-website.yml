@@ -52,12 +52,24 @@ jobs:
          for file in src/items/*.md; do
             filename=$(basename -- $file)
             filename="${filename%.*}.html"
-            pandoc -f markdown -t html --template=src/templates/template.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "items/$filename"
+
+            cdate=`git log --diff-filter=A --format="%ci" -- $file`
+            udate=`git log -1 --format="%ci" -- $file`
+            export CREATED_DATE=${cdate:0:10}
+            export UPDATED_DATE=${udate:0:10}
+
+            pandoc -f markdown -t html --template=src/templates/template.html --lua-filter=src/filter/custom_meta_date.lua --lua-filter=src/filter/replace_dates.lua --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "items/$filename"
          done
          for file in src/items/with-katex/*.md; do
             filename=$(basename -- $file)
             filename="${filename%.*}.html"
-            pandoc -f markdown -t html5 --template=src/templates/template-with-katex.html --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "items/$filename"
+
+            cdate=`git log --diff-filter=A --format="%ci" -- $file`
+            udate=`git log -1 --format="%ci" -- $file`
+            export CREATED_DATE=${cdate:0:10}
+            export UPDATED_DATE=${udate:0:10}
+
+            pandoc -f markdown -t html5 --template=src/templates/template-with-katex.html --lua-filter=src/filter/custom_meta_date.lua --lua-filter=src/filter/replace_dates.lua --preserve-tabs --eol=lf --toc --no-highlight -V pagetitle="$filename" --mathjax "$file" > "items/$filename"
          done
 
       - name: Generate RSS feed

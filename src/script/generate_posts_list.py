@@ -17,6 +17,7 @@ for item in rss_feed.get('item', []):
 markdown_list = "## Posts\n"
 for item in rss_feed['item']:
     date = item.get('date', '')
+    date = date[:10]
     title = item.get('title', '')
     link = item.get('link', '')
     markdown_list += f'- *{date}:*<br class="br-sp"> [{title}]({link})\n'
