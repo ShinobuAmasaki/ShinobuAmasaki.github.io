@@ -4,7 +4,7 @@
    <meta charset="utf-8" />
    <meta name="viewport" content="width=device-width,initial-scale=1" />
    <meta name="twitter:card" content="summary" />
-      <meta name="dcterms.date" content="2025-02-09" />
+      <meta name="dcterms.date" content="2025-07-21" />
         <meta name="description" content="FortranからPLplotライブラリを使う解説記事
 その2: 直線・曲線・散布図を描く" />
    <meta name="twitter:description" content="FortranからPLplotライブラリを使う解説記事
@@ -154,16 +154,16 @@ end block plot</code></pre>
          </div>
          <p>この図では原点と点(1,
          0.5)に線が引かれていますが、このままでは線分であることが明確ではないので<code>frame</code>ブロックを少し変更します。</p>
-         <pre class="fortran"><code> frame: block
-    real(PLFLT), parameter :: xmin = -0.1d0, xmax = 1.1d0 ! xminとxmaxを変更
-    real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
-    integer :: just, axis
+         <pre class="fortran"><code>frame: block
+   real(PLFLT), parameter :: xmin = -0.1d0, xmax = 1.1d0 ! xminとxmaxを変更
+   real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
+   integer :: just, axis
 
-    just = 0
-    axis = 0
-    call plenv( xmin, xmax, ymin, ymax, just, axis)
-    call pllab(&quot;x&quot;, &quot;y&quot;, &quot;Title&quot;)
- end block frame</code></pre>
+   just = 0
+   axis = 0
+   call plenv( xmin, xmax, ymin, ymax, just, axis)
+   call pllab(&quot;x&quot;, &quot;y&quot;, &quot;Title&quot;)
+end block frame</code></pre>
          <p>これを反映したプログラムを実行すると、次のようになります。</p>
          <div class="large-img">
          <figure>
@@ -203,9 +203,9 @@ end block plot</code></pre>
          <pre class="fortran"><code>plot: block
    integer, parameter :: n = 101
    integer, :: i
-	 real(PLFLT) :: x(n), y_sine(n)
-	 
-	 do i = 1, n
+   real(PLFLT) :: x(n), y_sine(n)
+    
+   do i = 1, n
       x(i) = (i-1)*(xmax - xmin)/(n-1)
       y_sine(i) = sin(x(i))
    end do
@@ -221,21 +221,21 @@ end block plot</code></pre>
          </div>
          <h4 id="コサインを追加">コサインを追加</h4>
          <p>次にCos関数の曲線を追加しますが、ここでは線の色を変えてみましょう。<code>plot</code>ブロックを以下のように変更します。</p>
-         <pre class="fortran"><code> plot: block
-    integer, parameter :: n = 101
-    integer :: i
-    real(PLFLT) :: x(n), y_sine(n), y_cosine(n)
+         <pre class="fortran"><code>plot: block
+   integer, parameter :: n = 101
+   integer :: i
+   real(PLFLT) :: x(n), y_sine(n), y_cosine(n)
 
-    do i = 1, n
-       x(i) = (i-1)*(xmax - xmin)/(n-1)
-       y_sine(i) = sin(x(i))
-       y_cosine(i) = cos(x(i))
-    end do
-    call plline(x, y_sine)
+   do i = 1, n
+      x(i) = (i-1)*(xmax - xmin)/(n-1)
+      y_sine(i) = sin(x(i))
+      y_cosine(i) = cos(x(i))
+   end do
+   call plline(x, y_sine)
 
-    call plcol0(2)
-    call plline(x, y_cosine)
- end block plot</code></pre>
+   call plcol0(2)
+   call plline(x, y_cosine)
+end block plot</code></pre>
          <p>新しいこのコードでは、配列<code>y_cosine</code>を追加しています。8行目でこの配列にCos関数の値を代入しています。次に<code>plcol0(2)</code>を呼び出して、その後に描画する色を変更しています。最後に<code>plline(x, y_cosine)</code>を呼び出して曲線を描画しています。これを実行すると以下のようなプロットを得られます。</p>
          <div class="large-img">
          <figure>
@@ -308,33 +308,33 @@ cmap1_radar.pal
    x(:) = -1d0
    y(:) = -1d0</code></pre>
          <p>そして、次のような<code>read_data</code>ブロックを追加して、<code>MPCORB_modified.DAT</code>からデータを読み込みます。</p>
-         <pre class="fortran"><code> read_data: block
-    character(7) :: id
-    character(5) :: epoch
-    real(PLFLT) :: h, g, perihelion, epoch_ano, lon_asc, inclination, ecc, mean_motion, a
-    	! 使用するのはeccとaのみで、他はダミー変数
-    integer :: uni, i, ierr
+         <pre class="fortran"><code>read_data: block
+   character(7) :: id
+   character(5) :: epoch
+   real(PLFLT) :: h, g, perihelion, epoch_ano, lon_asc, inclination, ecc, mean_motion, a
+      ! 使用するのはeccとaのみで、他はダミー変数
+   integer :: uni, i, ierr
 
-    open(newunit=uni, file=&#39;MPCORB_modified.DAT&#39;, status=&#39;old&#39;)
+   open(newunit=uni, file=&#39;MPCORB_modified.DAT&#39;, status=&#39;old&#39;)
 
-    i = 1
-    ierr = 0
-    do while (.true.)
-       if (ierr /= 0) then
-          exit
-       end if
-       read(uni, *, iostat=ierr)  &amp;
-          id, h, g, epoch, epoch_ano, perihelion, &amp;
-          lon_asc, inclination, ecc, mean_motion, a
-          ! 1レコードには、第9列に軌道離心率eが、第11列に軌道長半径aが配置されているので、
-          ! これらを変数eccとaに読み込む
+   i = 1
+   ierr = 0
+   do while (.true.)
+      if (ierr /= 0) then
+         exit
+      end if
+      read(uni, *, iostat=ierr)  &amp;
+         id, h, g, epoch, epoch_ano, perihelion, &amp;
+         lon_asc, inclination, ecc, mean_motion, a
+         ! 1レコードには、第9列に軌道離心率eが、第11列に軌道長半径aが配置されているので、
+         ! これらを変数eccとaに読み込む
 
-       x(i) = a
-       y(i) = ecc
-       i = i + 1
-    end do
-    close(uni)
- end block read_data</code></pre>
+      x(i) = a
+      y(i) = ecc
+      i = i + 1
+   end do
+   close(uni)
+end block read_data</code></pre>
          <p>次に<code>initialize</code>, <code>frame</code>,
          <code>plot</code>ブロックを次のように記述します。</p>
          <pre class="fortran"><code>initialize: block
