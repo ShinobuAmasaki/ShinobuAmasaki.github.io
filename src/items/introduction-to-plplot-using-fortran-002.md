@@ -109,16 +109,16 @@ end block plot
 この図では原点と点(1, 0.5)に線が引かれていますが、このままでは線分であることが明確ではないので`frame`ブロックを少し変更します。
 
 ```fortran
- frame: block
-    real(PLFLT), parameter :: xmin = -0.1d0, xmax = 1.1d0 ! xminとxmaxを変更
-    real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
-    integer :: just, axis
+frame: block
+   real(PLFLT), parameter :: xmin = -0.1d0, xmax = 1.1d0 ! xminとxmaxを変更
+   real(PLFLT), parameter :: ymin = -1d0, ymax = 1d0
+   integer :: just, axis
 
-    just = 0
-    axis = 0
-    call plenv( xmin, xmax, ymin, ymax, just, axis)
-    call pllab("x", "y", "Title")
- end block frame
+   just = 0
+   axis = 0
+   call plenv( xmin, xmax, ymin, ymax, just, axis)
+   call pllab("x", "y", "Title")
+end block frame
 ```
 
 これを反映したプログラムを実行すると、次のようになります。
@@ -167,9 +167,9 @@ program main
 plot: block
    integer, parameter :: n = 101
    integer, :: i
-	 real(PLFLT) :: x(n), y_sine(n)
-	 
-	 do i = 1, n
+   real(PLFLT) :: x(n), y_sine(n)
+    
+   do i = 1, n
       x(i) = (i-1)*(xmax - xmin)/(n-1)
       y_sine(i) = sin(x(i))
    end do
@@ -192,21 +192,21 @@ end block plot
 次にCos関数の曲線を追加しますが、ここでは線の色を変えてみましょう。`plot`ブロックを以下のように変更します。
 
 ```fortran
- plot: block
-    integer, parameter :: n = 101
-    integer :: i
-    real(PLFLT) :: x(n), y_sine(n), y_cosine(n)
+plot: block
+   integer, parameter :: n = 101
+   integer :: i
+   real(PLFLT) :: x(n), y_sine(n), y_cosine(n)
 
-    do i = 1, n
-       x(i) = (i-1)*(xmax - xmin)/(n-1)
-       y_sine(i) = sin(x(i))
-       y_cosine(i) = cos(x(i))
-    end do
-    call plline(x, y_sine)
+   do i = 1, n
+      x(i) = (i-1)*(xmax - xmin)/(n-1)
+      y_sine(i) = sin(x(i))
+      y_cosine(i) = cos(x(i))
+   end do
+   call plline(x, y_sine)
 
-    call plcol0(2)
-    call plline(x, y_cosine)
- end block plot
+   call plcol0(2)
+   call plline(x, y_cosine)
+end block plot
 ```
 
 新しいこのコードでは、配列`y_cosine`を追加しています。8行目でこの配列にCos関数の値を代入しています。次に`plcol0(2)`を呼び出して、その後に描画する色を変更しています。最後に`plline(x, y_cosine)`を呼び出して曲線を描画しています。これを実行すると以下のようなプロットを得られます。
@@ -294,33 +294,33 @@ program main
 そして、次のような`read_data`ブロックを追加して、`MPCORB_modified.DAT`からデータを読み込みます。
 
 ```fortran
- read_data: block
-    character(7) :: id
-    character(5) :: epoch
-    real(PLFLT) :: h, g, perihelion, epoch_ano, lon_asc, inclination, ecc, mean_motion, a
-    	! 使用するのはeccとaのみで、他はダミー変数
-    integer :: uni, i, ierr
+read_data: block
+   character(7) :: id
+   character(5) :: epoch
+   real(PLFLT) :: h, g, perihelion, epoch_ano, lon_asc, inclination, ecc, mean_motion, a
+      ! 使用するのはeccとaのみで、他はダミー変数
+   integer :: uni, i, ierr
 
-    open(newunit=uni, file='MPCORB_modified.DAT', status='old')
+   open(newunit=uni, file='MPCORB_modified.DAT', status='old')
 
-    i = 1
-    ierr = 0
-    do while (.true.)
-       if (ierr /= 0) then
-          exit
-       end if
-       read(uni, *, iostat=ierr)  &
-          id, h, g, epoch, epoch_ano, perihelion, &
-          lon_asc, inclination, ecc, mean_motion, a
-          ! 1レコードには、第9列に軌道離心率eが、第11列に軌道長半径aが配置されているので、
-          ! これらを変数eccとaに読み込む
+   i = 1
+   ierr = 0
+   do while (.true.)
+      if (ierr /= 0) then
+         exit
+      end if
+      read(uni, *, iostat=ierr)  &
+         id, h, g, epoch, epoch_ano, perihelion, &
+         lon_asc, inclination, ecc, mean_motion, a
+         ! 1レコードには、第9列に軌道離心率eが、第11列に軌道長半径aが配置されているので、
+         ! これらを変数eccとaに読み込む
 
-       x(i) = a
-       y(i) = ecc
-       i = i + 1
-    end do
-    close(uni)
- end block read_data
+      x(i) = a
+      y(i) = ecc
+      i = i + 1
+   end do
+   close(uni)
+end block read_data
 ```
 
 次に`initialize`, `frame`, `plot`ブロックを次のように記述します。
