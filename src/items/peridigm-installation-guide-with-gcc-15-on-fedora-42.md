@@ -1,5 +1,5 @@
 ---
-title: "Peridigmインストールガイド【GCC 15編】"
+title: "Peridigmインストールガイド【GCC 15・Fedora 42編】[JA]"
 date: 2025-08-08
 link: https://shinobuamasaki.github.io/items/peridigm-installation-guide-with-gcc-15-on-fedora-42.html
 language: ja
@@ -102,8 +102,8 @@ sudo passwd
 - CMake
 - M4
 - Git
-- `curl`
-- `tree`
+- curl
+- tree
 
 最初に、リポジトリの更新を確認する。
 
@@ -656,4 +656,4 @@ Peridigmのインストールには苦労が多いという指摘もあるが、
 1. [NetCDF Release Notes | Unidata](https://docs.unidata.ucar.edu/netcdf-c/4.9.2/RELEASE_NOTES.html)
 1. [Peridigmをソースからインストールする | ぺんぎんや](https://e-penguiner.com/installation-of-peridigm/)
 1. [New C++ features in GCC 15 | Red Hat Developer](https://developers.redhat.com/articles/2025/04/24/new-c-features-gcc-15#)
-1. https://github.com/zlib-ng/zlib-ng
+1. [https://github.com/zlib-ng/zlib-ng](https://github.com/zlib-ng/zlib-ng)
