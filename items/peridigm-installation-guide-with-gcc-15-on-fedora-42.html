@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+      <meta name="dcterms.date" content="2025-08-08" />
+        <meta name="description" content="Fedora 42上でGCC
+15を使って破壊解析ツールPeridigmをインストールする方法を解説する記事" />
+   <meta name="twitter:description" content="Fedora 42上でGCC
+15を使って破壊解析ツールPeridigmをインストールする方法を解説する記事" />
+   <meta name="og:description" content="Fedora 42上でGCC
+15を使って破壊解析ツールPeridigmをインストールする方法を解説する記事" />
+      <meta property="og:title" content="Peridigmインストールガイド【GCC
+15編】" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+
+   <!-- <meta name="twitter:image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png" /> -->
+	<meta name="twitter:image" content="https://shinobuamasaki.github.io/img/shinobu.png">
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/peridigm-installation-guide-with-gcc-15-on-fedora-42.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+  <!--  <meta property="og:image" itemprop="image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png"> -->
+	<meta property="og:image" itemprop="image" content="https://shinobuamasaki.github.io/img/shinobu.png">
+
+   <title>Peridigmインストールガイド【GCC
+15編】 | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1
+         id="peridigmインストールガイドgcc-15fedora-42編">Peridigmインストールガイド【GCC
+         15・Fedora 42編】</h1>
+         <p>Author: 雨崎しのぶ</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2025-08-08 JST</p>
+         <h2 id="概要">概要</h2>
+         <p>本稿では破壊解析ツールPeridigmのインストールについて述べる。Ubuntu（22.04
+         LTS）でのインストール方法は柴田（2025）が詳しいが、これはPeridigmの依存関係を基本的にすべてビルドしてインストールする方法について述べている。これに対し本稿では、HDF5とNetCDF、およびTrilinosについてのみビルドするが、それ以外のソフトウェアについてはパッケージマネージャで提供されるもので、かつできるだけ新しいバージョンを使ってのインストールを試みる。この目的は、Peridigmの簡便なインストール方法を提供し、依存関係のなかで新しいバージョンを使ってよいものとそうではないものを区別することである。これらの理由から、新しいパッケージが提供されやすいLinuxのディストリビューションであるFedora
+         42を例に用いる。</p>
+         <h2 id="目次">目次</h2>
+         <ul>
+         <li><a href="#概要">概要</a></li>
+         <li><a href="#前準備">前準備</a>
+         <ul>
+         <li><a href="#WSLの場合">WSLの場合</a></li>
+         <li><a
+         href="#コンパイラやビルドツールのインストール">コンパイラやビルドツールのインストール</a></li>
+         </ul></li>
+         <li><a
+         href="#依存関係のインストール">依存関係のインストール</a>
+         <ul>
+         <li><a
+         href="#パッケージマネージャからインストール">パッケージマネージャからインストール</a>
+         <ul>
+         <li><a href="#OpenMPI">OpenMPI</a></li>
+         <li><a href="#BLAS/LAPACK">BLAS/LAPACK</a></li>
+         <li><a href="#OpenSSL">OpenSSL</a></li>
+         <li><a href="#yaml-cpp">yaml-cpp</a></li>
+         <li><a href="#Python3">Python3</a></li>
+         <li><a href="#Boost">Boost</a></li>
+         <li><a href="zlib">zlib</a></li>
+         </ul></li>
+         <li><a
+         href="#ソースコードからビルドしてインストール">ソースコードからビルドしてインストール</a>
+         <ul>
+         <li><a href="#HDF5">HDF5</a></li>
+         <li><a href="#NetCDF">NetCDF</a></li>
+         </ul></li>
+         </ul></li>
+         <li><a
+         href="#Trilinosのインストール">Trilinosのインストール</a>
+         <ul>
+         <li><a href="#ダウンロードと展開">ダウンロードと展開</a></li>
+         <li><a href="#CMakeで構成">CMakeで構成</a></li>
+         <li><a href="#Trilinosのビルド">Trilinosのビルド</a></li>
+         <li><a
+         href="#Trilinosのインストール">Trilinosのインストール</a></li>
+         </ul></li>
+         <li><a
+         href="#Peridigmのインストール">Peridigmのインストール</a>
+         <ul>
+         <li><a
+         href="#前準備とダウンロード">前準備とダウンロード</a></li>
+         <li><a
+         href="#ビルドしてインストール">ビルドしてインストール</a></li>
+         <li><a
+         href="#スクリプトファイルのコピー">スクリプトファイルのコピー</a></li>
+         </ul></li>
+         <li><a href="#環境変数の設定">環境変数の設定</a></li>
+         <li><a href="#まとめ">まとめ</a></li>
+         <li><a href="#参考文献">参考文献</a></li>
+         </ul>
+         <h2 id="前準備">前準備</h2>
+         <h3 id="wslの場合">WSLの場合</h3>
+         <p>Windows Subsystem for
+         Linuxのバージョン2（WSL2）を使う場合は以下を行うとよいだろう。そうでない場合は本節を読み飛ばして次節に移ってほしい。</p>
+         <p>まず最初に、PowerShellからFedora Linux 42を追加する。</p>
+         <pre class="powershell"><code>wsl --install FedoraLinux-42</code></pre>
+         <p>このコマンドを実行すると、以下のような出力を得る。</p>
+         <pre><code>ダウンロードしています: Fedora Linux 42
+インストールしています: Fedora Linux 42
+ディストリビューションが正常にインストールされました。&#39;wsl.exe -d FedoraLinux-42&#39; を使用して起動できます
+FedoraLinux-42 を起動しています...
+Please create a default user account. The username does not need to match your Windows username.
+For more information visit: https://aka.ms/wslusers
+Enter new UNIX username:</code></pre>
+         <p>UNIXユーザ名を尋ねるプロンプトが表示されるので、ここでは例えば<code>shinobu</code>とする（UNIXユーザ名は各自で好きな名前にしてほしい。本稿はユーザ名として<code>shinobu</code>使うものとして述べる）。</p>
+         <pre><code>Enter new UNIX username: shinobu
+Your user has been created, is included in the wheel group, and can use sudo without a password.
+To set a password for your user, run &#39;sudo passwd shinobu&#39;</code></pre>
+         <p>ユーザ<code>shinobu</code>のパスワードを設定する。</p>
+         <pre><code>sudo passwd shinobu</code></pre>
+         <p>必要ならrootユーザーのパスワードも設定する。</p>
+         <pre><code>sudo passwd</code></pre>
+         <h3
+         id="コンパイラやビルドツールのインストール">コンパイラやビルドツールのインストール</h3>
+         <p>ここでは、以下のコンパイラおよびビルドツールをパッケージマネージャからインストールする。</p>
+         <ul>
+         <li>GCC 15: <code>gcc</code>, <code>gfortran</code>,
+         <code>g++</code></li>
+         <li>Make</li>
+         <li>CMake</li>
+         <li>M4</li>
+         <li>Git</li>
+         <li><code>curl</code></li>
+         <li><code>tree</code></li>
+         </ul>
+         <p>最初に、リポジトリの更新を確認する。</p>
+         <pre><code>sudo dnf update -y</code></pre>
+         <p>GCCと<code>make</code>、<code>cmake</code>、<code>m4</code>をインストールする。</p>
+         <pre><code>sudo dnf install gcc gcc-fortran gcc-c++ make cmake m4</code></pre>
+         <p><code>git</code>をインストールする。</p>
+         <pre><code>sudo dnf install git</code></pre>
+         <p><code>curl</code>と<code>tree</code>はデフォルトで入っていると思われるが、なければ以下のコマンドでインストールする。</p>
+         <pre><code>sudo dnf install curl tree</code></pre>
+         <h2 id="依存関係のインストール">依存関係のインストール</h2>
+         <p>ここではTrilinos以外のPeridigmの依存関係のインストールについて解説する。</p>
+         <h3
+         id="パッケージマネージャからインストール">パッケージマネージャからインストール</h3>
+         <p>まず、Peridigmの依存関係のパッケージを、Fedora
+         42のデフォルトのパッケージマネージャコマンド<code>dnf</code>を使ってインストールする方法について述べる。</p>
+         <ul>
+         <li>OpenMPI</li>
+         <li>BLAS/LAPACK</li>
+         <li>OpenSSL</li>
+         <li>yaml-cpp</li>
+         <li>Python3</li>
+         <li>Boost</li>
+         <li>zlib-ng</li>
+         </ul>
+         <h4 id="openmpi">OpenMPI</h4>
+         <p>OpenMPIのインストールには次のコマンドを実行する：</p>
+         <pre><code>sudo dnf install openmpi openmpi-devel</code></pre>
+         <p>OpenMPIのバイナリ（ヘッダファイルも）は<code>/usr/lib64/openmpi</code>ディレクトリ下にインストールされるので、それらのファイルを使えるように環境変数を次のように設定する：</p>
+         <pre><code>export PATH=/usr/lib64/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH</code></pre>
+         <p>2025年8月現在では、OpenMPIのバージョン5.0.6がインストールされる。<code>mpirun --version</code>の実行結果は次の通り：</p>
+         <pre><code>mpirun (Open MPI) 5.0.6
+
+Report bugs to https://www.open-mpi.org/community/help/</code></pre>
+         <h4 id="blaslapack">BLAS/LAPACK</h4>
+         <p>線形代数演算ライブラリのBLAS/LAPACKをインストールする。これらのインストールには次のコマンドを実行する。</p>
+         <pre><code>sudo dnf install openblas openblas-devel lapack lapack-devel</code></pre>
+         <p>2025年8月現在では、インストールされるBLAS (OpenBLAS)
+         のバージョンは0.3.29、LAPACKのバージョンは3.12.0である。</p>
+         <h4 id="openssl">OpenSSL</h4>
+         <p>OpenSSLのインストールには次のコマンドを実行する。</p>
+         <pre><code>sudo dnf install openssl</code></pre>
+         <p>2025年8月現在では、OpenSSLのバージョン3.2.4がインストールされる。</p>
+         <h4 id="yaml-cpp">yaml-cpp</h4>
+         <p>yaml-cppのインストールには次のコマンドを実行する。</p>
+         <pre><code>sudo dnf install yaml-cpp yaml-cpp-devel</code></pre>
+         <p><code>yaml-cpp-devel</code>をインストールしないとヘッダファイルがインストールされない点に注意する。2025年8月現在では、yaml-cppのバージョン0.8.0がインストールされる。</p>
+         <h4 id="python3">Python3</h4>
+         <p>Python3のインストールには次のコマンドを実行する。</p>
+         <pre><code>sudo dnf install python3 python3-devel</code></pre>
+         <p>python3は既にインストールされているかもしれない。これはPeridigmのテストやスクリプト（分割されたファイルの統合など）の実行に必要となる。2025年8月現在、Pythonのバージョン3.13.5がインストールされる。</p>
+         <h4 id="boost">Boost</h4>
+         <p>C++のライブラリであるBoostのインストールには次のコマンドを実行する。</p>
+         <pre><code>sudo dnf install boost boost-devel</code></pre>
+         <p>Boostのヘッダファイルは<code>/usr/include/boost</code>にインストールされる。</p>
+         <h4 id="zlib">zlib</h4>
+         <p>データ圧縮・伸張を行うライブラリのzlibをインストールするには次のコマンドを実行する：</p>
+         <pre><code>sudo dnf install zlib-ng zlib-ng-devel zlib-ng-compat-devel</code></pre>
+         <p>注：<code>zlib-ng</code>の<code>ng</code>は”next
+         generation”の意味らしい（cf. https://github.com/zlib-ng/zlib-ng）。</p>
+         <h3
+         id="ソースコードからビルドしてインストール">ソースコードからビルドしてインストール</h3>
+         <p>次にHDF5とNetCDFをソースコードからビルドしてインストールする方法について述べる。Trilinosも同様にビルドしてインストールするが、その手順については別の節に後述する。</p>
+         <p>HDF5とNetCDFはともにTrilinosの依存関係である。Fedora
+         42ではHDF5を<code>dnf</code>コマンドで導入しようとすると、バージョン1.14.6がインストールされるが、これは後述の実行時エラーを起こすので、バージョン1.12.1をソースコードからビルドしてインストールする。NetCDFもこれに応じてバージョン4.8.1をソースコードからビルドしてインストールする。</p>
+         <p>インストール先は<code>/opt</code>ディレクトリ下にソフトウェアとそのバージョン毎に分けてインストールする。</p>
+         <h4 id="hdf5">HDF5</h4>
+         <p>curlコマンドでダウンロードする</p>
+         <pre><code>curl -O https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.1/src/hdf5-1.12.1.tar.gz</code></pre>
+         <p>tarコマンドで展開する。</p>
+         <pre><code>tar xf hdf5-1.12.1/</code></pre>
+         <p>展開されたディレクトリ下に<code>build</code>ディレクトリを作成し、ここに移動して、構成を実行する。</p>
+         <pre><code>mkdir -p hdf5-1.12.1/build
+cd hdf5-1.12.1/build
+
+../configure --prefix=/opt/hdf5/1.12.1 --enable-parallel --enable-shared --with-default-api-version=v110 --enable-hl --enable-fortran</code></pre>
+         <p>読者の好みに応じて<code>--enable-cxx</code>や<code>--enable-fortran</code>などを付加してもよい（ここでは後者を採用した）。</p>
+         <p><code>make</code>コマンドでビルドを実行する（<code>-j</code>オプションに渡す並列数はマシンに合わせて変更してほしい）。</p>
+         <pre><code>make -j4</code></pre>
+         <p><code>su</code>コマンドでrootユーザーにスイッチし、インストールを実行する（<code>sudo make install</code>で行おうとすると環境変数が引き継がれない問題でエラーとなり失敗することがある）。</p>
+         <pre><code>$ su
+# make install</code></pre>
+         <p>もしくは<code>sudo su</code>でrootユーザーになり、OpenMPIのパスを設定してインストールすれば良い。</p>
+         <pre><code>$ sudo su
+# export PATH=/usr/lib64/openmpi/bin:$PATH
+# export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+# make install</code></pre>
+         <p>インストールされたかどうかを確認する</p>
+         <pre><code>$ export PATH=/opt/hdf5/1.12.1/bin:$PATH</code></pre>
+         <h5
+         id="hdf5のv1.14.6に起因するperidigmの実行時エラーメッセージ">HDF5のv1.14.6に起因するPeridigmの実行時エラーメッセージ</h5>
+         <p>パッケージマネージャからHDF5をインストールすると、最終的なPeridigmの実行で次のようなエラーメッセージが表示されるようだ。</p>
+         <pre><code>HDF5-DIAG: Error detected in HDF5 (1.14.6):
+  #000: ../../src/H5FD.c line 368 in H5FDunregister(): not a file driver
+    major: Invalid arguments to routine
+    minor: Inappropriate type</code></pre>
+         <h4 id="netcdf">NetCDF</h4>
+         <p>curlコマンドでダウンロードする</p>
+         <pre><code>curl -O -L https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.8.1.tar.gz</code></pre>
+         <p>アーカイブを<code>tar</code>コマンドで展開して、そのディレクトリに移動する。</p>
+         <pre><code>tar xf v4.8.1.tar.gz
+cd netcdf-c-4.8.1</code></pre>
+         <p>柴田（2025）に倣い、ヘッダファイルの数値を書き換える。変更するマクロ変数は<code>NC_MAX_DIMS</code>、<code>NC_MAX_VARS</code>、<code>NC_MAX_VAR_DIMS</code>の3つ。</p>
+         <p>デフォルトの値を確認する：</p>
+         <pre><code>cat include/netcdf.h | grep  -e &quot;#define NC_MAX_DIMS&quot; -e &quot;#define NC_MAX_VARS&quot; -e &quot;#define NC_MAX_VAR_DIMS&quot;</code></pre>
+         <p>上のコマンドを実行すると次のような出力が得られるだろう。</p>
+         <pre><code>#define NC_MAX_DIMS     1024 /* not enforced after 4.5.0 */
+#define NC_MAX_VARS     8192 /* not enforced after 4.5.0 */
+#define NC_MAX_VAR_DIMS 1024 /**&lt; max per variable dimensions */</code></pre>
+         <p>柴田（2025）に倣い、マクロ変数の値を変更する。以下の3回の<code>sed</code>コマンドを実行して、<code>netcdf.h</code>のファイルを操作する：</p>
+         <pre><code>sed -i \
+-e &#39;s@#define NC_MAX_DIMS     1024@#define NC_MAX_DIMS     65536@g&#39; \
+-e &#39;s@#define NC_MAX_VARS     8192@#define NC_MAX_VARS     524288@g&#39; \
+-e &#39;s@#define NC_MAX_VAR_DIMS 1024@#define NC_MAX_VAR_DIMS     8@g&#39; \
+./include/netcdf.h</code></pre>
+         <p>変更されたことを確認するには上記の<code>cat</code>コマンドを再実行すればよい。以下のような出力を得られるだろう：</p>
+         <pre><code>#define NC_MAX_DIMS     65536 /* not enforced after 4.5.0 */
+#define NC_MAX_VARS     524288 /* not enforced after 4.5.0 */
+#define NC_MAX_VAR_DIMS     8 /**&lt; max per variable dimensions */</code></pre>
+         <p>ヘッダファイルの編集が完了したら、ビルドディレクトリを作成し、そこに移動する。</p>
+         <pre><code>mkdir -p build
+cd build</code></pre>
+         <p>構成を実行する。ここでコンパイラは最新のGCC
+         バージョン15系なので、コンパイルを通すために、いくつかのオプションを<code>CFLAGS</code>に指定する：</p>
+         <ul>
+         <li><code>-std=c11</code></li>
+         <li><code>-D_GNU_SOURCE</code></li>
+         <li>`<code>-Wno-incompatible-pointer-type</code></li>
+         <li><code>-I/opt/hdf5/1.12.1/include</code></li>
+         </ul>
+         <pre><code>../configure --prefix=/opt/netcdf/4.8.1 CC=mpicc LDFLAGS=&quot;-L/opt/hdf5/1.12.1/lib&quot; CFLAGS=&quot;-std=c11 -D_GNU_SOURCE -Wno-incompatible-pointer-types -I/opt/hdf5/1.12.1/include&quot;</code></pre>
+         <p><code>make</code>コマンドでビルドする。</p>
+         <pre><code>make -j4</code></pre>
+         <p>rootユーザに切り替えて、ビルドしたファイルをインストールする。</p>
+         <pre><code>$ su
+# make install</code></pre>
+         <p><code>make install</code>の実行で以下のようなメッセージが表示されれば、NetCDFの</p>
+         <p>インストールは成功である。</p>
+         <pre><code>+-------------------------------------------------------------+
+| Congratulations! You have successfully installed netCDF!    |
+|                                                             |
+| You can use script &quot;nc-config&quot; to find out the relevant     |
+| compiler options to build your application. Enter           |
+|                                                             |
+|     nc-config --help                                        |
+|                                                             |
+| for additional information.                                 |
+|                                                             |
+| CAUTION:                                                    |
+|                                                             |
+| If you have not already run &quot;make check&quot;, then we strongly  |
+| recommend you do so. It does not take very long.            |
+|                                                             |
+| Before using netCDF to store important data, test your      |
+| build with &quot;make check&quot;.                                    |
+|                                                             |
+| NetCDF is tested nightly on many platforms at Unidata       |
+| but your platform is probably different in some ways.       |
+|                                                             |
+| If any tests fail, please see the netCDF web site:          |
+| http://www.unidata.ucar.edu/software/netcdf/                |
+|                                                             |
+| NetCDF is developed and maintained at the Unidata Program   |
+| Center. Unidata provides a broad array of data and software |
+| tools for use in geoscience education and research.         |
+| http://www.unidata.ucar.edu                                 |
++-------------------------------------------------------------+</code></pre>
+         <h2 id="trilinosのインストール">Trilinosのインストール</h2>
+         <p>Peridigmの重要な依存関係ライブラリであるTrilinosをインストールする。このステップがPeridigmインストールの最難関であろう。</p>
+         <p>柴田（2025）に倣い、Trilinosはバージョン13.0.1を使用する。</p>
+         <h3 id="ダウンロードと展開">ダウンロードと展開</h3>
+         <pre><code>$ curl -O -L https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-13-0-1.tar.gz
+$ tar xf trilinos-release-13-0-1.tar.gz
+$ cd Trilinos-trilinos-release-13-0-1</code></pre>
+         <h3 id="cmakeで構成">CMakeで構成</h3>
+         <p>指定するオプションが多く、混乱しやすいので注意する。</p>
+         <pre><code>cmake -S . -B build \
+-DCMAKE_INSTALL_PREFIX:PATH=/opt/trilinos/13.0.1 \
+-DMPI_BASE_DIR:PATH=/usr/lib64/openmpi \
+-DCMAKE_BUILD_TYPE:STRING=Release \
+-DBUILD_SHARED_LIBS:BOOL=OFF \
+-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=&quot;&quot; \
+-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=OFF \
+-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF \
+-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=OFF \
+-DTrilinos_ENABLE_Teuchos:BOOL=ON \
+-DTrilinos_ENABLE_Shards:BOOL=ON \
+-DTrilinos_ENABLE_Sacado:BOOL=ON \
+-DTrilinos_ENABLE_Epetra:BOOL=ON \
+-DTrilinos_ENABLE_EpetraExt:BOOL=ON \
+-DTrilinos_ENABLE_Ifpack:BOOL=ON \
+-DTrilinos_ENABLE_AztecOO:BOOL=ON \
+-DTrilinos_ENABLE_Belos:BOOL=ON \
+-DTrilinos_ENABLE_Phalanx:BOOL=ON \
+-DPhalanx_EXPLICIT_TEMPLATE_INSTANTIATION:BOOL=ON \
+-DTrilinos_ENABLE_Zoltan:BOOL=ON \
+-DTrilinos_ENABLE_SEACAS:BOOL=ON \
+-DTrilinos_ENABLE_NOX:BOOL=ON \
+-DTrilinos_ENABLE_Pamgen:BOOL=ON \
+-DTrilinos_ENABLE_Kokkos:BOOL=ON \
+-DTrilinos_ENABLE_SEACASPLT:BOOL=OFF \
+-DTrilinos_ENABLE_SEACASBlot:BOOL=OFF \
+-DTrilinos_ENABLE_SEACASFastq:BOOL=OFF \
+-DTrilinos_ENABLE_EXAMPLES:BOOL=OFF \
+-DTrilinos_ENABLE_TESTS:BOOL=OFF \
+-DTPL_ENABLE_MATLAB:BOOL=OFF \
+-DTPL_ENABLE_Matio:BOOL=OFF \
+-DTPL_ENABLE_Netcdf:BOOL=ON \
+-DNetcdf_INCLUDE_DIRS:PATH=/opt/netcdf/4.8.1/include \
+-DNetcdf_LIBRARY_DIRS:PATH=/opt/netcdf/4.8.1/lib \
+-DTPL_ENABLE_HDF5:BOOL=ON \
+-DHDF5_INCLUDE_DIRS:PATH=/opt/hdf5/1.12.1/include \
+-DHDF5_LIBRARY_DIRS:PATH=/opt/hdf5/1.12.1/lib \
+-DTPL_ENABLE_MPI:BOOL=ON \
+-DTPL_ENABLE_BLAS:BOOL=ON \
+-DTPL_BLAS_LIBRARIES:FILEPATH=/usr/lib64/libblas.so \
+-DTPL_ENABLE_LAPACK:BOOL=ON \
+-DTPL_LAPACK_LIBRARIES:FILEPATH=/usr/lib64/liblapack.so \
+-DTPL_ENABLE_Boost:BOOL=ON \
+-DTPL_ENABLE_QT:BOOL=OFF \
+-DTPL_ENABLE_X11:BOOL=OFF \
+-DTPL_ENABLE_yaml-cpp:BOOL=ON \
+-DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+-DTrilinos_VERBOSE_CONFIGURE:BOOL=OFF \
+-DCMAKE_C_FLAGS=&quot;-std=c11&quot; \
+-DCMAKE_CXX_FLAGS=&quot;-include cstdint -Wno-template-body&quot; \
+-DCMAKE_Fortran_FLAGS=&quot;-std=legacy&quot;</code></pre>
+         <p>このコマンドで構成を実行すると、<code>build</code>ディレクトリが自動的に作成され、その下に必要なファイルとビルドのための情報がコピーされる。</p>
+         <p>GCC15を使った場合に、Trilinos13の構成とビルドが通るようにするには、いくつかのオプションを追加する必要がある。</p>
+         <ul>
+         <li><code>-DCMAKE_C_FLAGS="-std=c11"</code>
+         <ul>
+         <li>Cの規格「C11」（ISO/IEC
+         9899:2011）を使用するように指示するオプション。</li>
+         </ul></li>
+         <li><code>-DCMAKE_CXX_FLAGS="-include cstdint -Wno-template-body"</code>
+         <ul>
+         <li><code>-include cstdint</code>はヘッダーファイルに<code>cstdint.h</code>を追加させるように指示する。</li>
+         <li><code>-Wno-template-body</code>はテンプレートエラーを無効にするように指示する。</li>
+         </ul></li>
+         <li><code>-DCMAKE_Fortran_FLAGS="-std=legacy"</code>
+         <ul>
+         <li><code>-std=legacy</code>はFORTRAN
+         77相当の古い機能拡張を有効にしてビルドするように指示する。</li>
+         </ul></li>
+         </ul>
+         <p>なお、Boostとyaml-cppのインストールをパッケージマネージャを使ってデフォルトの場所にインストールした場合に限り、以下の構成オプションは指定しなくてよい。</p>
+         <ul>
+         <li><code>-DTPL_Boost_INCLUDE_DIRS</code></li>
+         <li><code>-DTPL_yaml-cpp_LIBRARIES</code></li>
+         <li><code>-DTPL_yaml-cpp_INCLUDE_DIRS</code></li>
+         </ul>
+         <h3 id="trilinosのビルド">Trilinosのビルド</h3>
+         <p>CMakeコマンドでTrilinosのビルドをするには、次のコマンドを実行する。</p>
+         <pre><code>cmake --build build -j 4</code></pre>
+         <h3 id="trilinosのインストール-1">Trilinosのインストール</h3>
+         <p>ビルドが成功の後、インストールを行うには、次のコマンドを実行する。</p>
+         <pre><code>sudo cmake --install build</code></pre>
+         <h2 id="peridigmのインストール">Peridigmのインストール</h2>
+         <p>最後に、本稿の主題であるPeridigmをソースコードからビルドしてインストールする方法について述べる。</p>
+         <h3 id="前準備とダウンロード">前準備とダウンロード</h3>
+         <p>Trilinosのインストール先について、環境変数の設定する。</p>
+         <pre><code>export PATH=/opt/trilinos/13.0.1/bin:$PATH
+export LD_LIBRARY_PATH=/opt/tirlinos/13.0.1/lib:$LD_LIBRARY_PATH</code></pre>
+         <p><code>git clone</code>でリポジトリを取得する。</p>
+         <pre><code>git clone https://github.com/peridigm/peridigm.git</code></pre>
+         <p><code>peridigm</code>ディレクトリへ移動する。</p>
+         <pre><code>cd peridigm</code></pre>
+         <h3 id="ビルドしてインストール">ビルドしてインストール</h3>
+         <p><code>cmake</code>で構成を実行する。</p>
+         <pre><code>cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=Release \
+ -DCMAKE_INSTALL_PREFIX:PATH=/opt/peridigm \
+ -DTRILINOS_DIR:PATH=/opt/trilions/13.0.1 \
+ -DCMAKE_CXX_COMPILER:STRING=&quot;mpicxx&quot;</code></pre>
+         <p><code>build</code>ディレクトリ内でビルドする。</p>
+         <pre><code>cmake --build build -j 4</code></pre>
+         <p>ビルドが完了したら最後にインストールする。</p>
+         <pre><code>sudo cmake --install build</code></pre>
+         <p><code>PATH</code>環境変数を更新して、コマンド<code>Peridigm</code>を実行できるようにする。</p>
+         <pre><code>export PATH=/opt/peridigm/bin:$PATH</code></pre>
+         <p><code>Peridimg</code>が実行可能かどうかを確かめる。</p>
+         <pre><code>type Peridigm</code></pre>
+         <p>以下のように出力されれば、Peridigmの実行ファイルのインストールには成功した。</p>
+         <pre><code>Peridigm is /opt/peridigm/bin/Peridigm</code></pre>
+         <h3
+         id="スクリプトファイルのコピー">スクリプトファイルのコピー</h3>
+         <p>最後に<code>peridigm/scripts</code>に含まれるPythonスクリプトを<code>/opt/peridigm/bin</code>にコピーする：</p>
+         <pre><code>sudo cp scripts/* /opt/peridigm/bin</code></pre>
+         <p>これは、<code>ls /opt/peridigm/bin</code>を実行して次のような結果を得られれば完了である。</p>
+         <pre><code>CriticalInitialVelocityForBondBreaking.py
+genesis_attributes_to_element_variables.py
+image_to_text.py
+MergeFiles.py
+mirror.py
+Peridigm
+peridigm_to_yaml.py
+plot_performance_test_results.py
+run_unit_test.py
+summarize_performance_test_results.py
+text_to_genesis.py
+xmlripper.py</code></pre>
+         <h2 id="環境変数の設定">環境変数の設定</h2>
+         <p><code>export</code>コマンドでセットした環境変数は再ログインした後には残らないので、シェルの設定ファイルにまとめて書いておくとよい。ここではBashを例にとり、その設定ファイル<code>~/.bashrc</code>に上で指定した環境変数について追記しておく（Zshの場合は<code>~/.zshrc</code>に記述する）。</p>
+         <pre class="shell"><code>export PATH=/usr/lib64/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+export MANPATH=/usr/lib64/openmpi/share/man:$MANPATH
+
+export PATH=/opt/netcdf/4.8.1/bin:$PATH
+export LD_LIBRARY_PATH=/opt/netcdf/4.8.1/lib:$LD_LIBRARY_PATH
+
+export PATH=/opt/trilinos/13.0.1/bin:$PATH
+export LD_LIBRARY_PATH=/opt/trilinos/13.0.1/lib:$LD_LIBRARY_PATH
+
+export PATH=/opt/peridigm/bin:$PATH</code></pre>
+         <p>これらの行を設定ファイルに追記しておけば、再ログイン時に自動で環境変数が読み込まれ、<code>Peridigm</code>コマンドが常に利用可能となる。</p>
+         <p>また、必要に応じてHDF5のディレクトリへのパスを追加してもよい。</p>
+         <pre class="shell"><code>export PATH=/opt/hdf5/1.12.1/bin:$PATH
+export LD_LIBRARY_PATH=/opt/hdf5/1.12.1/lib:$LD_LIBRARY_PATH</code></pre>
+         <h2 id="まとめ">まとめ</h2>
+         <p>本稿ではFedora
+         42を用いて、破壊解析ツールのPeridigmについて、できるだけ新しいライブラリを使ったインストールの方法について述べた。依存関係のソフトウェアのうち、OpenMPIやBLAS/LAPACK、OpenSSL、Boost、yaml-cppについては新しいバージョンのライブラリを使ってPeridigmを実行することができる。</p>
+         <p>しかしながら、HDF5とNetCDF、およびこれらに依存するTrilinosを新しいバージョンに切り替えるのはハードルが高いだろう。特にHDF5のバージョン1.14系ではAPIが新しくなったようで、NetCDFバージョン4.8.1はこれには対応していない（NetCDFのリリースノートではv4.9.2でHDF5
+         v1.14系に対応し始めたと読み取れる記述がある）。また、Trilinosについては、PeridigmがどのようにTrilinosに依存しているかを詳細に確認してからバージョンアップを試みる必要があり、これには多大な労力がかかると見込まれるため今回は行っていない。そのため、これらのライブラリについては、柴田（2025）に従い、HDF5
+         v1.12.1、NetCDF v4.8.1、Trilinos
+         v13.0.1を使ってインストールを行った。</p>
+         <p>Peridigmのインストールには苦労が多いという指摘もあるが、読者の扱う様々な環境でPeridigmを実行するために、本稿がその助けになれば幸いである。</p>
+         <h2 id="参考文献">参考文献</h2>
+         <ol type="1">
+         <li><a
+         href="https://nextpublishing.jp/book/18749.html">柴田良一『はじめてのPeridigm　粒子モデルによる破壊解析』（インプレス・ネクスト・パブリッシング、2025年7月）、ISBN：9784295603948</a></li>
+         <li><a
+         href="https://support.hdfgroup.org/documentation/hdf5-docs/Migrating+from+HDF5+1.12+to+HDF5+1.14.html">Migrating
+         from HDF5 1.12 to HDF5 1.14 | The HDF Group</a></li>
+         <li><a
+         href="https://docs.unidata.ucar.edu/netcdf-c/4.9.2/RELEASE_NOTES.html">NetCDF
+         Release Notes | Unidata</a></li>
+         <li><a
+         href="https://e-penguiner.com/installation-of-peridigm/">Peridigmをソースからインストールする
+         | ぺんぎんや</a></li>
+         <li><a
+         href="https://developers.redhat.com/articles/2025/04/24/new-c-features-gcc-15#">New
+         C++ features in GCC 15 | Red Hat Developer</a></li>
+         <li>https://github.com/zlib-ng/zlib-ng</li>
+         </ol>
+      </div>
+   </div>
+</main>
+</body>
+</html>

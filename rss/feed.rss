@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Mon, 21 Jul 2025 13:19:04 +0900</pubDate>
+<pubDate>Fri, 08 Aug 2025 15:45:35 +0900</pubDate>
 
 
 <image>
@@ -19,6 +19,14 @@
 <description>Amasaki Shinobu's icon</description>
 </image>
 
+<item>
+<title>Peridigmインストールガイド【GCC 15編】</title>
+ <link>https://shinobuamasaki.github.io/items/peridigm-installation-guide-with-gcc-15-on-fedora-42.html</link>
+ <description>Fedora 42上でGCC
+15を使って破壊解析ツールPeridigmをインストールする方法を解説する記事</description>
+ <dc:creator>雨崎しのぶ（Amasaki Shinobu）</dc:creator>
+ <pubDate>2025-08-08 09:00:00 JST</pubDate>
+</item>
 <item>
 <title>Fortranコンパイラ一覧 [JA]</title>
  <link>https://qiita.com/amasaki203/items/18d6cf8528202b2c81f3</link>
