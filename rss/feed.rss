@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Fri, 08 Aug 2025 15:45:35 +0900</pubDate>
+<pubDate>Fri, 08 Aug 2025 15:51:06 +0900</pubDate>
 
 
 <image>
@@ -20,7 +20,7 @@
 </image>
 
 <item>
-<title>Peridigmインストールガイド【GCC 15編】</title>
+<title>Peridigmインストールガイド【GCC 15・Fedora 42編】[JA]</title>
  <link>https://shinobuamasaki.github.io/items/peridigm-installation-guide-with-gcc-15-on-fedora-42.html</link>
  <description>Fedora 42上でGCC
 15を使って破壊解析ツールPeridigmをインストールする方法を解説する記事</description>
