@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Mon, 01 Dec 2025 08:33:55 +0900</pubDate>
+<pubDate>Mon, 01 Dec 2025 08:37:38 +0900</pubDate>
 
 
 <image>
@@ -20,7 +20,7 @@
 </image>
 
 <item>
-<title>Fortranで文字列【基礎編その1】</title>
+<title>Fortranで文字列【基礎編その1】[JA]</title>
  <link>https://shinobuamasaki.github.io/items/fortran-character-string-processing-001.html</link>
  <description>Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第1回。内容は文字列リテラルや変数、初歩的な組込み関数と部分文字列について</description>
  <dc:creator>Amasaki Shinobu</dc:creator>
