@@ -1,5 +1,5 @@
 ---
-title: "積んで読んで積んでる本 \"Flexible Pattern Matching in Strings\""
+title: "積んで読んで積んでる本 \"Flexible Pattern Matching in Strings\" [JA]"
 date: 2025-12-03
 language: ja
 link: https://shinobuamasaki.github.io/items/tsundoku-ac-20251203.html
@@ -17,7 +17,7 @@ Posted on: 2025-12-03 JST
 
 ## はじめに
 
-この記事は積読アドベントカレンダー 2025の3日目の記事です。
+この記事は[積読アドベントカレンダー 2025](https://qiita.com/advent-calendar/2025/tsundoku)の3日目の記事です。
 
 積んでいる本は自室に沢山あるのですが、ここでは文字列処理の本を1冊取り上げたいと思います。
 
