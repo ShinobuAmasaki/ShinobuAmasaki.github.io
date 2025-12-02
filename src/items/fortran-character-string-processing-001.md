@@ -125,7 +125,7 @@ str3 = 'abcdef' ! 長さ6のメモリが割付けされる
 
 ```fortran
 str3 = 'He couldn''t say "yes."'
-   ! 長さ22のメモリが再割付けられて、変数str3にHe could n't say "yes."が格納される
+   ! 長さ22のメモリが再割付けられて、変数str3にHe couldn't say "yes."が格納される
 ```
 
 `allocate`文を用いて、明示的にメモリ割付けを行うことも可能である。
