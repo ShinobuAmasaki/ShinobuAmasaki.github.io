@@ -4,7 +4,7 @@
    <meta charset="utf-8" />
    <meta name="viewport" content="width=device-width,initial-scale=1" />
    <meta name="twitter:card" content="summary" />
-      <meta name="dcterms.date" content="2025-12-01" />
+      <meta name="dcterms.date" content="2025-12-03" />
         <meta name="description" content="Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第1回。内容は文字列リテラルや変数、初歩的な組込み関数と部分文字列について" />
    <meta name="twitter:description" content="Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第1回。内容は文字列リテラルや変数、初歩的な組込み関数と部分文字列について" />
    <meta name="og:description" content="Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第1回。内容は文字列リテラルや変数、初歩的な組込み関数と部分文字列について" />
@@ -118,7 +118,7 @@ str6 = &#39;abcd&#39;     ! str6に&#39;abcd  &#39;が格納される</code></pr
          <pre class="fortran"><code>str3 = &#39;abcdef&#39; ! 長さ6のメモリが割付けされる</code></pre>
          <p>同じ変数に再び代入を行うと、上と同様に変数は再割付けされる。</p>
          <pre class="fortran"><code>str3 = &#39;He couldn&#39;&#39;t say &quot;yes.&quot;&#39;
-   ! 長さ22のメモリが再割付けられて、変数str3にHe could n&#39;t say &quot;yes.&quot;が格納される</code></pre>
+   ! 長さ22のメモリが再割付けられて、変数str3にHe couldn&#39;t say &quot;yes.&quot;が格納される</code></pre>
          <p><code>allocate</code>文を用いて、明示的にメモリ割付けを行うことも可能である。</p>
          <pre class="fortran"><code>allocate(character(12) :: str7)  ! 長さ12だけ割付ける
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+      <meta name="dcterms.date" content="2025-12-03" />
+        <meta name="description" content="筆者の積読になっている文字列処理の本の”Flexible
+Pattern Matching in Strings—Practical on-line search algorithms for
+texts and biological sequences” (Navarro and Raffinot,
+2002)についての自由記述の記事" />
+   <meta name="twitter:description" content="筆者の積読になっている文字列処理の本の”Flexible
+Pattern Matching in Strings—Practical on-line search algorithms for
+texts and biological sequences” (Navarro and Raffinot,
+2002)についての自由記述の記事" />
+   <meta name="og:description" content="筆者の積読になっている文字列処理の本の”Flexible
+Pattern Matching in Strings—Practical on-line search algorithms for
+texts and biological sequences” (Navarro and Raffinot,
+2002)についての自由記述の記事" />
+      <meta property="og:title" content="積んで読んで積んでる本
+“Flexible Pattern Matching in Strings”" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+
+   <!-- <meta name="twitter:image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png" /> -->
+	<meta name="twitter:image" content="https://shinobuamasaki.github.io/img/shinobu.png">
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/tsundoku-ac-20251203.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+  <!--  <meta property="og:image" itemprop="image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png"> -->
+	<meta property="og:image" itemprop="image" content="https://shinobuamasaki.github.io/img/shinobu.png">
+
+   <title>積んで読んで積んでる本 “Flexible Pattern Matching in
+Strings” | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1
+         id="積んで読んで積んでる本-flexible-pattern-matching-in-strings">積んで読んで積んでる本
+         “Flexible Pattern Matching in Strings”</h1>
+         <p>Author: Amasaki Shinobu (雨崎しのぶ)</p>
+         <p>Twitter: <a href="https://x.com/amasaki203"><span
+         class="citation"
+         data-cites="amasaki203">@amasaki203</span></a></p>
+         <p>Posted on: 2025-12-03 JST</p>
+         <h2 id="はじめに">はじめに</h2>
+         <p>この記事は積読アドベントカレンダー
+         2025の3日目の記事です。</p>
+         <p>積んでいる本は自室に沢山あるのですが、ここでは文字列処理の本を1冊取り上げたいと思います。</p>
+         <h2 id="積んでいる本は">積んでいる本は</h2>
+         <p>“Flexible Pattern Matching in Strings—Practical on-line
+         search algorithms for texts and biological sequences” (Navarro
+         and Raffinot, 2002)
+         という本を積んでます。正確には今年の6月に買って数ページつまみ読みしてから、9月まで寝かせていたあと、10月に気合いを入れて読むことに挑戦して1ヶ月かけて第2章まで読み終え、11月から再び積み本に戻りました。</p>
+         <p>この本の位置づけは、情報技術 (IT)というよりは計算機科学 (CS)
+         の、特に文字列処理の実践的専門書にあたるでしょうか。内容は文字列探索や拡張文字列探索、正規表現マッチングなどに関するアルゴリズム本です。“Practical”とタイトルにある通り、各章において実用面で効率の良いアルゴリズムの紹介と著者らによるベンチマーク結果で構成されています。</p>
+         <h2 id="買ったきっかけ">買ったきっかけ</h2>
+         <p>そもそもは、正規表現を処理する効率的なアルゴリズムの解説が掲載されている本を探していました。何故かというと、筆者は<a
+         href="https://github.com/ShinobuAmasaki/forgex">Fortranの正規表現ライブラリをOSSで作っている</a>ので、それを改良するのに役立つ網羅的な文献が必要だと感じていたためです。</p>
+         <p>正規表現に関する本について、オライリーの『詳説　正規表現　第3版』と『正規表現クックブック』、技術評論社の『正規表現技術入門』はすでに本棚にあり目を通していました。しかし、オライリーの方は正規表現の使い方・書き方にフォーカスした本で、技術評論社の方は様々な正規表現エンジンの仕組みの解説が豊富でしたが、どれも細かい最適化の実装やパターンマッチングの効率的なアルゴリズム手法の詳細を説明するものではありませんでした。</p>
+         <p>結局、文字列処理から正規表現エンジンのアルゴリズムについて包括的に扱っている本は、和書では見つけることができず、外書を探すことにしました。今から約半年前の2025年5月末ごろ、ResearchGateやGoogle
+         Scholarで英語の文献を探していた時にこの本を発見し、Cambridgeのサイトを見てパターンマッチングや正規表現を扱っていることを知りました。</p>
+         <p>2025年6月当時は、Amazonでおよそ1万円くらいの価格でしたが、思い切ってペーパーバック版を購入しました。なお、2025年12月1日現在のAmazonでの価格はかなり高騰しているので、購入したい方は値段が落ち着くのを待つか別の方法で取り寄せるのがよいかもしれません。</p>
+         <p>届いた本はAmazon.co.jpのオンデマンド本のようで、最後のページに”Printed
+         in Japan”と書かれていました。</p>
+         <h2 id="どう読んでいったか">どう読んでいったか</h2>
+         <p>この本は、判型が245mm x
+         171mmの約200ページに渡って、全7章で構成されています：</p>
+         <ul>
+         <li>第1章 “Introduction”</li>
+         <li>第2章 “String Matching”</li>
+         <li>第3章 “Multiple string matching”</li>
+         <li>第4章 “Extended string matching”</li>
+         <li>第5章 “Regular expression matching”</li>
+         <li>第6章 “Approximate matching”</li>
+         <li>第7章 “Conclusion”</li>
+         </ul>
+         <p>注文して届いた直後に、現物を手に取って正規表現を扱った第5章を眺めてみましたが「むずしくてよくわからんな」という感想を持ち、少し読んだあとはそのまま放置していました（詳しく言うと、正規表現パターンのリテラル抽出による最適化の箇所だけ読んで実装に反映させました）。</p>
+         <p>1回目に開いたとき、最初はただページをめくって読むだけで進めようとしていましたが、全くと言っていいほど頭に入って来ません。何ページか読んでから「この読み方じゃダメだな」ということに気が付いたので、再び開いた10月の読書ではやり方を変えることにしました。その作戦は、</p>
+         <ol type="1">
+         <li>本文の英文をノートに筆写し、</li>
+         <li>理解が怪しい単語の意味を書き込み、</li>
+         <li>英文の構文解析をして、</li>
+         <li>頭の中で直訳を作り、</li>
+         <li>和訳をノートに書き込んで、</li>
+         <li>セクションごとの要約を作る、</li>
+         </ol>
+         <p>というカロリーが高くて時間が掛かるけれど、確実に理解できる方法を採用しました。</p>
+         <p>10月1日から31日までのほぼ毎日の数時間を読書にあてて、実際にこの学習方法でやってみました。月末までに第1章のイントロダクションと第2章の”String
+         Matching”までの40ページを読み込むことができましたが、しかし、筆圧が強いせいか軽い腱鞘炎になったのとちょうど区切りがよかったので、11月は別のことを取り組むことにしました。その後も12月になっても積読状態のままです。</p>
+         <p>これを読むのにコクヨのB5判100枚ノートを1冊と半分を使ったので、手で書いたノートは300ページくらいでしょうか。書き込んだ量は多かったですが、用語と文章の構造と和訳とセクションごとの要約をまとめた良いノートができました。第2章までをほぼ理解し、ノートを使って紹介されたアルゴリズムを自分で実装できたので、文字列マッチングだけについては今のところ満足しています。余裕ができたら第3章以降の複数文字列や正規表現、近似文字列のマッチングアルゴリズムに取り組みたいと考えているところです。</p>
+         <h2 id="読みたい人は">読みたい人は</h2>
+         <p>この本はオートマトンや形式言語、計算複雑性の概念などについての知識を前提にしているので、これを読む前にM.
+         Sipserの『計算理論の基礎』のようなCSの基礎的な教科書等を事前に読んでおくことをおすすめします。筆者はこれの邦訳第2版第1巻を読んでから取り組みました。</p>
+         <h2 id="次いつ読む">次いつ読む？</h2>
+         <p>2025年の12月は、ほかのブログ記事（<a
+         href="https://qiita.com/advent-calendar/2025/fortran">Fortranアドベントカレンダー
+         2025をやってます</a>）の執筆に専念したいので、ライブラリの改良のためにノートは開くと思いますが、この本を再び読み始めるのはしばらく先になりそうです。年明けて2026年の1月か2月にでも、また積み本から引っ張り出したいと思っています。</p>
+         <h2 id="参照">参照</h2>
+         <ul>
+         <li><p>G. Navarro, M. Raffinot, “Flexible Pattern Matching in
+         Strings—Practical on-line search algorithms for texts and
+         biological sequences”, Cambridge University Press, 2002, ISBN:
+         9780521039932,
+         https://doi.org/10.1017/CBO9781316135228</p></li>
+         <li><p>Michael Sipser 著, 田中圭介・藤岡淳 監訳, 阿部正幸・
+         植田広樹・太田 和夫・渡辺治 訳, 『計算理論の基礎　原著第3版』,
+         共立出版, 2023,
+         https://www.kyoritsu-pub.co.jp/book/b10033938.html</p>
+         <p>筆者がNavarro and Raffinot
+         (2002)に取り組む前に読んだのは原著第2版第1巻です:</p>
+         <ul>
+         <li>Michael Sipser 著, 田中圭介・藤岡淳 監訳,
+         阿部正幸・植田広樹・太田和夫・渡辺治
+         訳,『計算理論の基礎　原著第2版 1.オートマトンと言語』,
+         共立出版, 2008, ISBN: 9784320122079,
+         https://www.kyoritsu-pub.co.jp/book/b10010657.html</li>
+         </ul></li>
+         </ul>
+      </div>
+   </div>
+</main>
+</body>
+</html>
