@@ -362,14 +362,13 @@ end block
 
 コード中のコメントで示しているように、指定した部分文字列の範囲と右辺の長さが一致しない場合の挙動に注意する必要がある。左辺の指定範囲長よりも、右辺が長い場合には余った文字は切り捨てられ、短い場合にはホワイトスペースで埋められる。[^4]
 
-## 注釈
-
-[^1]: 参考文献2の第15.4節 "Typed and sourced allocation", pp. 297-299を参照した。
-[^2]: 参考文献3の第6.2節 "Substrings"を参照した。
-[^3]: 規格では派生型のオブジェクトを構造体 (structure)と呼び、これを構造体構成子 (structure constructor)と呼ぶらしい。以前は`derived type`の和訳語は「構造型」を使っていたようだ（参考文献1のpp. 26-27を参照）。
-[^4]: 詳細は参考文献2の第3.7節 "Scalar character expressions and assignments"を参照のこと。
 ## 参考文献
 
 1. Michael Metcalf and John Reid 著, 西村恕彦・和田英穂・西村和夫・高田正之 訳,"bit別冊 詳解 Fortran90", 共立出版株式会社, 1993, ISBN: 
 2. Michael Metcalf, John Reid, Malcolm Cohen, "Modern Fortran explained: Incorporating Fortran 2018", Oxford University Press, 2018, https://doi.org/10.1093/oso/9780198811893.001.0001, ISBN: 9780198811886
 3. J.C. Adams, W.S. Brainerd, J.T. Martin, B.T. Smith, J.L. Wagener, "Fortran 95 Handbook Complete ISO/ANSI Reference", MIT Press, 1997, ISBN: 978026251096
+
+[^1]: 参考文献2の第15.4節 "Typed and sourced allocation", pp. 297-299を参照した。
+[^2]: 参考文献3の第6.2節 "Substrings"を参照した。
+[^3]: 規格では派生型のオブジェクトを構造体 (structure)と呼び、これを構造体構成子 (structure constructor)と呼ぶらしい。以前は`derived type`の和訳語は「構造型」を使っていたようだ（参考文献1のpp. 26-27を参照）。
+[^4]: 詳細は参考文献2の第3.7節 "Scalar character expressions and assignments"を参照のこと。
