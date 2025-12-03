@@ -15,6 +15,7 @@ Twitter: [@amasaki203](https://x.com/amasaki203)
 
 Posted on: 2025-12-01 JST
 
+次の記事：[Fortranで文字列【基礎編その2—文字列の配列】](https://shinobuamasaki.github.io/items/fortran-character-string-processing-002.html)
 ## 概要
 
 本稿は「Fortranで文字列」と題したプログラミング解説記事シリーズの第1回である。このシリーズではFortran 2003以降の機能を使ったプログラミングにおける文字列の基本的な取扱い方を見つめなおして、Fortranの真価が再評価されることを目的としている。第1回となるこの記事は基礎編にあたり、リテラルの引用符や変数の使い方、文字列の組込み関数について解説する。
