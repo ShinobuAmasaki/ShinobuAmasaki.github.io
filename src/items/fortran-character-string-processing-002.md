@@ -1,5 +1,5 @@
 ---
-title: "Fortranで文字列【基礎編その2—配列】[JA]"
+title: "Fortranで文字列【基礎編その2—文字列の配列】[JA]"
 date: 2025-12-03
 language: ja
 link: https://shinobuamasaki.github.io/items/fortran-character-string-processing-002.html
