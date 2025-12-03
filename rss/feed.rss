@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Wed, 03 Dec 2025 20:49:24 +0900</pubDate>
+<pubDate>Wed, 03 Dec 2025 21:02:53 +0900</pubDate>
 
 
 <image>
@@ -20,7 +20,7 @@
 </image>
 
 <item>
-<title>Fortranで文字列【基礎編その2—配列】[JA]</title>
+<title>Fortranで文字列【基礎編その2—文字列の配列】[JA]</title>
  <link>https://shinobuamasaki.github.io/items/fortran-character-string-processing-002.html</link>
  <description>Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第2回。文字列の配列について、組込み機能の固定長という制約と派生型でラップして実現する可変長文字列配列を扱った記事</description>
  <dc:creator>Amasaki Shinobu</dc:creator>
