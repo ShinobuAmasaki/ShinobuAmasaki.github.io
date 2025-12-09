@@ -9,7 +9,7 @@ description: "Fortranにおける文字列の取扱いとその処理に関す�
 
 # Fortranで文字列【基礎編その2—文字列の配列】
 
-Author: Amasaki Shinobu (雨崎しのぶ)1
+Author: Amasaki Shinobu (雨崎しのぶ)
 
 Twitter: [@amasaki203](https://x.com/amasaki203)
 
@@ -364,7 +364,7 @@ end block
 
 ## 参考文献
 
-1. Michael Metcalf and John Reid 著, 西村恕彦・和田英穂・西村和夫・高田正之 訳,"bit別冊 詳解 Fortran90", 共立出版株式会社, 1993, ISBN: 
+1. Michael Metcalf and John Reid 著, 西村恕彦・和田英穂・西村和夫・高田正之 訳,"bit別冊 詳解 Fortran90", 共立出版株式会社, 1993
 2. Michael Metcalf, John Reid, Malcolm Cohen, "Modern Fortran explained: Incorporating Fortran 2018", Oxford University Press, 2018, https://doi.org/10.1093/oso/9780198811893.001.0001, ISBN: 9780198811886
 3. J.C. Adams, W.S. Brainerd, J.T. Martin, B.T. Smith, J.L. Wagener, "Fortran 95 Handbook Complete ISO/ANSI Reference", MIT Press, 1997, ISBN: 978026251096
 
