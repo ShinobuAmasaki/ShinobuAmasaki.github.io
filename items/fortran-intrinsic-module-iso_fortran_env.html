@@ -6,11 +6,11 @@
    <meta name="twitter:card" content="summary" />
       <meta name="dcterms.date" content="2025-12-09" />
         <meta name="description" content="Fortran
-2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事" />
+2003で導入された標準モジュールの一つであるiso_fortran_envについてを扱った解説記事" />
    <meta name="twitter:description" content="Fortran
-2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事" />
+2003で導入された標準モジュールの一つであるiso_fortran_envについてを扱った解説記事" />
    <meta name="og:description" content="Fortran
-2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事" />
+2003で導入された標準モジュールの一つであるiso_fortran_envについてを扱った解説記事" />
       <meta property="og:title" content="Fortran標準モジュール要約【iso_fortran_env編】[JA]" /> 
       <meta name="twitter:site" content="@amasaki203" />
 <!-- <meta name="twitter:image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png" /> -->
@@ -22,9 +22,6 @@
 
    <title>Fortran標準モジュール要約【iso_fortran_env編】[JA] | Amasaki Shinobu's Website</title>
 	
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha256-tkzDFSl16wERzhCWg0ge2tON2+D6Qe9iEaJqM4ZGd4E=" crossorigin="anonymous" type="text/css" rel="stylesheet">
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha256-gNVpJCw01Tg4rruvtWJp9vS0rRchXP2YF+U+b2lp8Po=" crossorigin="anonymous" type="text/javascript"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha256-ExtbCSBuYA7kq1Pz362ibde9nnsHYPt6JxuxYeZbU+c=" crossorigin="anonymous" type="text/javascript"></script>
    
    <link rel="icon" href="../favicon.ico" type="image/x-icon" >
    
@@ -123,31 +120,24 @@ end program main</code></pre>
          <h2
          id="iso_fortran_envモジュールで定義されているもの"><code>iso_fortran_env</code>モジュールで定義されているもの</h2>
          <h3 id="型の情報に関わるもの">型の情報に関わるもの</h3>
-         <p>組込み型の型パラメータとして与えたり、<code>kind()</code>の引数に指定して利用するものを以下に示す。ただし<code>numerical_storage_size</code>は</p>
+         <p>組込み型の型パラメータとして与えたり、<code>kind()</code>の引数に指定して利用したりするものを以下に示す。</p>
          <ul>
-         <li><code>int8</code>：整数型種別で符号付き8ビット（1バイト）を指す。範囲は<span
-         class="math inline">\(-128\)</span>から<span
-         class="math inline">\(127\)</span></li>
-         <li><code>int16</code>：同様に、符号付き16ビット（2バイト）を指し、範囲は<span
-         class="math inline">\(-32\:768\)</span>から<span
-         class="math inline">\(32\:767\)</span></li>
-         <li><code>int32</code>：同様に、符号付き32ビット（4バイト）を指し、範囲は<span
-         class="math inline">\(-2\:147\:483\:648\)</span>から<span
-         class="math inline">\(2\:147\:483\:647\)</span></li>
-         <li><code>int64</code>：同様に、符号付き64ビット（8バイト）を指し、範囲は<span
-         class="math inline">\(9\:223\:372\:036\:854\:775\:808\)</span>から<span
-         class="math inline">\(9\:223\:372\:036\:854\:775\:807\)</span></li>
-         <li><code>integer_kinds</code>：処理系がサポートする整数型の種別値一覧を持つ配列定数</li>
+         <li><code>int8</code>：8ビット（1バイト）の整数型を指す種別値を持つ定数。範囲は-128から127</li>
+         <li><code>int16</code>：16ビット（2バイト）の整数型を指す種別値を持つ定数。範囲は-32,768から32,767</li>
+         <li><code>int32</code>：32ビット（4バイト）の整数型を指す種別値を持つ定数。範囲は-2,147,483,648から2,147,483,647</li>
+         <li><code>int64</code>：64ビット（8バイト）の整数型を指す種別値を持つ定数。範囲は-9,223,372,036,854,775,808から9,223,372,036,854,775,807</li>
          <li><code>real32</code>：32ビットの浮動小数点数を指す実数型種別値持つ定数。単精度実数と呼ばれる型の種別に対応する</li>
          <li><code>real64</code>：64ビットの浮動小数点数を指す実数型の種別値を持つ定数。倍精度実数と呼ばれる型の種別に対応する</li>
          <li><code>real128</code>：128ビット（16バイト）の浮動小数点数を指す実数型の種別値を持つ定数。四倍精度実数と呼ばれる場合もある。実装されているかは処理系により異なる</li>
-         <li><code>real_kinds</code>：処理系がサポートする実数型の種別値一覧を持つ配列定数</li>
          <li><code>logical8</code>：8ビットの論理型を指す種別値を持つ定数</li>
          <li><code>logical16</code>：16ビットの論理型を指す種別値を持つ定数</li>
          <li><code>logical32</code>：32ビットの論理型を指す種別値を持つ定数</li>
          <li><code>logical64</code>：64ビットの論理型を指す種別値を持つ定数</li>
+         <li><code>integer_kinds</code>：処理系がサポートする整数型の種別値一覧を持つ配列定数</li>
+         <li><code>real_kinds</code>：処理系がサポートする実数型の種別値一覧を持つ配列定数</li>
          <li><code>logical_kinds</code>：処理系がサポートする論理型の種別値一覧を持つ配列定数</li>
          </ul>
+         <p>最後の3つは、それぞれの型の種別値の一覧を取得でき、その処理系で利用可能な（非負整数をもつ）型パラメータを知ることができる。</p>
          <h3 id="文字列処理に関わるもの">文字列処理に関わるもの</h3>
          <p><code>character_kinds</code>は、処理系がサポートする文字列型の種別値一覧を持つ配列定数であり、これに含まれる値の一つを<code>character</code>型変数の宣言時に<code>kind</code>型パラメータとして渡すことで、異なる文字種別の文字列変数を扱うことが可能になる<a
          href="#fn2" class="footnote-ref" id="fnref2"
