@@ -1,8 +1,8 @@
 ---
-title: "Fortran標準モジュール要約【iso_fortran_env】"
+title: "Fortran標準モジュール要約【iso_fortran_env編】[JA]"
 date: 2025-12-09
 language: ja
-link: https://shinobuamasaki.github.io/items/iso_fortran_env-module-summary.html
+link: https://shinobuamasaki.github.io/items/fortran-intrinsic-module-iso_fortran_env.html
 author: Amasaki Shinobu
 description: "Fortran 2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事"
 
