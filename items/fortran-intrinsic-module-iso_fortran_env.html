@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <meta name="twitter:card" content="summary" />
+      <meta name="dcterms.date" content="2025-12-09" />
+        <meta name="description" content="Fortran
+2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事" />
+   <meta name="twitter:description" content="Fortran
+2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事" />
+   <meta name="og:description" content="Fortran
+2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事" />
+      <meta property="og:title" content="Fortran標準モジュール要約【iso_fortran_env】" /> 
+      <meta name="twitter:site" content="@amasaki203" />
+
+   <!-- <meta name="twitter:image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png" /> -->
+	<meta name="twitter:image" content="https://shinobuamasaki.github.io/img/shinobu.png">
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://shinobuamasaki.github.io/fortran-intrinsic-module-iso_fortran_env.html" />
+   <meta property="og:site_name" content="Amasaki Shinobu's website" />
+  <!--  <meta property="og:image" itemprop="image" content="https://raw.githubusercontent.com/ShinobuAmasaki/ShinobuAmasaki.github.io/refs/heads/gh-pages/img/shinobu.png"> -->
+	<meta property="og:image" itemprop="image" content="https://shinobuamasaki.github.io/img/shinobu.png">
+
+   <title>Fortran標準モジュール要約【iso_fortran_env】 | Amasaki Shinobu's Website</title>
+	
+   <link rel="icon" href="../favicon.ico" type="image/x-icon" >
+   
+   <link rel="stylesheet" type="text/css" href="../style/common.css">
+   <link rel="stylesheet" type="text/css" href="../style/header.css">
+   <script src="../style/highlight.min.js"></script>
+   <script>
+      hljs.configure({languages: []});
+      hljs.highlightAll();
+   </script>
+   <link rel="stylesheet" type="text/css" href="../style/atom-one-dark.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header>
+      <div class="inner">
+         <a href="https://shinobuamasaki.github.io/"><img id="myicon" src="../img/shinobu.png" width="80px" height="80px" border="solid 10px #000"></a>
+         <p class="logo">Amasaki Shinobu's Website</p>
+         <ul class="header-buttons">
+            <li><a href="https://shinobuamasaki.github.io/">TOP</a></li>
+         </ul>
+      </div>
+   </header>
+<main>
+   <div class="container">
+      <div class="child">
+         <h1
+         id="fortran標準モジュール要約iso_fortran_env">Fortran標準モジュール要約【iso_fortran_env】</h1>
+         <h2 id="概要">概要</h2>
+         <p>Fortran
+         2003以降では、言語の規格で定められた組込みモジュールを使うことができる。組込みモジュールはいくつか用意されているが、本稿ではFortranによるプログラミングで最も基本的であり、使うことによる恩恵の大きい<code>iso_fortran_env</code>モジュールについて解説する。</p>
+         <p>まず初めに、モジュールの導入の仕方について簡単に解説し、<code>iso_fortran_env</code>モジュールを導入できるようにする。この際に組込みモジュールとユーザ定義／サードパーティモジュールとでのキーワードの指定の違いについても説明する。</p>
+         <p>その後に、当該モジュールで定義されている定数・変数および手続について、筆者が独自に分類したカテゴリに分けて、それぞれについて簡単に説明を記す。</p>
+         <h2 id="目次">目次</h2>
+         <ul>
+         <li><a href="#概要">概要</a></li>
+         <li><a href="#目次">目次</a></li>
+         <li><a
+         href="#組込みモジュールを導入する">組込みモジュールを導入する</a>
+         <ul>
+         <li><a
+         href="#組込みモジュール一覧">組込みモジュール一覧</a></li>
+         <li><a
+         href="#use文による組込みモジュールの導入"><code>use</code>文によるモジュールの導入</a></li>
+         </ul></li>
+         <li><a
+         href="#iso_fortran_envモジュールで定義されているもの"><code>iso_fortran_env</code>モジュールで定義されているもの</a>
+         <ul>
+         <li><a
+         href="#型の情報に関わるもの">型の情報に関わるもの</a></li>
+         <li><a
+         href="#文字列処理に関わるもの">文字列処理に関わるもの</a></li>
+         <li><a href="#入出力に関わるもの">入出力に関わるもの</a></li>
+         <li><a
+         href="#コンパイル時の情報に関わるもの">コンパイル時の情報に関わるもの</a></li>
+         <li><a
+         href="#coarray機能に関わるもの">Coarray機能に関わるもの</a></li>
+         <li><a href="#非推奨のもの">非推奨のもの</a></li>
+         </ul></li>
+         <li><a href="#ノート">ノート</a></li>
+         <li><a href="#参考文献">参考文献</a></li>
+         </ul>
+         <h2
+         id="組込みモジュールを導入する">組込みモジュールを導入する</h2>
+         <h3 id="組込みモジュール一覧">組込みモジュール一覧</h3>
+         <p>Fortran
+         2018標準では、次の5つの組込みモジュールを処理系が提供するものと定めている：</p>
+         <ul>
+         <li><code>iso_fortran_env</code></li>
+         <li><code>ieee_arithmetic</code></li>
+         <li><code>ieee_exceptions</code></li>
+         <li><code>ieee_features</code></li>
+         <li><code>iso_c_binding</code></li>
+         </ul>
+         <p>以下では、Fortranプログラミング環境に関する組込みモジュールの<code>iso_fortran_env</code>で定められている内容、すなわち変数や定数および手続について解説する。</p>
+         <h3
+         id="use文による組込みモジュールの導入"><code>use</code>文による組込みモジュールの導入</h3>
+         <p>通常、モジュールの導入には<code>use</code>文を使う。<code>iso_fortran_env</code>はFortran標準の組込みモジュールであり、これも例外ではなく、<code>program</code>文または<code>module</code>文の直後に<code>use</code>文を置いて使うことが多い。なお、組込みモジュールを導入する際には<code>intrinsic</code>キーワードを加えて記述すると、組込みモジュールを指しているという意図が明確になるため、筆者はこれを推奨している。また、ユーザー定義モジュールを導入したい場合には、<code>non_intrinsic</code>キーワードを指定して、それを強制することが可能だ。</p>
+         <pre class="fortran"><code>program main
+   use :: iso_fortran_env  ! iso_fortran_envモジュールを導入する。
+   use, intrinsic :: ieee_arithmetic     ! 組込みモジュールのieee_arithmeticを導入
+   use, non_intrinsic :: ieee_arithmetic ! ユーザー定義モジュールのieee_arithmeticを導入する。
+   ...
+end program main</code></pre>
+         <p>なお、組込みモジュールとユーザー定義モジュールの名前空間は別のものと定められているため、同名の2つのモジュールを使うことが、規格では一応許可されている<a
+         href="#fn1" class="footnote-ref" id="fnref1"
+         role="doc-noteref"><sup>1</sup></a>。けれども、やむを得ずそのような構成をとる際には<code>intrinsic</code>と<code>non_intrinsic</code>キーワードを適切に使い分けることが要求されるだろう。</p>
+         <h2
+         id="iso_fortran_envモジュールで定義されているもの"><code>iso_fortran_env</code>モジュールで定義されているもの</h2>
+         <h3 id="型の情報に関わるもの">型の情報に関わるもの</h3>
+         <p>組込み型の型パラメータとして与えたり、<code>kind()</code>の引数に指定して利用するものを以下に示す。ただし<code>numerical_storage_size</code>は</p>
+         <ul>
+         <li><code>int8</code>：整数型種別で符号付き8ビット（1バイト）を指す。範囲は<span
+         class="math inline">\(-128\)</span>から<span
+         class="math inline">\(127\)</span></li>
+         <li><code>int16</code>：同様に、符号付き16ビット（2バイト）を指し、範囲は<span
+         class="math inline">\(-32\:768\)</span>から<span
+         class="math inline">\(32\:767\)</span></li>
+         <li><code>int32</code>：同様に、符号付き32ビット（4バイト）を指し、範囲は<span
+         class="math inline">\(-2\:147\:483\:648\)</span>から<span
+         class="math inline">\(2\:147\:483\:647\)</span></li>
+         <li><code>int64</code>：同様に、符号付き64ビット（8バイト）を指し、範囲は<span
+         class="math inline">\(9\:223\:372\:036\:854\:775\:808\)</span>から<span
+         class="math inline">\(9\:223\:372\:036\:854\:775\:807\)</span></li>
+         <li><code>integer_kinds</code>：処理系がサポートする整数型の種別値一覧を持つ配列定数</li>
+         <li><code>real32</code>：32ビットの浮動小数点数を指す実数型種別値持つ定数。単精度実数と呼ばれる型の種別に対応する</li>
+         <li><code>real64</code>：64ビットの浮動小数点数を指す実数型の種別値を持つ定数。倍精度実数と呼ばれる型の種別に対応する</li>
+         <li><code>real128</code>：128ビット（16バイト）の浮動小数点数を指す実数型の種別値を持つ定数。四倍精度実数と呼ばれる場合もある。実装されているかは処理系により異なる</li>
+         <li><code>real_kinds</code>：処理系がサポートする実数型の種別値一覧を持つ配列定数</li>
+         <li><code>logical8</code>：8ビットの論理型を指す種別値を持つ定数</li>
+         <li><code>logical16</code>：16ビットの論理型を指す種別値を持つ定数</li>
+         <li><code>logical32</code>：32ビットの論理型を指す種別値を持つ定数</li>
+         <li><code>logical64</code>：64ビットの論理型を指す種別値を持つ定数</li>
+         <li><code>logical_kinds</code>：処理系がサポートする論理型の種別値一覧を持つ配列定数</li>
+         </ul>
+         <h3 id="文字列処理に関わるもの">文字列処理に関わるもの</h3>
+         <p><code>character_kinds</code>は、処理系がサポートする文字列型の種別値一覧を持つ配列定数であり、これに含まれる値の一つを<code>character</code>型変数の宣言時に<code>kind</code>型パラメータとして渡すことで、異なる文字種別の文字列変数を扱うことが可能になる<a
+         href="#fn2" class="footnote-ref" id="fnref2"
+         role="doc-noteref"><sup>2</sup></a>。</p>
+         <h3 id="入出力に関わるもの">入出力に関わるもの</h3>
+         <ul>
+         <li><code>input_unit</code>：標準入力のユニット（装置番号）を指す値を持つ定数</li>
+         <li><code>output_unit</code>：標準出力のユニットを指す値を持つ定数</li>
+         <li><code>error_unit</code>：標準エラー出力のユニットを指す値を持つ定数</li>
+         <li><code>iostat_end</code>：入出力文の実行で、<code>iostat</code>指定子から渡された値がEnd
+         Of Fileの条件に該当するかを確認するための定数</li>
+         <li><code>iostat_eor</code>：入出力文の実行で、<code>iostat</code>指定子から渡された値がEnd
+         Of Recordの条件に該当するかを確認するための定数</li>
+         <li><code>iostat_inquire_internal_unit</code>：<code>inquire</code>文の実行で、内部ファイルに割り当てられた装置番号を指して照会した際に、<code>iostat</code>指定子に返される値と比較するための定数。この比較を行うことで、不適切な<code>inquire</code>文の実行に対してのエラーハンドリングができるようになる</li>
+         <li><code>file_storage_size</code>：外部ファイルの記憶単位のビット長を表す定数。<code>open</code>文の<code>recl</code>指定子に用いる。</li>
+         </ul>
+         <p>標準入力・出力・エラー出力については、従来のコードでは慣例的にそれぞれ<code>5</code>,
+         <code>6</code>, <code>0</code>の値が直接書かれていたが、Fortran
+         2003において標準化され、<code>iso_fortran_env</code>から利用可能となっている。ただし、多くの処理系で<code>input_unit</code>が<code>5</code>に、<code>output_unit</code>が<code>6</code>に、<code>error_unit</code>が<code>0</code>に結び付けられているので、ファイルを開く<code>open</code>文では、これらの値を使わないほうがよい。</p>
+         <h3
+         id="コンパイル時の情報に関わるもの">コンパイル時の情報に関わるもの</h3>
+         <p>実行ファイルの中に、ビルド時のコンパイラのバージョン、コンパイルオプションを埋め込むことができる手続が提供されている：</p>
+         <ul>
+         <li><code>compiler_version()</code>：ビルド時に使用されたコンパイラのバージョン情報を表す文字列を返す関数。</li>
+         <li><code>compier_options()</code>：ビルド時に使用されたコンパイルオプションの情報を表す文字列を返す関数。</li>
+         </ul>
+         <h3 id="coarray機能に関わるもの">Coarray機能に関わるもの</h3>
+         <p>Coarrayに関する定数と変数、および手続については、詳しく解説できるだけの理解と技量を筆者はまだ持ち合わせていないので、モジュールで定義されているものの名前を紹介するに留める。以下は、Fortran
+         2018で定義されている名前である<a href="#fn3"
+         class="footnote-ref" id="fnref3"
+         role="doc-noteref"><sup>3</sup></a>。</p>
+         <ul>
+         <li><code>atomic_int_kind</code></li>
+         <li><code>atomic_logical_kind</code></li>
+         <li><code>current_team</code></li>
+         <li><code>initial_team</code></li>
+         <li><code>parent_team</code></li>
+         <li><code>stat_locked</code></li>
+         <li><code>stat_locked_other_image</code></li>
+         <li><code>stat_stopped_image</code></li>
+         <li><code>stat_failed_image</code></li>
+         <li><code>stat_unlocked</code></li>
+         <li><code>stat_unlocked_failed_image</code></li>
+         <li><code>lock_type</code></li>
+         <li><code>event_type</code></li>
+         <li><code>team_type</code></li>
+         </ul>
+         <h3 id="非推奨のもの">非推奨のもの</h3>
+         <p>以下の2つは、Fortranのstorage
+         association（記憶列結合）という機能に関わるものだが、これはFortran
+         90の時点で非推奨になっており<a href="#fn4" class="footnote-ref"
+         id="fnref4"
+         role="doc-noteref"><sup>4</sup></a>、今後も使うべきではないものに分類されている。そのためここでは名前だけを紹介することに留める。もし古いコードのメンテナンス等で、知識が必要になったら参考文献1の付録Aなどを参照してほしい。</p>
+         <ul>
+         <li><code>numerical_storage_size</code></li>
+         <li><code>character_storage_size</code></li>
+         </ul>
+         <h2 id="ノート">ノート</h2>
+         <ol type="1">
+         <li><code>logical8</code>から<code>logical64</code>は、Fortran
+         2023標準で採用された比較的新しいもので、論理型の種別値を持つ定数である。</li>
+         <li>Fortran 90で追加された <code>selected_int_kind()</code>・
+         <code>selected_real_kind()</code>と、Fortran
+         2003で追加された<code>selected_char_kind()</code>の3つの手続は、モジュールではなく言語組込みの手続である。</li>
+         <li>2と同様に、Fortran
+         2023で追加された<code>selected_logical_kind()</code>も言語組込みの手続である。</li>
+         <li><code>atomic_and</code>,
+         <code>atomic_or</code>,<code>atomic_xor</code>,
+         <code>atomic_add</code>, <code>atomic_fetch_add</code>,
+         <code>atomic_fetch_and</code>, <code>atomic_fetch_or</code>,
+         <code>atomic_fetch_xor</code>, <code>atomic_cas</code>,
+         <code>atomic_define</code>, <code>atomic_ref</code>,
+         の手続はすべて、モジュールではなく言語組込みの手続である。</li>
+         <li>Fortran
+         2018において、複素数型の型種別を指す定数は用意されていない。</li>
+         <li><code>real128</code>の実数型が提供されている（すなわち定数<code>real128</code>が非負整数の値を持つ）かどうかについて次のコンパイラを調べた：
+         <ul>
+         <li>GNU Fortran <code>gfortran</code>（Linux環境のGNU Fortran
+         14.3.0）では値<code>16</code>を持つ。</li>
+         <li>Intel Fortran Compiler <code>ifx</code>（Linux環境のIFX
+         2024.0.0 20231017）では値<code>16</code>を持つ。</li>
+         <li>LLVM Flang <code>flang</code>（Linux (Ubuntu 24.04)
+         環境の<code>flang-new-21</code>）は値<code>-1</code>を持ち、これを型パラメータに指定するとコンパイルエラーとなる。</li>
+         </ul></li>
+         <li>一部の処理系では半精度浮動小数点数（16ビット実数型）を扱える処理系もあるようだが、標準化されていないことに注意（参考文献3を参照）。</li>
+         <li>一部の処理系では拡張倍精度浮動小数点数（例:
+         <code>real(kind=10)</code>）を指定できるが、これについては標準化されておらず、当該モジュールでこれを指す定数は存在しない。加えて、筆者はこれについて語るに足る知見を持たないので、ここで触れるだけにしておく。</li>
+         <li>現在のFortran標準では、モジュールにおいても符号なし整数型は提供されていないが、次の規格
+         “F202Y”
+         策定の議論において、導入が議論されている（参考文献4を参照）。</li>
+         </ol>
+         <h2 id="参考文献">参考文献</h2>
+         <ol type="1">
+         <li><p>Michael Metcalf, John Reid, Malcolm Cohen, “Modern
+         Fortran Explained: Incorporating Fortran 2018”, Oxford
+         University Press, 2018,
+         https://doi.org/10.1093/oso/9780198811893.001.0001, ISBN:
+         9780198811886</p></li>
+         <li><p>Michael Metcalf, John Reid 著,
+         西村恕彦・和田英穂・西村和夫・高田正之 訳,“bit別冊 詳解
+         Fortran90”, 共立出版株式会社, 1993</p></li>
+         <li><p>NAG Fortran コンパイラ 7.0 マニュアル, 第2.12節
+         “半精度浮動小数点数”, Nihon Numerical Algorithms Group K.K.,
+         https://www.nag-j.co.jp/nagfor/np70_manual/compiler_2_12.html</p></li>
+         <li><p>Document #N2230, DIN-6 “Proposal for UNSIGNED type”,
+         ISO/IEC JTC1/SC22/WG5—The Home of Fortran Standard:
+         https://wg5-fortran.org, PDF:
+         https://wg5-fortran.org/N2201-N2250/N2230.pdf</p></li>
+         </ol>
+         <aside id="footnotes"
+         class="footnotes footnotes-end-of-document"
+         role="doc-endnotes">
+         <hr />
+         <ol>
+         <li id="fn1"><p>ただし、Intel Fortran Compiler
+         <code>ifx</code>ではコンパイルエラーとなる。<a href="#fnref1"
+         class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+         <li
+         id="fn2"><p>処理系ごとに異なる文字種別については、筆者の別の記事でテーマに取り上げて解説をする予定である（2025年12月9日現在）。<a
+         href="#fnref2" class="footnote-back"
+         role="doc-backlink">↩︎</a></p></li>
+         <li
+         id="fn3"><p>参考文献1の第17章（pp. 325-346）と第20章（pp. 383-396）を参照のこと。<a
+         href="#fnref3" class="footnote-back"
+         role="doc-backlink">↩︎</a></p></li>
+         <li id="fn4"><p>参考文献3「bit別冊 詳解Fortran
+         90」の第11章（pp. 253-265）において「使わないほうがよい機能」に挙げられている。<a
+         href="#fnref4" class="footnote-back"
+         role="doc-backlink">↩︎</a></p></li>
+         </ol>
+         </aside>
+      </div>
+   </div>
+</main>
+</body>
+</html>
