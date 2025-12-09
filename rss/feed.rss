@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Tue, 09 Dec 2025 23:15:41 +0900</pubDate>
+<pubDate>Tue, 09 Dec 2025 23:23:19 +0900</pubDate>
 
 
 <image>
@@ -20,8 +20,8 @@
 </image>
 
 <item>
-<title>Fortran標準モジュール要約【iso_fortran_env】</title>
- <link>https://shinobuamasaki.github.io/items/iso_fortran_env-module-summary.html</link>
+<title>Fortran標準モジュール要約【iso_fortran_env編】[JA]</title>
+ <link>https://shinobuamasaki.github.io/items/fortran-intrinsic-module-iso_fortran_env.html</link>
  <description>Fortran
 2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事</description>
  <dc:creator>Amasaki Shinobu</dc:creator>
