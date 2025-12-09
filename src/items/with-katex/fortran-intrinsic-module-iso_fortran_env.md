@@ -5,10 +5,16 @@ language: ja
 link: https://shinobuamasaki.github.io/items/fortran-intrinsic-module-iso_fortran_env.html
 author: Amasaki Shinobu
 description: "Fortran 2003で導入された標準モジュールの一つであるiso_fortran_envを扱った解説記事"
-
+latex: true
 ---
 
-# Fortran標準モジュール要約【iso_fortran_env】
+# Fortran標準モジュール要約【iso_fortran_env編】
+
+Author: Amasaki Shinobu (雨崎しのぶ)
+
+Twitter: [@amasaki203](https://x.com/amasaki203)
+
+Posted on: 2025-12-09 JST
 
 ## 概要
 
