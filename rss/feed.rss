@@ -7,7 +7,7 @@
 <language>en</language>
 <copyright>Amasaki Shinobu</copyright>
 <docs>https://shinobuamasaki.github.io/feed.rss</docs>
-<pubDate>Tue, 09 Dec 2025 23:53:53 +0900</pubDate>
+<pubDate>Mon, 09 Mar 2026 16:53:57 +0900</pubDate>
 
 
 <image>
@@ -28,13 +28,6 @@
  <pubDate>2025-12-09 09:00:00 JST</pubDate>
 </item>
 <item>
-<title>Fortranで文字列【基礎編その2—文字列の配列】[JA]</title>
- <link>https://shinobuamasaki.github.io/items/fortran-character-string-processing-002.html</link>
- <description>Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第2回。文字列の配列について、組込み機能の固定長という制約と派生型でラップして実現する可変長文字列配列を扱った記事</description>
- <dc:creator>Amasaki Shinobu</dc:creator>
- <pubDate>2025-12-03 09:00:00 JST</pubDate>
-</item>
-<item>
 <title>積んで読んで積んでる本 “Flexible Pattern Matching in Strings”
 [JA]</title>
  <link>https://shinobuamasaki.github.io/items/tsundoku-ac-20251203.html</link>
@@ -42,6 +35,13 @@
 Matching in Strings—Practical on-line search algorithms for texts and
 biological sequences” (Navarro and Raffinot,
 2002)についての自由記述の記事</description>
+ <dc:creator>Amasaki Shinobu</dc:creator>
+ <pubDate>2025-12-03 09:00:00 JST</pubDate>
+</item>
+<item>
+<title>Fortranで文字列【基礎編その2—文字列の配列】[JA]</title>
+ <link>https://shinobuamasaki.github.io/items/fortran-character-string-processing-002.html</link>
+ <description>Fortranにおける文字列の取扱いとその処理に関する解説についての連載記事の第2回。文字列の配列について、組込み機能の固定長という制約と派生型でラップして実現する可変長文字列配列を扱った記事</description>
  <dc:creator>Amasaki Shinobu</dc:creator>
  <pubDate>2025-12-03 09:00:00 JST</pubDate>
 </item>
