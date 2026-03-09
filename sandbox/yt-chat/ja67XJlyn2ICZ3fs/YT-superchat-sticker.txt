@@ -1,0 +1,214 @@
+/* UTF-8 */
+/*ここから*/
+yt-live-chat-app {
+
+   yt-live-chat-renderer,
+   yt-live-chat-text-message-renderer {
+      background-color: transparent !important;
+   }
+
+   yt-live-chat-server-error-message,
+   yt-live-chat-banner-manager,
+   yt-live-chat-banner-renderer {
+      display: none !important;
+   }
+
+   #panel-pages,
+   yt-live-ticker-renderer,
+   yt-live-chat-header-renderer,
+   yt-live-chat-message-input-renderer,
+   yt-live-chat-ticker-renderer,
+   yt-invalidation-continuation {
+      display: none !important;
+   }
+
+   /* メンバーバッジを非表示にする */
+   yt-live-chat-text-message-renderer #author-badges,
+   yt-live-chat-text-message-renderer #chat-badges,
+   yt-live-chat-paid-message-renderer #author-badges,
+   yt-live-chat-paid-message-renderer #chat-badges {
+      display: none !important;
+   }
+
+   /* チャットランクを非表示にする */
+   #before-content-buttons,
+   #leaderboard-badge {
+      display: none !important;
+   }
+
+   /* メンバーシップ入会を非表示にする */
+   .yt-live-chat-membersip-item-renderer,
+   ytd-sponsorships-live-chat-header-renderer,
+   ytd-sponsorships-live-chat-gift-redemption-announcement-renderer {
+      display: none !important;
+   }
+
+   /* 「チャットへようこそ！」を非表示にする */
+   yt-live-chat-viewer-engagement-message-renderer {
+      display: none !important;
+   }
+
+   yt-live-chat-paid-message-renderer,
+   yt-live-chat-paid-sticker-renderer {
+      display: block !important;
+   }
+
+   font-family: "Roboto, Arial, sans-serif";
+
+   /* ========================= Supersticker ========================= */
+
+   yt-live-chat-paid-sticker-renderer {
+
+      --text-color: var(--yt-live-chat-paid-message-color, var(--fallback-color));
+
+      #card {
+         overflow: hidden;
+         border: 1px solid, var(--border);
+         position: relative;
+         padding: 0;
+      }
+
+      #content {
+         font-size: 16px !important;
+         display: inline-block !important;
+         color: var(--main-color, var(--fallback-color)) !important;
+         width: 100% !important;
+         position: relative;
+         transform-origin: 0% 0%;
+         animation: slideIn 0.5s forwards ease-out;
+         text-align: left;
+         flex-grow: 3;
+      }
+
+      #author-info {
+         padding: 0 !important;
+         align-items: flex-start !important;
+         flex-grow: 3;
+
+         yt-live-chat-author-chip {
+            display: inline-block !important;
+         }
+
+         #content-primary-column {
+            box-sizing: border-box;
+         }
+
+         #author-name-chip {
+            flex-grow: 3;
+         }
+
+         #author-name {
+            display: -webkit-box !important;
+            font-weight: 600;
+            flex-grow: 3;
+         }
+
+         #author-photo {
+            display: block !important;
+            border-radius: 999px;
+            overflow: hidden;
+            flex: 0 0 32px;
+         }
+      }
+
+      #sticker-container {
+         display: flex !important;
+         margin-left: 0 !important;
+         justify-content: flex-end !important;
+      }
+
+      #sticker {
+         display: block !important;
+      }
+   }
+
+   /* ========================= Superchat ========================= */
+
+   yt-live-chat-paid-message-renderer {
+
+      --text-color: var(--yt-live-chat-paid-message-color, var(--fallback-color));
+      font-family: "Roboto, Arial, sans-serif";
+
+      #card {
+         overflow: hidden;
+         border: 1px solid var(--border);
+         position: relative;
+         padding: 0;
+      }
+
+      #component {
+         text-indent: -0.5em;
+         font-size: 16px !important;
+         display: inline-block !important;
+         width: auto !important;
+         color: var(--main-color, var(--fallback-color));
+      }
+
+      #header {
+         padding: 10px;
+         background: var(--yt-live-chat-paid-message-primary-color, var(--fallback-color));
+         color: var(--yt-live-chat-paid-message-primary-color, var(--fallback-color));
+      }
+
+      #header-content {
+         display: flex !important;
+         gap: var(--gap) !important;
+         align-items: center;
+      }
+
+      #author-photo {
+         display: block !important;
+         width: 32px;
+         height: 32px;
+         border-radius: 999px;
+         flex: 0 0 32px;
+      }
+
+      .yt-live-chat-author-chip {
+         display: -webkit-box !important;
+      }
+
+      #purchase-amount {
+         font-weight: 700;
+         margin-left: auto;
+         white-space: nowrap;
+      }
+
+      #content {
+         margin-left: 28px;
+         margin-top: 6px;
+         margin-bottom: 6px;
+         padding: 8px 22px;
+         border-radius: 20px;
+         position: relative;
+         transform-origin: 0% 0%;
+         animation: slideIn 0.5s forwards ease-out;
+         text-align: left;
+      }
+
+      #message {
+         color: var(--text-color, var(--fallback-color)) !important;
+         font-family: var(--font);
+
+         line-height: 1.35;
+         word-break: break-word;
+      }
+
+      #action-buttons {
+         display: none !important;
+      }
+   }
+
+   :is(yt-live-chat-text-message-renderer,
+      yt-live-chat-paid-message-renderer,
+      yt-live-chat-paid-sticker-renderer,
+      yt-live-chat-membersip-item-renderer) #menu {
+      display: none !important;
+   }
+
+}
+
+:root {
+   --fallback-color: black;
+}
+/* ここまで */
